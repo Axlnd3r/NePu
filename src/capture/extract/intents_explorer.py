@@ -23,6 +23,7 @@ import pandas as pd
 
 URL = "https://explorer.near-intents.org/api/v0/transactions"
 PAGE_SIZE = 1000  # documented maximum
+MAX_PAGES_PER_DAY = 200  # a day has ~20 pages; more means something is wrong
 MIN_INTERVAL = 5.0
 COLUMNS = [
     "date",
@@ -82,25 +83,57 @@ class ExplorerClient:
         raise RuntimeError("Explorer API kept answering 429")
 
     def fetch_day(self, day: date) -> list[dict]:
-        """All SUCCESS transactions created on `day` (UTC). Both bounds are non-inclusive."""
+        """All SUCCESS transactions created on `day` (UTC), newest first, without duplicates.
+
+        Pages move backwards in time: the next request ends at the second of the last row of the
+        previous page (the end bound is non-inclusive, so that second is requested again and the
+        rows already seen are dropped). The API's cursor (lastDepositAddress) is not used: on
+        2026-10-10 it returned the first page again after ten pages.
+        """
         start = int(datetime.combine(day, dtime.min, tzinfo=UTC).timestamp()) - 1
-        end = int(datetime.combine(day + timedelta(days=1), dtime.min, tzinfo=UTC).timestamp())
-        params: dict = {
-            "numberOfTransactions": PAGE_SIZE,
-            "statuses": "SUCCESS",
-            "startTimestampUnix": start,
-            "endTimestampUnix": end,
-        }
+        window_end = int(
+            datetime.combine(day + timedelta(days=1), dtime.min, tzinfo=UTC).timestamp()
+        )
         rows: list[dict] = []
-        while True:
-            page = self.get(params)
-            rows.extend(page)
+        seen: set[tuple] = set()
+        for _ in range(MAX_PAGES_PER_DAY):
+            page = self.get(
+                {
+                    "numberOfTransactions": PAGE_SIZE,
+                    "statuses": "SUCCESS",
+                    "startTimestampUnix": start,
+                    "endTimestampUnix": window_end,
+                }
+            )
+            fresh = [tx for tx in page if _row_id(tx) not in seen]
+            if page and not fresh:
+                raise RuntimeError(f"{day}: a full page of already-seen rows; pagination is stuck")
+            for tx in fresh:
+                seen.add(_row_id(tx))
+                rows.append(tx)
             if len(page) < PAGE_SIZE:
                 return rows
-            last = page[-1]
-            params = {**params, "lastDepositAddress": last["depositAddress"]}
-            if last.get("depositMemo"):
-                params["lastDepositMemo"] = last["depositMemo"]
+            next_end = _seconds(page[-1]["createdAtTimestamp"]) + 1
+            if next_end >= window_end:
+                raise RuntimeError(f"{day}: {PAGE_SIZE} rows in one second; cannot page further")
+            window_end = next_end
+        raise RuntimeError(f"{day}: more than {MAX_PAGES_PER_DAY} pages; stopping")
+
+
+def _row_id(tx: dict) -> tuple:
+    return (
+        tx["depositAddress"],
+        tx.get("depositMemo"),
+        tx["createdAt"],
+        tx["originAsset"],
+        tx["destinationAsset"],
+        tx.get("amountIn"),
+    )
+
+
+def _seconds(timestamp: float) -> int:
+    """createdAtTimestamp is in seconds; tolerate milliseconds."""
+    return int(timestamp // 1000 if timestamp > 1e11 else timestamp)
 
 
 def chain_of(asset_id: str) -> str:

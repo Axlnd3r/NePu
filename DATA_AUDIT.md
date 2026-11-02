@@ -17,7 +17,7 @@ evidence JSON next to its dry-run and billed bytes.
 | 5 | Buyback destination | "permanent capital vehicle" | Wallet `buybacks.multisignature.near` (single source: revenue.near.org). The phrase "permanent capital vehicle" is **not found** in any source. Account did not exist on 2026-03-01, so the 2026-02-23 to ~April destination is unknown. NEAR is held, not burned | `buybacks_account_creation.json`, `onchain_accounts.json` | **PARTIAL** (vehicle label: FAIL) | scope buyback series to >= 2026-04-26; earlier period "unavailable" |
 | 6 | Issuance | ~2.5 % per year | Net `total_supply` growth 2.467 % to 2.479 % annualised over 28 to 365 days | `rpc_total_supply.json` | **OK** | none needed |
 | 7 | DefiLlama | fees/revenue, daily | Daily from 2025-05-10 (fees, revenue) and 2024-12-10 (volume) | `defillama_evidence.json` | **OK** | none needed |
-| 8 | Explorer API | params, fields, one JWT call | Spec read and saved. No JWT available, so no call made. `appFees.fee` unit undocumented | `intents_explorer_openapi.yaml` | **PARTIAL** | DefiLlama for fees/volume; Distribution Map degraded |
+| 8 | Explorer API | params, fields, one JWT call | JWT works (updated 2026-11-02). Fields match the spec; `appFees.fee` is basis points of `amountIn`. 30-day pull done: 89,210 rows. Covers about 27 % of DefiLlama's Intents volume (1Click only). The cursor parameter is unreliable (see Check 8) | `intents_explorer_openapi.yaml`, `explorer_sample.json`, `explorer_checks.json` | **OK** (scope: 1Click only) | time-window pagination; non-1Click flow stays "unavailable" |
 | 9 | CoinGecko | daily range call with key | No key. Keyless works only for the **past 365 days** (error 10012 beyond that, found in F2). Keyed call untested | `sanity_onchain_vs_defillama.json`, F2 notes | **PARTIAL** | price_daily limited to the last 365 days; earlier days need a paid key or another source (user decision) |
 | 10 | Cost | 3 largest queries under limit | All three exceed 10 GB per query (3.1 TB, 315 GB, 181 GB). Cheaper designs found for the flows (see Check 10) | `bq_cost_dryruns.json` | **PARTIAL** | cheaper query designs, chunked pulls |
 
@@ -126,9 +126,17 @@ Quality flags: revenue exceeds fees on 5 of 540 days (2025-11-07, 2026-01-15, 20
 - `https://explorer.near-intents.org/api/v0/openapi.yaml` read (HTTP 200). Endpoints: `GET /api/v0/transactions`, `GET /api/v0/partner-any-quotes`. Bearer JWT on all; 1 request per 5 s per partner (429 otherwise).
 - `/transactions` params: `numberOfTransactions` (default 50, max 1000), `lastDepositAddress` + `lastDepositMemo` (cursor), `direction` (next/prev), `search`, `fromChainId`, `fromTokenId`, `toChainId`, `toTokenId`, `referral`, `affiliate`, `statuses`, `showTestTxs`, `minUsdPrice`, `maxUsdPrice`, `startTimestamp[Unix]`, `endTimestamp[Unix]` (both non-inclusive).
 - Response fields: `originAsset`, `destinationAsset`, `amountIn`, `amountInFormatted`, `amountInUsd`, `amountOut`, `amountOutFormatted`, `amountOutUsd`, `appFees[{recipient, fee}]`, `referral`, `status`, `createdAt`, `createdAtTimestamp`, `nearTxHashes`, `originChainTxHashes`, `destinationChainTxHashes`, `depositType`, `recipientType`, `refundFee`, and others.
-- There is no separate chain field: chain is encoded in the asset id. The unit of `appFees.fee` is not documented (example value 50, plausibly basis points); unverified.
-- Only 1Click transactions are covered (CLAUDE.md); coverage of non-1Click flow is unknown.
-- **No JWT was available** (not in `.env`, not in the environment), so no call was made and no sample saved.
+- There is no separate chain field: chain is encoded in the asset id.
+- Only 1Click transactions are covered. Measured over the 30-day pull below, Explorer volume is 27 % of DefiLlama's volume for the same days (daily ratio 0.21 to 0.33), so the rest of Intents volume is not in this table.
+
+*Update 2026-11-02, after the JWT was obtained (Partner Dashboard, key type "Explorer", `partners.near-intents.org`):*
+- **JWT works.** One call returned HTTP 200 with a list; every field matched the OpenAPI schema. Sample in `docs/audit/explorer_sample.json` (token redacted). A page of 1,000 rows holds about 2 hours of traffic.
+- **`appFees[].fee` is in basis points of `amountIn`.** Docs (`api-reference/oneclick/request-a-swap-quote.md`): "Fee for this recipient as part of amountIn in basis points". The data agrees: over 548 transactions of at least 20 USD with an app fee, the observed spread (1 - out/in) correlates 0.66 with the declared fee, and 90 % of them have a spread of at least the declared fee. With a partner key the fee is split 50/50 with 1Click (1Click keeps at least 20 bps; `resources/fees.md`), so the declared fee is the amount requested, not what the recipient nets.
+- **Asset-id patterns** seen in real data: `nep141:<chain>-<address>.omft.near`, `nep141:<name>.omft.near`, other `nep141:...` (on NEAR), `nep245:v2_1.omni.hot.tg:<id>_<address>` and `1cs_v1:<chain>:<kind>:<id>`. My first parsing rule left 55 % of assets unknown; after handling all five patterns 0 % of the 30-day pull is unknown. HOT ids (for example `hot:56`) are left as raw ids, not mapped to chain names.
+- **The cursor (`lastDepositAddress`) is unreliable.** On 2026-10-10, after ten correct pages, a request with the cursor returned the first page again (100 % overlap), and my loop repeated it from cache until I stopped it (CPU 913 s, 2.1 GB). The client now pages by moving the end timestamp back to the last row's second and dropping duplicates, stops with an error when a page adds nothing new, and caps a day at 200 pages. Checked with one real request at the stall point (998 new contiguous rows) and with a fake server in the tests.
+- **Pull result** (`data/snapshot/explorer_1click_daily.parquet`): 89,210 rows for 2026-10-03 to 2026-11-01, 488,989 transactions (11,831 to 23,791 a day, median 15,960), 506 pages in about 57 minutes (about 7 s per request). The row count equals an independent recount of unique transactions from the cached pages, day by day.
+- **Declared app fee** in the pull: 4.81 M USD on 1,051 M USD of volume (0.458 %). This is the requested fee summed over recipients, before the 50/50 split with 1Click.
+- **Limitation of the table design:** `affiliate` joins all fee recipients of a transaction into one string and `fee_usd` is their sum, so fee per recipient cannot be recovered from this table. The raw pages are cached (685 MB for the 506 pages used, plus 178 MB of older unused pages from the cursor attempt, under `data/live/_cache/`, not committed), so F4 can rebuild the table at recipient level without new requests.
 
 ## Check 9: CoinGecko
 
@@ -171,7 +179,7 @@ Hybrid choice: activity tables from 2026-04-26, supply/burn from 2025-05-10, wal
 | `fee_wallet_inflows_daily` | 811 | 2025-11-07..2026-10-31 | BigQuery, `sql/fee_wallet_inflows_daily.sql` |
 | `defillama_intents_daily` | 690 | 2024-12-10..2026-10-30 | DefiLlama (4 endpoints) |
 | `price_daily` | 363 | 2025-11-04..2026-11-01 | CoinGecko (keyless) |
-| `explorer_1click_daily` | not pulled | - | needs `INTENTS_EXPLORER_JWT` |
+| `explorer_1click_daily` | 89,210 | 2026-10-03..2026-11-01 | Explorer API `/transactions` (added in snapshot v2) |
 
 BigQuery cost of the extract: 37 queries, 258.57 GB billed (0.235 TiB; dry-run total 258.56 GB), largest
 single query 10.36 GB against the 10.74 GB limit. Together with F1 (about 45 GB) roughly 0.3 TiB of the
@@ -195,7 +203,7 @@ Assumption that failed, fallback chosen (CLAUDE.md "stop and record"):
 New or confirmed facts:
 - BigQuery `INFORMATION_SCHEMA`-checked column names in the F2 SQL all executed without error.
 - `receipt_actions` queries scale far less than the F1 extrapolation suggested: the 190-day activity window costs 43 to 47 GB per table; the 540-day equivalents are about 10 times more.
-- The Explorer client is implemented and tested against mocks only (throttle 1 request per 5 s, on-disk cache, pagination, 429 retry). Not exercised against the real API: no JWT. `fee_usd` is left empty because the unit of `appFees[].fee` is undocumented, and the chain derived from asset ids is an unverified heuristic.
+- The Explorer client (throttle 1 request per 5 s, on-disk cache, 429 retry, time-window pagination) was first tested against mocks only and then run against the real API after the JWT arrived; see Check 8. Snapshot v1 had no Explorer table; snapshot v2 adds it and leaves the other seven files byte-identical.
 
 ## F3 core model (2026-11-02)
 
@@ -275,7 +283,7 @@ because issuance is fixed in NEAR.
 | Q1 | BigQuery freshness after NEAR Lake deprecation | Closed: fresh to 2026-11-02 | Check 1 |
 | Q2 | Full ids of revenue wallets | Closed (1csfundsadmin only confirmed via revenue.near.org and chain state) | Check 4 |
 | Q3 | How Intents fees move | Closed: native NEAR TRANSFER after `native_withdraw` | Check 4 |
-| Q4 | Explorer API access | Open: needs a JWT | Check 8 |
+| Q4 | Explorer API access | Closed 2026-11-02: JWT works, 30 days pulled | Check 8 |
 | Q5 | DefiLlama endpoints | Closed | Check 7 |
 
 ## Gate 1 decision (recommendation, needs your confirmation)
@@ -287,7 +295,7 @@ Overall: **GO-WITH-FALLBACK**. The gate box in `PROGRESS.md` is left unticked un
 | BigQuery | **GO-WITH-FALLBACK** | Fresh. Use `ft_balances_daily` for wallet balances (net out internal transfers), `blocks`/`circulating_supply` for supply, chunked `execution_outcomes` + `transactions` for burn. Developer indicator over a shortened window. Budget about 0.5 TiB per full extract |
 | NEAR RPC (archival) | **GO** | Net supply and account state, no key. Gross issuance not available from `total_supply` alone |
 | DefiLlama | **GO** | Independent cross-check for fees and revenue (matched on-chain within 1.6 % over 30 days); fees, volume and TVL history is 540 days or less. `dexs` as Intents volume must be confirmed before using it for tau_eff |
-| Explorer API | **GO-WITH-FALLBACK** | Blocked on a JWT. Without it, fees by channel/affiliate (Distribution Map: fees by channel, HHI, near.com share) is not computable beyond the wallet split, and the module is reported "unavailable" for the missing part |
+| Explorer API | **GO-WITH-FALLBACK** (update 2026-11-02: JWT obtained, now GO for 1Click only, see Check 8) | Blocked on a JWT. Without it, fees by channel/affiliate (Distribution Map: fees by channel, HHI, near.com share) is not computable beyond the wallet split, and the module is reported "unavailable" for the missing part |
 | CoinGecko | **GO** | Keyless works; key optional |
 | Buyback destination | **GO-WITH-FALLBACK** | Define buyback value as inflow to `buybacks.multisignature.near` from 2026-04-26. Before that: "unavailable, destination unknown". Report captured revenue (all three wallets, internal transfers netted) separately, and keep it distinct from NEAR actually held in the buyback wallet. No burn is observed, so burn value in the coverage ratio is gas burn only |
 
@@ -314,4 +322,8 @@ Resulting scope:
 - Ingestion implemented and run; see "F2 ingestion". Snapshot v1 frozen at 2026-11-01. Manifests now carry `query_sha256`, and a test fails if a SQL file changes after its snapshot was taken.
 - Corrected the F1 burn statement in Check 6 (it rested on a single day).
 - Mistakes made and fixed: a missing `DATASET` constant (caught by a test), an over-strict test for missing values, and a 91-day request padding for CoinGecko that would have broken at the 365-day boundary (removed).
+
+### 2026-11-02, F2 follow-up (Explorer)
+- JWT obtained and verified; 30-day pull completed after fixing a pagination loop (Check 8). Snapshot v2 frozen at 2026-11-01.
+- Mistake made and fixed: I trusted the API's cursor without a stall check, so a repeated page looped from cache for about 25 minutes before I noticed. The pagination, its guards and tests were replaced.
 

@@ -215,30 +215,95 @@ def _tx(i: int, asset_in: str = "nep141:wrap.near", fee_to: str | None = "near.n
     }
 
 
-def test_explorer_throttle_cache_and_pagination(tmp_path: Path) -> None:
-    fc = FakeClock()
-    calls: list[dict] = []
-    pages = [[_tx(i) for i in range(intents_explorer.PAGE_SIZE)], [_tx(9999)]]
+def _day_txs(day: date, count: int, tie_at: int | None = None) -> list[dict]:
+    """`count` transactions of `day`, newest first, 100 s apart; row tie_at shares its
+    predecessor's second (older milliseconds), as happens at a page boundary."""
+    end = int(datetime(day.year, day.month, day.day, tzinfo=UTC).timestamp()) + 86400
+    txs = []
+    for i in range(count):
+        sec = end - 1 - i * 100
+        ms = 900
+        if tie_at is not None and i == tie_at:
+            sec, ms = txs[-1]["createdAtTimestamp"], 100
+        created = datetime.fromtimestamp(sec, UTC).strftime("%Y-%m-%dT%H:%M:%S") + f".{ms:03d}Z"
+        txs.append({**_tx(i), "createdAt": created, "createdAtTimestamp": sec})
+    return txs
+
+
+def _fake_explorer(txs: list[dict], calls: list[dict]):
+    """Emulates the Explorer API filter: start < createdAtTimestamp < end, newest first. Like the
+    real API on 2026-10-10 it ignores lastDepositAddress (the client must not rely on it)."""
 
     def handler(request: httpx.Request) -> httpx.Response:
-        calls.append(dict(request.url.params))
-        assert request.headers["authorization"] == "Bearer jwt"
-        return httpx.Response(200, json=pages[len(calls) - 1])
+        q = dict(request.url.params)
+        calls.append(q)
+        lo, hi, n = (
+            int(q["startTimestampUnix"]),
+            int(q["endTimestampUnix"]),
+            int(q["numberOfTransactions"]),
+        )
+        rows = [t for t in txs if lo < t["createdAtTimestamp"] < hi]
+        rows.sort(key=lambda t: t["createdAt"], reverse=True)
+        return httpx.Response(200, json=rows[:n])
 
-    client = intents_explorer.ExplorerClient(
+    return handler
+
+
+def _client(tmp_path: Path, handler, fc: "FakeClock") -> intents_explorer.ExplorerClient:
+    return intents_explorer.ExplorerClient(
         "jwt",
         tmp_path,
         http=httpx.Client(transport=httpx.MockTransport(handler)),
         clock=fc.clock,
         sleep=fc.sleep,
     )
-    rows = client.fetch_day(D(2026, 10, 30))
-    assert len(rows) == intents_explorer.PAGE_SIZE + 1
-    assert calls[1]["lastDepositAddress"] == f"addr{intents_explorer.PAGE_SIZE - 1}"
-    assert fc.sleeps == [5.0]  # second request waited the full interval
 
-    again = client.fetch_day(D(2026, 10, 30))  # served from the on-disk cache
-    assert len(again) == len(rows) and client.requests_made == 2 and len(calls) == 2
+
+def test_explorer_pages_back_in_time_without_cursor(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setattr(intents_explorer, "PAGE_SIZE", 100)
+    day = D(2026, 10, 30)
+    txs = _day_txs(day, 250, tie_at=100)  # rows 99 and 100 share a second across the boundary
+    calls: list[dict] = []
+    fc = FakeClock()
+    client = _client(tmp_path, _fake_explorer(txs, calls), fc)
+
+    rows = client.fetch_day(day)
+    ids = [(r["depositAddress"], r["createdAt"]) for r in rows]
+    assert len(rows) == 250 and len(set(ids)) == 250  # complete, no duplicates
+    assert [r["createdAt"] for r in rows] == sorted((r["createdAt"] for r in rows), reverse=True)
+    assert all("lastDepositAddress" not in c for c in calls)
+    assert len(calls) == 3 and client.requests_made == 3
+    assert fc.sleeps == [5.0, 5.0]  # 1 request per 5 s
+
+    again = client.fetch_day(day)  # served from the on-disk cache
+    assert len(again) == 250 and client.requests_made == 3 and len(calls) == 3
+
+
+def test_explorer_stuck_pagination_raises_instead_of_looping(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setattr(intents_explorer, "PAGE_SIZE", 100)
+    day = D(2026, 10, 30)
+    same_second = int(datetime(2026, 10, 30, 12, tzinfo=UTC).timestamp())
+    txs = []
+    for i in range(150):  # more rows in one second than a page holds
+        txs.append(
+            {
+                **_tx(i),
+                "createdAt": f"2026-10-30T12:00:00.{i:03d}Z",
+                "createdAtTimestamp": same_second,
+            }
+        )
+    client = _client(tmp_path, _fake_explorer(txs, []), FakeClock())
+    with pytest.raises(RuntimeError, match="stuck"):
+        client.fetch_day(day)
+
+
+def test_explorer_stops_at_page_limit(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setattr(intents_explorer, "PAGE_SIZE", 2)
+    monkeypatch.setattr(intents_explorer, "MAX_PAGES_PER_DAY", 3)
+    day = D(2026, 10, 30)
+    client = _client(tmp_path, _fake_explorer(_day_txs(day, 50), []), FakeClock())
+    with pytest.raises(RuntimeError, match="more than 3 pages"):
+        client.fetch_day(day)
 
 
 def test_explorer_429_waits_and_retries(tmp_path: Path) -> None:

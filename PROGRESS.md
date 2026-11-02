@@ -21,6 +21,13 @@ Living log. Claude updates this at the end of every session. Newest entry on top
 | F8 Demo + submission | 13–14 Nov | todo | |
 
 ## Session log
+### 2026-11-02 — F2 follow-up (Explorer)
+- Done: Explorer API verified with the JWT (fee unit = bps of amountIn, asset-id patterns, cursor unreliable); pagination rewritten (time window, dedupe, stall guard, page cap); 30-day pull complete: 89,210 rows, 488,989 transactions, 2026-10-03..2026-11-01; snapshot v2 frozen at 2026-11-01 (8 tables, the other 7 byte-identical).
+- Numbers found (source: data/snapshot/explorer_1click_daily.parquet): Explorer volume is 27 % of DefiLlama's for the same days; declared app fee 0.458 % of volume; chain parsing 0 % unknown; row count equals an independent recount from the cache.
+- Decisions: page by end timestamp, never by cursor; keep the table at transaction-group grain for now and rebuild at recipient level in F4 from the cache.
+- Blockers: none new.
+- Next: F4.
+
 ### 2026-11-02 — F3
 - Done: models/coverage.py, models/breakeven.py, build.py writing site/public/data/coverage.json, docs/METHODOLOGY.md with every definition, tests (golden 3-day fixture, invariants, monthly reconciliation, build). 66 tests pass offline. Also normalised the repository to LF line endings (Python on Windows had written CRLF into 31 files) and verified the Explorer API against real data.
 - Numbers found (source: data/snapshot via coverage.json):
@@ -29,8 +36,8 @@ Living log. Claude updates this at the end of every session. Newest entry on top
   - Monthly on-chain vs DefiLlama revenue: 10 of 10 complete months within 15 %, largest +11.0 % (2025-12).
   - Transfer netting validated against receipts: 502,793.0 and 7,274.0 NEAR (estimates 502,791.6 and 7,274.2).
 - Decisions: buyback_near = inflow to buybacks.multisignature.near net of estimated transfers from the other revenue wallets, from 2026-04-27; headline on wallet basis, DefiLlama proxy shown as a labelled secondary series; tau_eff keeps the spec definition (all revenue) with a labelled buyback-only variant; reconciliation tolerance 15 % is a documented constant guarded by a test; the public reference is not used by the model.
-- Blockers: buyback value before 2026-04-27 is unknown (revenue reached fefundsadmin/1cs); the reference comparison cannot be confirmed (Stocktwits post unverifiable); Explorer 30-day pull still running at the time of writing.
-- Next: finish the Explorer pull, freeze snapshot v2, then F4 Distribution Map (appFees recipients: buybacks.multisignature.near is the largest recipient in the sample).
+- Blockers: buyback value before 2026-04-27 is unknown (revenue reached fefundsadmin/1cs); the reference comparison cannot be confirmed (Stocktwits post unverifiable).
+- Next: F4 Distribution Map. Prerequisite: rebuild the Explorer table at recipient level from the cached pages (the current table joins recipients and cannot split fee per recipient); Explorer covers 1Click only, about 27 % of DefiLlama volume.
 
 ### 2026-11-02 — F2
 - Done: `capture extract` (incremental by date, retries with backoff, dry-run then run under maximum_bytes_billed, oversize ranges split automatically) and `capture snapshot --freeze`. Five SQL files in sql/, extractors for BigQuery, DefiLlama, CoinGecko and the Intents Explorer (mock-tested only). Manifests now store `query_sha256`. 33 tests pass offline. Snapshot v1 frozen at 2026-11-01.

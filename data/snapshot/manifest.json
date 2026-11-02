@@ -27,6 +27,19 @@
       "query_sha256": null
     },
     {
+      "path": "explorer_1click_daily.parquet",
+      "sha256": "4ab87fe7ad03e5bf40a8765cde167c1b71fccfecc6c4808dfa3f85c85d6a6cd0",
+      "rows": 89210,
+      "source": "https://explorer.near-intents.org/api/v0/transactions",
+      "query_file": null,
+      "date_range": [
+        "2026-10-03",
+        "2026-11-01"
+      ],
+      "pulled_at_utc": "2026-11-02T07:37:07Z",
+      "query_sha256": null
+    },
+    {
       "path": "fee_wallet_inflows_daily.parquet",
       "sha256": "b32041f11877be8982692961c963facc466746595aa13fc99f3ed7089e901b42",
       "rows": 811,
