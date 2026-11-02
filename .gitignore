@@ -1,0 +1,18 @@
+# secrets
+.env
+
+# fresh pulls (snapshot/ is committed)
+data/live/
+
+# python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
+# node / site
+node_modules/
+site/out/
+site/.next/
+site/public/data/
