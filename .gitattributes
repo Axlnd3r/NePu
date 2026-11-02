@@ -1,0 +1,4 @@
+# Text files use LF in the repository and in working trees on every OS.
+* text=auto eol=lf
+*.parquet binary
+*.ico binary

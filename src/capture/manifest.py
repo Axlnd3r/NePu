@@ -72,7 +72,7 @@ def make_entry(
 def write_manifest(data_dir: Path, entries: list[FileEntry]) -> Path:
     out = data_dir / MANIFEST_NAME
     payload = {"files": [asdict(e) for e in sorted(entries, key=lambda e: e.path)]}
-    out.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    out.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8", newline="\n")
     return out
 
 

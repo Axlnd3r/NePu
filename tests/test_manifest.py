@@ -62,3 +62,7 @@ def test_missing_file_detected(data_dir: Path) -> None:
 @pytest.mark.parametrize("manifest", COMMITTED_MANIFESTS, ids=lambda p: p.parent.name)
 def test_committed_manifest_hashes(manifest: Path) -> None:
     assert verify_manifest(manifest.parent) == []
+
+
+def test_manifest_is_written_with_lf_line_endings(data_dir: Path) -> None:
+    assert b"\r" not in (data_dir / "manifest.json").read_bytes()
