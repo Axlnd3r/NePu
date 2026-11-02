@@ -25,6 +25,7 @@ class FileEntry:
     query_file: str | None
     date_range: tuple[str, str] | None  # inclusive block_date range, ISO dates
     pulled_at_utc: str  # ISO 8601, e.g. 2026-11-02T08:00:00Z
+    query_sha256: str | None = None  # SHA-256 of the query file when the data was pulled
 
 
 def sha256_file(path: Path) -> str:
@@ -54,6 +55,7 @@ def make_entry(
     pulled_at_utc: str,
     query_file: str | None = None,
     date_range: tuple[str, str] | None = None,
+    query_sha256: str | None = None,
 ) -> FileEntry:
     return FileEntry(
         path=file_path.relative_to(data_dir).as_posix(),
@@ -63,6 +65,7 @@ def make_entry(
         query_file=query_file,
         date_range=date_range,
         pulled_at_utc=pulled_at_utc,
+        query_sha256=query_sha256,
     )
 
 
@@ -71,6 +74,14 @@ def write_manifest(data_dir: Path, entries: list[FileEntry]) -> Path:
     payload = {"files": [asdict(e) for e in sorted(entries, key=lambda e: e.path)]}
     out.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
     return out
+
+
+def upsert_entries(data_dir: Path, entries: list[FileEntry]) -> Path:
+    """Add or replace entries (matched by path) and rewrite the manifest."""
+    exists = (data_dir / MANIFEST_NAME).exists()
+    by_path = {e.path: e for e in read_manifest(data_dir)} if exists else {}
+    by_path.update({e.path: e for e in entries})
+    return write_manifest(data_dir, list(by_path.values()))
 
 
 def read_manifest(data_dir: Path) -> list[FileEntry]:

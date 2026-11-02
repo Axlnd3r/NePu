@@ -3,7 +3,7 @@
 Living log. Claude updates this at the end of every session. Newest entry on top.
 
 ## Gates
-- [ ] Gate 1 (2026-11-03): data go/no-go — see DATA_AUDIT.md
+- [x] Gate 1 (2026-11-03): data go/no-go — GO-WITH-FALLBACK, confirmed by user 2026-11-02, see DATA_AUDIT.md
 - [ ] Gate 2 (2026-11-07): first coverage ratio from pipeline, reconciliation tests passing
 - [ ] Gate 3 (2026-11-13): `make all` succeeds from a clean clone with no credentials; /screener score >= 8
 
@@ -12,7 +12,7 @@ Living log. Claude updates this at the end of every session. Newest entry on top
 |---|---|---|---|
 | F0 Setup repo | 2 Nov | done | `make all` green locally; CI not yet run (no remote) |
 | F1 Data verification | 2–3 Nov | done, awaiting Gate 1 confirmation | Recommendation GO-WITH-FALLBACK, see DATA_AUDIT.md |
-| F2 Ingestion + snapshot | 3–5 Nov | todo | |
+| F2 Ingestion + snapshot | 3–5 Nov | done | Snapshot v1 frozen 2026-11-01; Explorer table not pulled (no JWT); price limited to 365 days |
 | F3 Coverage ratio + tests | 5–7 Nov | todo | |
 | F4 Distribution Map | 7–9 Nov | todo | |
 | F5 Valuation Lab | 8–10 Nov | todo | |
@@ -21,6 +21,17 @@ Living log. Claude updates this at the end of every session. Newest entry on top
 | F8 Demo + submission | 13–14 Nov | todo | |
 
 ## Session log
+### 2026-11-02 — F2
+- Done: `capture extract` (incremental by date, retries with backoff, dry-run then run under maximum_bytes_billed, oversize ranges split automatically) and `capture snapshot --freeze`. Five SQL files in sql/, extractors for BigQuery, DefiLlama, CoinGecko and the Intents Explorer (mock-tested only). Manifests now store `query_sha256`. 33 tests pass offline. Snapshot v1 frozen at 2026-11-01.
+- Numbers found (source: data/snapshot/*.parquet, manifest.json):
+  - Rows: network_daily 190, contracts_daily 211,845, intents_onchain_daily 190, supply_daily 541, fee_wallet_inflows_daily 811, defillama_intents_daily 690, price_daily 363.
+  - BigQuery: 37 queries, 258.57 GB billed (0.235 TiB), largest query 10.36 GB; a second extract billed 0 bytes.
+  - Last 365 days: burn 615,669 NEAR, net supply growth 2.4788 %, implied gross issuance 2.527 % (corrects the F1 claim).
+  - Wallet net change vs DefiLlama revenue, 2026-10-03..10-30: ratio 1.005 (sanity check, not the F3 reconciliation).
+- Decisions: price_daily limited to the past 365 days (CoinGecko public API error 10012); fee_wallet_inflows_daily stores net daily change, not gross inflow; DefiLlama drops the last 3 days as not final; snapshot refuses a partial day.
+- Blockers: no Intents Explorer JWT, so explorer_1click_daily is not pulled and the Distribution Map stays degraded; no USD price before 2025-11-04 (needs a paid CoinGecko key or another source, your call); source gaps 2026-04-17..20 (wallet balances) and 2026-04-18/19 (circulating supply).
+- Next: F3 coverage ratio. Net out transfers between the three wallets (2026-09-09 case), define buyback value from 2026-04-26, label issuance as net or implied gross.
+
 ### 2026-11-02 — F1
 - Done: checks 1-10 in DATA_AUDIT.md with evidence in docs/audit/ (SHA256SUMS). Statuses: 1, 2, 3, 4, 6, 7 OK; 5, 8, 9, 10 PARTIAL. Added git remote `origin` (not pushed), filled README links, added BQ_MAX_BYTES default and COINGECKO_API_KEY to .env.example, created local .env (gitignored).
 - Numbers found (source file):

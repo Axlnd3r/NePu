@@ -18,7 +18,7 @@ evidence JSON next to its dry-run and billed bytes.
 | 6 | Issuance | ~2.5 % per year | Net `total_supply` growth 2.467 % to 2.479 % annualised over 28 to 365 days | `rpc_total_supply.json` | **OK** | none needed |
 | 7 | DefiLlama | fees/revenue, daily | Daily from 2025-05-10 (fees, revenue) and 2024-12-10 (volume) | `defillama_evidence.json` | **OK** | none needed |
 | 8 | Explorer API | params, fields, one JWT call | Spec read and saved. No JWT available, so no call made. `appFees.fee` unit undocumented | `intents_explorer_openapi.yaml` | **PARTIAL** | DefiLlama for fees/volume; Distribution Map degraded |
-| 9 | CoinGecko | daily range call with key | No key. Keyless call works (HTTP 200, hourly points for a 32-day range). Keyed call and daily granularity not tested | `sanity_onchain_vs_defillama.json` | **PARTIAL** | keyless endpoint; add key to `.env` to lift limits |
+| 9 | CoinGecko | daily range call with key | No key. Keyless works only for the **past 365 days** (error 10012 beyond that, found in F2). Keyed call untested | `sanity_onchain_vs_defillama.json`, F2 notes | **PARTIAL** | price_daily limited to the last 365 days; earlier days need a paid key or another source (user decision) |
 | 10 | Cost | 3 largest queries under limit | All three exceed 10 GB per query (3.1 TB, 315 GB, 181 GB). Cheaper designs found for the flows (see Check 10) | `bq_cost_dryruns.json` | **PARTIAL** | cheaper query designs, chunked pulls |
 
 ## Check 1: freshness
@@ -104,7 +104,7 @@ Cross-check (not a reconciliation, see F3): positive daily balance deltas of buy
 | ~90d | 87.26 | 2.473 % |
 | ~365d | 365.00 | 2.479 % |
 
-Consistent with 2.5 % and stable across windows. Caveat: this is **net** of burn. Network burn is about 687 NEAR on 2026-10-31 (Check 2), roughly 0.02 % a year, which accounts for the gap. Gross issuance is not read directly here; a gross figure would need the epoch reward data (not checked). My window search was loose (the "30d" block is 28.5 days back), so only the actual-day columns should be quoted.
+Consistent with 2.5 % and stable across windows. Caveat: this is **net** of burn. Gross issuance is not read directly here. *Corrected in F2:* the F1 text said a burn of about 687 NEAR per day (one day, 2026-10-31) "accounts for the gap" to 2.5 %. Over the full 365 complete days to 2026-11-01 the burn is 615,669 NEAR (0.0481 % of starting supply), so net growth plus burn gives an implied gross issuance of 2.527 %, 0.027 percentage points above the nominal 2.5 %; that residual is not explained here. Burn also halved within the year (mean 2,412 NEAR/day in the first half, 966 in the second). Source: `data/snapshot/supply_daily.parquet`. My window search was loose (the "30d" block is 28.5 days back), so only the actual-day columns should be quoted.
 
 ## Check 7: DefiLlama
 
@@ -132,7 +132,7 @@ Quality flags: revenue exceeds fees on 5 of 540 days (2025-11-07, 2026-01-15, 20
 
 ## Check 9: CoinGecko
 
-No key. Keyless `GET /api/v3/coins/near/market_chart/range?vs_currency=usd&from=2026-10-01&to=2026-11-02` returned HTTP 200 with `prices`, `market_caps`, `total_volumes`: 769 hourly points. Daily granularity for ranges over 90 days is the documented behaviour but was not tested. The keyed call and its rate limits are untested.
+No key. Keyless `GET /api/v3/coins/near/market_chart/range?vs_currency=usd&from=2026-10-01&to=2026-11-02` returned HTTP 200 with `prices`, `market_caps`, `total_volumes`: 769 hourly points. The keyed call and its rate limits are untested. **F2 finding:** a range starting 2025-05-10 returned HTTP 401, `error_code 10012`, "Public API users are limited to querying historical data within the past 365 days"; a range starting 2025-11-03 returned HTTP 200 and one starting 2025-10-31 returned the same 401.
 
 ## Check 10: cost
 
@@ -154,6 +154,48 @@ Takeaways:
 - Burn needs about 206 GB (two tables) in chunks of at most ~10 GB, which means roughly monthly chunks and a per-query limit just above 10 GB, or fortnightly chunks.
 - One full extract of burn plus the developer/activity scan is about 0.5 TiB, half the monthly sandbox quota. Re-running `make extract` more than once or twice in a month will hit the quota. Narrow the developer indicator window (for example the last 180 days) before F2.
 - Dry-run sizes can differ from billed bytes (billed rounds up per table, minimum 10 MB).
+
+## F2 ingestion (2026-11-02)
+
+Run with `capture extract` (incremental by date, one parquet per table in `data/live/`), frozen with
+`capture snapshot --freeze 2026-11-01` into `data/snapshot/` (snapshot v1). Windows follow the
+Hybrid choice: activity tables from 2026-04-26, supply/burn from 2025-05-10, wallets from
+2025-11-07. Only complete UTC days are stored.
+
+| Table | Rows | block_date range | Source / SQL |
+|---|---|---|---|
+| `network_daily` | 190 | 2026-04-26..2026-11-01 | BigQuery, `sql/network_daily.sql` |
+| `contracts_daily` | 211,845 | 2026-04-26..2026-11-01 | BigQuery, `sql/contracts_daily.sql` |
+| `intents_onchain_daily` | 190 | 2026-04-26..2026-11-01 | BigQuery, `sql/intents_onchain_daily.sql` |
+| `supply_daily` | 541 | 2025-05-10..2026-11-01 | BigQuery, `sql/supply_daily.sql` |
+| `fee_wallet_inflows_daily` | 811 | 2025-11-07..2026-10-31 | BigQuery, `sql/fee_wallet_inflows_daily.sql` |
+| `defillama_intents_daily` | 690 | 2024-12-10..2026-10-30 | DefiLlama (4 endpoints) |
+| `price_daily` | 363 | 2025-11-04..2026-11-01 | CoinGecko (keyless) |
+| `explorer_1click_daily` | not pulled | - | needs `INTENTS_EXPLORER_JWT` |
+
+BigQuery cost of the extract: 37 queries, 258.57 GB billed (0.235 TiB; dry-run total 258.56 GB), largest
+single query 10.36 GB against the 10.74 GB limit. Together with F1 (about 45 GB) roughly 0.3 TiB of the
+1 TiB monthly sandbox quota is used. A second `capture extract` ran 0 queries and billed 0 bytes.
+
+Definitions and limits (each is a property of the data, not a bug):
+- `new_accounts` counts CREATE_ACCOUNT actions only. Implicit accounts are created by TRANSFER and are not counted, so the series undercounts new accounts.
+- `unique_signers` (intents) is the distinct transaction signer of FUNCTION_CALL receipts to `intents.near`; `unique_callers` (contracts) is the distinct receipt predecessor. For relayed calls these are not end users.
+- `fee_wallet_inflows_daily.amount` is the **net daily change** of the wallet's liquid balance (`ft_balances_daily`), not gross inflow. The first observed day of each wallet is empty (unknown). `amount_raw` is derived from a float64, accurate to about 15 significant digits. Transfers between the wallets are not netted yet (F3). Rule 2 exception: this table has no `block_date`; the filter is on its partition column `epoch_date`. It is held back one extra day (`lag_days=1`) because its partitions land later.
+- `supply_daily.burnt_near` = receipts burn + transaction-conversion burn; both parts are kept as columns. `circulating_supply_near` is the float view (rule 6).
+- DefiLlama: the last 3 days are dropped as not final (2026-10-31 showed 11,755 USD of fees against 127k to 388k on neighbouring days). The table is rebuilt from the full history each run; the second run revised 0 stored values. Revenue exceeds fees on 4 of the stored days.
+- `price_daily.near_usd` is the price at 00:00 UTC of each day. Only NEAR is priced: no other token reaches the wallets.
+
+Source gaps found (the data is missing at the source; nothing was filled in):
+- `ft_balances_daily` has no rows for `fefundsadmin` and `1csfundsadmin` on 2026-04-17..2026-04-20. The change on 2026-04-21 for those two wallets spans 5 days (`days_since_prev` = 5).
+- `circulating_supply` has no rows for 2026-04-18 and 2026-04-19 (`circulating_supply_near` empty).
+
+Assumption that failed, fallback chosen (CLAUDE.md "stop and record"):
+- **CoinGecko public API serves only the past 365 days.** Fallback: `price_daily` covers 363 days (2025-11-04 onward) and slides forward on later runs. Prices for 2025-05-10..2025-11-03 are unavailable, so USD values for supply, burn and DefiLlama days before 2025-11-04 cannot be computed from this source. Options for you: a paid CoinGecko key, or another price source (not adopted without your decision).
+
+New or confirmed facts:
+- BigQuery `INFORMATION_SCHEMA`-checked column names in the F2 SQL all executed without error.
+- `receipt_actions` queries scale far less than the F1 extrapolation suggested: the 190-day activity window costs 43 to 47 GB per table; the 540-day equivalents are about 10 times more.
+- The Explorer client is implemented and tested against mocks only (throttle 1 request per 5 s, on-disk cache, pagination, 429 retry). Not exercised against the real API: no JWT. `fee_usd` is left empty because the unit of `appFees[].fee` is undocumented, and the chain derived from asset ids is an unverified heuristic.
 
 ## Original open questions
 
@@ -196,3 +238,9 @@ Resulting scope:
 - Ran checks 1 to 10. BigQuery access: ADC login on the user's Google account, sandbox project, `BQ_MAX_BYTES` 10 GiB.
 - Tooling: uv 0.13.6, GNU make 4.4.1, Google Cloud SDK (for ADC only).
 - Mistakes made and fixed during the run: a wrong column name in one `account_changes` dry-run (fixed, see Check 2), a loose block-height search for the 30-day supply point (actual days reported instead), and a BigQuery `accounts` scan that was rejected for cost before execution.
+
+### 2026-11-02, F2
+- Ingestion implemented and run; see "F2 ingestion". Snapshot v1 frozen at 2026-11-01. Manifests now carry `query_sha256`, and a test fails if a SQL file changes after its snapshot was taken.
+- Corrected the F1 burn statement in Check 6 (it rested on a single day).
+- Mistakes made and fixed: a missing `DATASET` constant (caught by a test), an over-strict test for missing values, and a 91-day request padding for CoinGecko that would have broken at the 365-day boundary (removed).
+

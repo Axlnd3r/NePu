@@ -37,8 +37,19 @@ make all
 | `make all` | setup + build + verify + site |
 
 ## Live mode
-TODO (F2). Copy `.env.example` to `.env`, fill in credentials, then `make extract` (pulls into
-`data/live/`) and `make build-live`. `make proof` commits the manifest hash to NEAR mainnet (F7).
+Needs credentials, so it is optional; the offline quickstart above never uses it.
+
+1. Copy `.env.example` to `.env` and fill in `GOOGLE_CLOUD_PROJECT` (and `BQ_MAX_BYTES`). Log in once
+   with `gcloud auth application-default login`. `INTENTS_EXPLORER_JWT` and `COINGECKO_API_KEY` are
+   optional; without the JWT the Explorer table is skipped.
+2. `uv run capture extract --dry-run` estimates BigQuery bytes without pulling anything.
+3. `make extract` pulls into `data/live/` (gitignored). It is incremental by date: a second run
+   queries nothing that is already there. BigQuery bills the queries to your own project's quota.
+4. `make build-live` rebuilds the metrics from `data/live/`.
+5. `uv run capture snapshot --freeze <YYYY-MM-DD>` copies `data/live/` into `data/snapshot/` (rows up
+   to that complete UTC day) and rewrites its manifest.
+
+`make proof` commits the manifest hash to NEAR mainnet (F7).
 
 ## Methodology
 See [docs/METHODOLOGY.md](docs/METHODOLOGY.md).
