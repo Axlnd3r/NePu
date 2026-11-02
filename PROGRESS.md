@@ -4,7 +4,7 @@ Living log. Claude updates this at the end of every session. Newest entry on top
 
 ## Gates
 - [x] Gate 1 (2026-11-03): data go/no-go — GO-WITH-FALLBACK, confirmed by user 2026-11-02, see DATA_AUDIT.md
-- [ ] Gate 2 (2026-11-07): first coverage ratio from pipeline, reconciliation tests passing
+- [x] Gate 2 (2026-11-07): first coverage ratio from pipeline, reconciliation tests passing — met 2026-11-02, see DATA_AUDIT.md F3
 - [ ] Gate 3 (2026-11-13): `make all` succeeds from a clean clone with no credentials; /screener score >= 8
 
 ## Phase status
@@ -13,7 +13,7 @@ Living log. Claude updates this at the end of every session. Newest entry on top
 | F0 Setup repo | 2 Nov | done | `make all` green locally; CI not yet run (no remote) |
 | F1 Data verification | 2–3 Nov | done, awaiting Gate 1 confirmation | Recommendation GO-WITH-FALLBACK, see DATA_AUDIT.md |
 | F2 Ingestion + snapshot | 3–5 Nov | done | Snapshot v1 frozen 2026-11-01; Explorer table not pulled (no JWT); price limited to 365 days |
-| F3 Coverage ratio + tests | 5–7 Nov | todo | |
+| F3 Coverage ratio + tests | 5–7 Nov | done | CR_float, CR_supply, V*, sensitivity, 10/10 months reconcile within 15% |
 | F4 Distribution Map | 7–9 Nov | todo | |
 | F5 Valuation Lab | 8–10 Nov | todo | |
 | F6 Dashboard | 9–12 Nov | todo | |
@@ -21,6 +21,17 @@ Living log. Claude updates this at the end of every session. Newest entry on top
 | F8 Demo + submission | 13–14 Nov | todo | |
 
 ## Session log
+### 2026-11-02 — F3
+- Done: models/coverage.py, models/breakeven.py, build.py writing site/public/data/coverage.json, docs/METHODOLOGY.md with every definition, tests (golden 3-day fixture, invariants, monthly reconciliation, build). 66 tests pass offline. Also normalised the repository to LF line endings (Python on Windows had written CRLF into 31 files) and verified the Explorer API against real data.
+- Numbers found (source: data/snapshot via coverage.json):
+  - CR_float 30d ending 2026-10-06 = 0.139 (buyback 335,408 NEAR + burn 34,338 NEAR over gross issuance 2,656,764 NEAR); CR_supply 30d = 0.013; DefiLlama-proxy basis 0.207.
+  - Latest CR_float 30d (2026-10-31) 0.120, 90d 0.133. V* 652 M USD/day vs actual 130 M USD/day (5.0x) as of 2026-10-30; tau_eff 30d 0.0548 %.
+  - Monthly on-chain vs DefiLlama revenue: 10 of 10 complete months within 15 %, largest +11.0 % (2025-12).
+  - Transfer netting validated against receipts: 502,793.0 and 7,274.0 NEAR (estimates 502,791.6 and 7,274.2).
+- Decisions: buyback_near = inflow to buybacks.multisignature.near net of estimated transfers from the other revenue wallets, from 2026-04-27; headline on wallet basis, DefiLlama proxy shown as a labelled secondary series; tau_eff keeps the spec definition (all revenue) with a labelled buyback-only variant; reconciliation tolerance 15 % is a documented constant guarded by a test; the public reference is not used by the model.
+- Blockers: buyback value before 2026-04-27 is unknown (revenue reached fefundsadmin/1cs); the reference comparison cannot be confirmed (Stocktwits post unverifiable); Explorer 30-day pull still running at the time of writing.
+- Next: finish the Explorer pull, freeze snapshot v2, then F4 Distribution Map (appFees recipients: buybacks.multisignature.near is the largest recipient in the sample).
+
 ### 2026-11-02 — F2
 - Done: `capture extract` (incremental by date, retries with backoff, dry-run then run under maximum_bytes_billed, oversize ranges split automatically) and `capture snapshot --freeze`. Five SQL files in sql/, extractors for BigQuery, DefiLlama, CoinGecko and the Intents Explorer (mock-tested only). Manifests now store `query_sha256`. 33 tests pass offline. Snapshot v1 frozen at 2026-11-01.
 - Numbers found (source: data/snapshot/*.parquet, manifest.json):

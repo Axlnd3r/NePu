@@ -1,0 +1,64 @@
+[
+ {
+  "label": "internal transfers between revenue wallets on 2026-04-22",
+  "sql": "SELECT block_date, block_timestamp_utc, receipt_id, receipt_predecessor_account_id AS from_wallet, receipt_receiver_account_id AS to_wallet, SAFE_CAST(JSON_VALUE(args,'$.deposit') AS FLOAT64)/1e24 AS amount_near FROM `bigquery-public-data.crypto_near_mainnet_us.receipt_actions` WHERE block_date = DATE '2026-04-22' AND action_kind='TRANSFER' AND receipt_predecessor_account_id IN ('fefundsadmin.sputnik-dao.near','1csfundsadmin.sputnik-dao.near','buybacks.multisignature.near') AND receipt_receiver_account_id IN ('fefundsadmin.sputnik-dao.near','1csfundsadmin.sputnik-dao.near','buybacks.multisignature.near') ORDER BY block_timestamp_utc",
+  "dry_run_bytes": 2352296632,
+  "dry_run_gb": 2.3523,
+  "est_cost_usd_on_demand": 0.0147,
+  "status": "OK",
+  "bytes_billed": 2353004544,
+  "rows_returned": 0,
+  "rows": []
+ },
+ {
+  "label": "internal transfers between revenue wallets on 2026-07-10",
+  "sql": "SELECT block_date, block_timestamp_utc, receipt_id, receipt_predecessor_account_id AS from_wallet, receipt_receiver_account_id AS to_wallet, SAFE_CAST(JSON_VALUE(args,'$.deposit') AS FLOAT64)/1e24 AS amount_near FROM `bigquery-public-data.crypto_near_mainnet_us.receipt_actions` WHERE block_date = DATE '2026-07-10' AND action_kind='TRANSFER' AND receipt_predecessor_account_id IN ('fefundsadmin.sputnik-dao.near','1csfundsadmin.sputnik-dao.near','buybacks.multisignature.near') AND receipt_receiver_account_id IN ('fefundsadmin.sputnik-dao.near','1csfundsadmin.sputnik-dao.near','buybacks.multisignature.near') ORDER BY block_timestamp_utc",
+  "dry_run_bytes": 3338214980,
+  "dry_run_gb": 3.3382,
+  "est_cost_usd_on_demand": 0.0209,
+  "status": "OK",
+  "bytes_billed": 3338665984,
+  "rows_returned": 0,
+  "rows": []
+ },
+ {
+  "label": "internal transfers between revenue wallets on 2026-07-14",
+  "sql": "SELECT block_date, block_timestamp_utc, receipt_id, receipt_predecessor_account_id AS from_wallet, receipt_receiver_account_id AS to_wallet, SAFE_CAST(JSON_VALUE(args,'$.deposit') AS FLOAT64)/1e24 AS amount_near FROM `bigquery-public-data.crypto_near_mainnet_us.receipt_actions` WHERE block_date = DATE '2026-07-14' AND action_kind='TRANSFER' AND receipt_predecessor_account_id IN ('fefundsadmin.sputnik-dao.near','1csfundsadmin.sputnik-dao.near','buybacks.multisignature.near') AND receipt_receiver_account_id IN ('fefundsadmin.sputnik-dao.near','1csfundsadmin.sputnik-dao.near','buybacks.multisignature.near') ORDER BY block_timestamp_utc",
+  "dry_run_bytes": 3218855264,
+  "dry_run_gb": 3.2189,
+  "est_cost_usd_on_demand": 0.0201,
+  "status": "OK",
+  "bytes_billed": 3219128320,
+  "rows_returned": 1,
+  "rows": [
+   {
+    "block_date": "2026-07-14",
+    "block_timestamp_utc": "2026-07-14 16:01:22.281636+00:00",
+    "receipt_id": "BGBNVT74op7ZXt6bZhnQrMxSXLKkU3GPEAzY8iAsz86L",
+    "from_wallet": "1csfundsadmin.sputnik-dao.near",
+    "to_wallet": "buybacks.multisignature.near",
+    "amount_near": 7274.0
+   }
+  ]
+ },
+ {
+  "label": "internal transfers between revenue wallets on 2026-09-09",
+  "sql": "SELECT block_date, block_timestamp_utc, receipt_id, receipt_predecessor_account_id AS from_wallet, receipt_receiver_account_id AS to_wallet, SAFE_CAST(JSON_VALUE(args,'$.deposit') AS FLOAT64)/1e24 AS amount_near FROM `bigquery-public-data.crypto_near_mainnet_us.receipt_actions` WHERE block_date = DATE '2026-09-09' AND action_kind='TRANSFER' AND receipt_predecessor_account_id IN ('fefundsadmin.sputnik-dao.near','1csfundsadmin.sputnik-dao.near','buybacks.multisignature.near') AND receipt_receiver_account_id IN ('fefundsadmin.sputnik-dao.near','1csfundsadmin.sputnik-dao.near','buybacks.multisignature.near') ORDER BY block_timestamp_utc",
+  "dry_run_bytes": 3028023252,
+  "dry_run_gb": 3.028,
+  "est_cost_usd_on_demand": 0.0189,
+  "status": "OK",
+  "bytes_billed": 3028287488,
+  "rows_returned": 1,
+  "rows": [
+   {
+    "block_date": "2026-09-09",
+    "block_timestamp_utc": "2026-09-09 10:39:10.545953+00:00",
+    "receipt_id": "6bnALp1E4P2rLBDKcp3UA6YGzwpssQ1Xus2suXzYvtvH",
+    "from_wallet": "1csfundsadmin.sputnik-dao.near",
+    "to_wallet": "buybacks.multisignature.near",
+    "amount_near": 502793.0
+   }
+  ]
+ }
+]

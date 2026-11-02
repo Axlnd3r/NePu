@@ -197,6 +197,77 @@ New or confirmed facts:
 - `receipt_actions` queries scale far less than the F1 extrapolation suggested: the 190-day activity window costs 43 to 47 GB per table; the 540-day equivalents are about 10 times more.
 - The Explorer client is implemented and tested against mocks only (throttle 1 request per 5 s, on-disk cache, pagination, 429 retry). Not exercised against the real API: no JWT. `fee_usd` is left empty because the unit of `appFees[].fee` is undocumented, and the chain derived from asset ids is an unverified heuristic.
 
+## F3 core model (2026-11-02)
+
+Model in `src/capture/models/coverage.py` and `breakeven.py`, definitions in `docs/METHODOLOGY.md`,
+output `site/public/data/coverage.json` (built from `data/snapshot/`, 66 offline tests).
+
+**Transfers between revenue wallets** (needed so the buyback wallet's inflow is not counted twice).
+A transfer into the buyback wallet is estimated from same-day moves and was checked against
+receipts for every day on which a revenue wallet fell (`docs/audit/internal_transfers_validation.json`):
+
+| Day | Estimate (NEAR) | Receipts |
+|---|---|---|
+| 2026-09-09 | 502,791.6 | `1csfundsadmin` to `buybacks`: 502,793.0 |
+| 2026-07-14 | 7,274.2 | `1csfundsadmin` to `buybacks`: 7,274.0 |
+| 2026-04-22 | not applicable (buyback wallet absent) | no transfer between the three wallets; 1cs paid an outside account |
+| 2026-07-10 | not applicable (the buyback wallet fell) | no transfer between the three wallets; paid an outside account |
+
+The estimator only treats a rise of the buyback wallet as a transfer in, never a fall. It can be wrong
+if a wallet pays an outside account on the same day as an organic inflow; no such day exists in the
+snapshot. It is not validated for future data.
+
+**Monthly reconciliation** (on-chain wallet inflows x daily price vs DefiLlama `revenue_usd`,
+tolerance 15%). All 10 complete months pass; none was excluded:
+
+| Month | Deviation | Month | Deviation |
+|---|---|---|---|
+| 2025-12 | +11.0 % | 2026-05 | -2.5 % |
+| 2026-01 | +3.5 % | 2026-06 | +5.1 % |
+| 2026-02 | -2.0 % | 2026-07 | -4.6 % |
+| 2026-03 | +0.8 % | 2026-08 | -1.6 % |
+| 2026-04 | -6.7 % | 2026-09 | -4.8 % |
+
+2025-11 (price starts 2025-11-04) and 2026-10 (DefiLlama ends 2026-10-30) are partial and not compared.
+DefiLlama revenue also matches the wallets in 2026-02 to 2026-04, before the buyback wallet existed,
+so that revenue was collected in `fefundsadmin` and `1csfundsadmin`. Whether any of it was used for
+buybacks in that period is still unknown, so buyback value stays empty before 2026-04-27.
+
+**Mutation checks** (the tests can fail): tolerance set to 5% makes the reconciliation test fail on
+2025-12, 2026-04 and 2026-06 and print the table; removing the transfer netting fails two golden tests.
+
+**Result for the 30 days ending 2026-10-06** (2026-09-07 to 2026-10-06), from `coverage.json`:
+
+| Quantity | Value |
+|---|---|
+| CR_float 30d (NEAR) | 0.139 (buyback 335,408 + burn 34,338, over gross issuance 2,656,764 NEAR) |
+| CR_float 30d (USD, daily prices) | 0.136 |
+| CR_supply 30d (burn only) | 0.013 |
+| CR_float 30d, DefiLlama proxy basis | 0.207 |
+| Buyback only, wallet basis, no burn | 0.126 |
+| Issuance in USD | 10.09 M at daily prices; 14.05 M at the 2026-10-06 price (5.29 USD) |
+| Buyback in USD | 1.23 M (wallet, daily prices); 1.93 M (DefiLlama proxy) |
+
+Comparison with the public reference you gave (issuance about 13 M USD, buybacks about 1.9 M USD,
+ratio about 0.146; a Stocktwits post I could not verify, so it is a pointer, not a source, and none of
+its numbers is used by the model or appears in the outputs). The model was not tuned to it. The
+ratios are close, but three differences that roughly cancel explain why that is not a confirmation:
+1. *Buyback basis.* The reference's 1.9 M USD matches DefiLlama's holders revenue (1.93 M), which is
+   all captured revenue including `fefundsadmin`, a wallet that has never paid out. The wallet-only
+   figure is 1.23 M. This is a hypothesis about how the reference was built, not something I can see.
+2. *Valuation.* The price ranged from 2.30 to 5.39 USD inside the window (2.44 on its first day, 5.29
+   on its last), so issuance is 10.1 M USD at daily prices and 14.1 M USD at the final price; the
+   reference's 13 M lies between them.
+3. *Definition.* CR_float includes burn (+0.013); the reference is buybacks over issuance.
+Buyback only on the wallet basis is 0.126 against 0.146, 14% lower, and using DefiLlama's proxy at
+the final price gives 0.137 (1.93 M over 14.05 M), 6% lower.
+
+**Break-even volume** as of 2026-10-30: V* is 652 M USD per day against an actual 30-day average
+Intents volume of 130 M USD per day (5.0x). tau_eff (30d) is 0.0548%. With only the buyback wallet's
+inflow, tau falls to 0.0362% and V* rises to 986 M USD per day. The sensitivity grid is consistent with
+that: inflation 2.5%, price 1x, tau 1x gives 654 M USD per day. Break-even scales linearly with price
+because issuance is fixed in NEAR.
+
 ## Original open questions
 
 | # | Question | Status | Where answered |

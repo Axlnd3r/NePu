@@ -84,8 +84,8 @@ def build(
     source: Annotated[Source, typer.Option(help="Data directory to build from.")] = Source.snapshot,
 ) -> None:
     """Rebuild every metric from data/<source>/ into site/public/data/."""
-    out = build_mod.build(source.value)
-    typer.echo(f"wrote {out.relative_to(build_mod.ROOT).as_posix()}")
+    for out in build_mod.build(source.value):
+        typer.echo(f"wrote {out.relative_to(build_mod.ROOT).as_posix()}")
 
 
 @app.command("verify-manifest")
