@@ -1,0 +1,494 @@
+[
+ {
+  "label": "Q4g actions of 33 receipts",
+  "sql": "SELECT block_timestamp_utc, receipt_id, receipt_predecessor_account_id AS pred, receipt_receiver_account_id AS recv, action_kind, SUBSTR(args,1,260) AS args_head FROM `bigquery-public-data.crypto_near_mainnet_us.receipt_actions` WHERE block_date BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 3 DAY) AND DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY) AND receipt_id IN UNNEST(@ids) ORDER BY block_timestamp_utc",
+  "dry_run_bytes": 7369852789,
+  "dry_run_gb": 7.3699,
+  "est_cost_usd_on_demand": 0.0461,
+  "status": "OK",
+  "bytes_billed": 7370440704,
+  "rows_returned": 30,
+  "rows": [
+   {
+    "block_timestamp_utc": "2026-10-31 22:08:21.807499+00:00",
+    "receipt_id": "11asN7qCuU3CGLDPXPAhM8kqBeojBgjSe5injBxGms1",
+    "pred": "intents.near",
+    "recv": "intents.near",
+    "action_kind": "FUNCTION_CALL",
+    "args_head": "{\"gas\":\"300000000000000\",\"deposit\":\"0\",\"args_base64\":\"eyJzaWduZWQiOlt7InBheWxvYWQiOnsibWVzc2FnZSI6IntcImRlYWRsaW5lXCI6XCIyMDI2LTEwLTMxVDIyOjEwOjIwLjgyN1pcIixcImludGVudHNcIjpbe1wiaW50ZW50XCI6XCJuYXRpdmVfd2l0aGRyYXdcIixcInJlY2VpdmVyX2lkXCI6XCJidXliYWNrcy5tdWx0aX"
+   },
+   {
+    "block_timestamp_utc": "2026-10-31 22:08:22.318180+00:00",
+    "receipt_id": "3tNKvwzwjJoL7GmaDvZmkMpnmASxV4VCHSqYWsqjNFrX",
+    "pred": "system",
+    "recv": "intents.near",
+    "action_kind": "TRANSFER",
+    "args_head": "{\"deposit\":\"276489348127092400000000\"}"
+   },
+   {
+    "block_timestamp_utc": "2026-10-31 22:08:22.318180+00:00",
+    "receipt_id": "H6QejjKMbh9RCYhgJdfLL2sanBrEDmyYGqu7oWkr9Be6",
+    "pred": "intents.near",
+    "recv": "wrap.near",
+    "action_kind": "FUNCTION_CALL",
+    "args_head": "{\"gas\":\"10000000000000\",\"deposit\":\"1\",\"args_base64\":\"eyJhbW91bnQiOiIyMjY4MzQ3MDYwMzU1NTk1ODk5NDIyOTk2OTAifQ==\",\"method_name\":\"near_withdraw\"}"
+   },
+   {
+    "block_timestamp_utc": "2026-10-31 22:08:22.826334+00:00",
+    "receipt_id": "CbLwZB43AXqDCMDmEc6iN6dyeGx1j43LhrPGLMx8k7gp",
+    "pred": "wrap.near",
+    "recv": "intents.near",
+    "action_kind": "TRANSFER",
+    "args_head": "{\"deposit\":\"226834706035559589942299691\"}"
+   },
+   {
+    "block_timestamp_utc": "2026-10-31 22:08:22.826334+00:00",
+    "receipt_id": "7zsXk23x2Xi1wYPEAy6CihyHHK3wR2BcFHqi25kc913U",
+    "pred": "system",
+    "recv": "intents.near",
+    "action_kind": "TRANSFER",
+    "args_head": "{\"deposit\":\"10482145513145200000000\"}"
+   },
+   {
+    "block_timestamp_utc": "2026-10-31 22:08:23.425850+00:00",
+    "receipt_id": "FjokiEpHrQDyeDSY7gE6YiCbTayPRPK3cC54RNREdAL",
+    "pred": "system",
+    "recv": "intents.near",
+    "action_kind": "TRANSFER",
+    "args_head": "{\"deposit\":\"200864306250000000000\"}"
+   },
+   {
+    "block_timestamp_utc": "2026-10-31 22:08:23.425850+00:00",
+    "receipt_id": "BT2oq794sHZeWvxMcbDu578pZZthkUN6zSK4MgBZqoJ7",
+    "pred": "intents.near",
+    "recv": "intents.near",
+    "action_kind": "FUNCTION_CALL",
+    "args_head": "{\"gas\":\"12000000000000\",\"deposit\":\"0\",\"args_base64\":\"eyJ3aXRoZHJhdyI6eyJyZWNlaXZlcl9pZCI6ImJ1eWJhY2tzLm11bHRpc2lnbmF0dXJlLm5lYXIiLCJhbW91bnQiOiIyMjY4MzQ3MDYwMzU1NTk1ODk5NDIyOTk2OTAifX0=\",\"method_name\":\"do_native_withdraw\"}"
+   },
+   {
+    "block_timestamp_utc": "2026-10-31 22:08:23.951703+00:00",
+    "receipt_id": "4PLSH6a5yUDhuWTNnm11GN1ZcNp8hjjsicS8hpnR1Q5p",
+    "pred": "intents.near",
+    "recv": "buybacks.multisignature.near",
+    "action_kind": "TRANSFER",
+    "args_head": "{\"deposit\":\"226834706035559589942299690\"}"
+   },
+   {
+    "block_timestamp_utc": "2026-10-31 22:08:23.951703+00:00",
+    "receipt_id": "8kQELhr1fverrBntNjCwRL3czbG9rKmca9cr8DPNRTCT",
+    "pred": "system",
+    "recv": "intents.near",
+    "action_kind": "TRANSFER",
+    "args_head": "{\"deposit\":\"12405653643150900000000\"}"
+   },
+   {
+    "block_timestamp_utc": "2026-10-31 22:08:24.572790+00:00",
+    "receipt_id": "3JqWv1HZFV4TH6D1rV3sDKtmj1CTZFu7FVtWBoQAAoub",
+    "pred": "system",
+    "recv": "intents.near",
+    "action_kind": "TRANSFER",
+    "args_head": "{\"deposit\":\"200864306250000000000\"}"
+   },
+   {
+    "block_timestamp_utc": "2026-10-31 22:16:11.463202+00:00",
+    "receipt_id": "D3w5BUPNDDxKR4QDQ1Z6kmsBk2huw5tsAvYfvnc5E6X7",
+    "pred": "intents.near",
+    "recv": "intents.near",
+    "action_kind": "FUNCTION_CALL",
+    "args_head": "{\"gas\":\"300000000000000\",\"deposit\":\"0\",\"args_base64\":\"eyJzaWduZWQiOlt7InBheWxvYWQiOnsibWVzc2FnZSI6IntcImRlYWRsaW5lXCI6XCIyMDI2LTExLTMwVDIzOjE2OjA0LjYyNVpcIixcImludGVudHNcIjpbe1wiaW50ZW50XCI6XCJuYXRpdmVfd2l0aGRyYXdcIixcInJlY2VpdmVyX2lkXCI6XCJmZWZ1bmRzYWRtaW4uc3"
+   },
+   {
+    "block_timestamp_utc": "2026-10-31 22:16:11.912892+00:00",
+    "receipt_id": "EdCyGPimnY3NYGY14x51EEt7vDwxy5RW8pojdWQ9zeiu",
+    "pred": "intents.near",
+    "recv": "wrap.near",
+    "action_kind": "FUNCTION_CALL",
+    "args_head": "{\"gas\":\"10000000000000\",\"deposit\":\"1\",\"args_base64\":\"eyJhbW91bnQiOiIyMjgxMDgzMDEwODY1MjQyNjA5MDk4MzMxMjgifQ==\",\"method_name\":\"near_withdraw\"}"
+   },
+   {
+    "block_timestamp_utc": "2026-10-31 22:16:11.912892+00:00",
+    "receipt_id": "CjvrfzXq9hNPUiVUCkzNQVPEFWazrtAMJdeKGgVQRntS",
+    "pred": "system",
+    "recv": "intents.near",
+    "action_kind": "TRANSFER",
+    "args_head": "{\"deposit\":\"276540390003670400000000\"}"
+   },
+   {
+    "block_timestamp_utc": "2026-10-31 22:16:12.494634+00:00",
+    "receipt_id": "EXFboW79328T8y667o9niAtREjt5DiVu3CawGcmmNMhp",
+    "pred": "system",
+    "recv": "intents.near",
+    "action_kind": "TRANSFER",
+    "args_head": "{\"deposit\":\"10482145513145200000000\"}"
+   },
+   {
+    "block_timestamp_utc": "2026-10-31 22:16:12.494634+00:00",
+    "receipt_id": "C3q1tmM8GFyBYMxKrXRanKJ238isYp3ewrucXnM4SSAG",
+    "pred": "wrap.near",
+    "recv": "intents.near",
+    "action_kind": "TRANSFER",
+    "args_head": "{\"deposit\":\"228108301086524260909833129\"}"
+   },
+   {
+    "block_timestamp_utc": "2026-10-31 22:16:13.167234+00:00",
+    "receipt_id": "DSnznutiTSEScFM5b8M3S7npPVvhNodzMRa8JVnMx9ia",
+    "pred": "intents.near",
+    "recv": "intents.near",
+    "action_kind": "FUNCTION_CALL",
+    "args_head": "{\"gas\":\"12000000000000\",\"deposit\":\"0\",\"args_base64\":\"eyJ3aXRoZHJhdyI6eyJyZWNlaXZlcl9pZCI6ImZlZnVuZHNhZG1pbi5zcHV0bmlrLWRhby5uZWFyIiwiYW1vdW50IjoiMjI4MTA4MzAxMDg2NTI0MjYwOTA5ODMzMTI4In19\",\"method_name\":\"do_native_withdraw\"}"
+   },
+   {
+    "block_timestamp_utc": "2026-10-31 22:16:13.167234+00:00",
+    "receipt_id": "GkLFotcVrEikpuK12j4RWsWDSDzNfCQpCa5WfasgZ8X4",
+    "pred": "system",
+    "recv": "intents.near",
+    "action_kind": "TRANSFER",
+    "args_head": "{\"deposit\":\"200864306250000000000\"}"
+   },
+   {
+    "block_timestamp_utc": "2026-10-31 22:16:13.851371+00:00",
+    "receipt_id": "6xP1YPyzNm1FBBbZj5KidFQsjXTM6isoW6S6bfU4XJFD",
+    "pred": "system",
+    "recv": "intents.near",
+    "action_kind": "TRANSFER",
+    "args_head": "{\"deposit\":\"12405617525241300000000\"}"
+   },
+   {
+    "block_timestamp_utc": "2026-10-31 22:16:13.851371+00:00",
+    "receipt_id": "F98aDrq5zP8z3GrRty6KtwBR75PqyuxsopaUnGWUeCo7",
+    "pred": "intents.near",
+    "recv": "fefundsadmin.sputnik-dao.near",
+    "action_kind": "TRANSFER",
+    "args_head": "{\"deposit\":\"228108301086524260909833128\"}"
+   },
+   {
+    "block_timestamp_utc": "2026-10-31 22:16:14.334194+00:00",
+    "receipt_id": "7ZYZVxbqLfAE8D4hQcMJz1VMFPEdUR6mfr6axba1uqZU",
+    "pred": "system",
+    "recv": "intents.near",
+    "action_kind": "TRANSFER",
+    "args_head": "{\"deposit\":\"200864306250000000000\"}"
+   },
+   {
+    "block_timestamp_utc": "2026-10-31 23:46:51.441310+00:00",
+    "receipt_id": "3pStbQ5QnJ2gk3kyyAArSRZUNcAh7neVRYBDreeyG5hU",
+    "pred": "intents.near",
+    "recv": "intents.near",
+    "action_kind": "FUNCTION_CALL",
+    "args_head": "{\"gas\":\"300000000000000\",\"deposit\":\"0\",\"args_base64\":\"eyJzaWduZWQiOlt7InBheWxvYWQiOnsibWVzc2FnZSI6IntcImRlYWRsaW5lXCI6XCIyMDI2LTEyLTAxVDAwOjQ2OjQzLjY4MVpcIixcImludGVudHNcIjpbe1wiaW50ZW50XCI6XCJuYXRpdmVfd2l0aGRyYXdcIixcInJlY2VpdmVyX2lkXCI6XCJidXliYWNrcy5tdWx0aX"
+   },
+   {
+    "block_timestamp_utc": "2026-10-31 23:46:51.997140+00:00",
+    "receipt_id": "Hz1mUnSWSDzRu85b1CQJCp1m2giyZ9V56re697sYmyVL",
+    "pred": "intents.near",
+    "recv": "wrap.near",
+    "action_kind": "FUNCTION_CALL",
+    "args_head": "{\"gas\":\"10000000000000\",\"deposit\":\"1\",\"args_base64\":\"eyJhbW91bnQiOiIyNDY5NzI2MDE4MTA1NjM3MjE1NjE4MDU1NDcifQ==\",\"method_name\":\"near_withdraw\"}"
+   },
+   {
+    "block_timestamp_utc": "2026-10-31 23:46:51.997140+00:00",
+    "receipt_id": "4vaexHnNZQYa6HVZMGpng84yj4WrzSD4AtCeWsiK8qLh",
+    "pred": "system",
+    "recv": "intents.near",
+    "action_kind": "TRANSFER",
+    "args_head": "{\"deposit\":\"276540438991329400000000\"}"
+   },
+   {
+    "block_timestamp_utc": "2026-10-31 23:46:52.459671+00:00",
+    "receipt_id": "9pgU7KBvqbfc8dLVkjrUtYqnVsdMLFBsfyEv1vRMXAix",
+    "pred": "system",
+    "recv": "intents.near",
+    "action_kind": "TRANSFER",
+    "args_head": "{\"deposit\":\"10482145513145200000000\"}"
+   },
+   {
+    "block_timestamp_utc": "2026-10-31 23:46:52.459671+00:00",
+    "receipt_id": "HKob1Zyh3Lq9DASaac6cEVvmLo4idsZhnmPHfW3L36mG",
+    "pred": "wrap.near",
+    "recv": "intents.near",
+    "action_kind": "TRANSFER",
+    "args_head": "{\"deposit\":\"246972601810563721561805548\"}"
+   },
+   {
+    "block_timestamp_utc": "2026-10-31 23:46:53.071503+00:00",
+    "receipt_id": "GDFjdCu1xvmYHYRfffjTkAnzP3Q4hxKnqMfxdWWjENPW",
+    "pred": "intents.near",
+    "recv": "intents.near",
+    "action_kind": "FUNCTION_CALL",
+    "args_head": "{\"gas\":\"12000000000000\",\"deposit\":\"0\",\"args_base64\":\"eyJ3aXRoZHJhdyI6eyJyZWNlaXZlcl9pZCI6ImJ1eWJhY2tzLm11bHRpc2lnbmF0dXJlLm5lYXIiLCJhbW91bnQiOiIyNDY5NzI2MDE4MTA1NjM3MjE1NjE4MDU1NDcifX0=\",\"method_name\":\"do_native_withdraw\"}"
+   },
+   {
+    "block_timestamp_utc": "2026-10-31 23:46:53.071503+00:00",
+    "receipt_id": "5wwGZkRtwSPgvNHfgniEUqdBXcxvfckPimjrAj2c8Jm7",
+    "pred": "system",
+    "recv": "intents.near",
+    "action_kind": "TRANSFER",
+    "args_head": "{\"deposit\":\"200864306250000000000\"}"
+   },
+   {
+    "block_timestamp_utc": "2026-10-31 23:46:53.718587+00:00",
+    "receipt_id": "FrN5kg4HogdzsduREKnaiocmt5i6BNHkWPsbvtcfGsfj",
+    "pred": "system",
+    "recv": "intents.near",
+    "action_kind": "TRANSFER",
+    "args_head": "{\"deposit\":\"12405653643150900000000\"}"
+   },
+   {
+    "block_timestamp_utc": "2026-10-31 23:46:53.718587+00:00",
+    "receipt_id": "HUY193r5L8c2zYxpdUM5PzegxD9svRrMbLz1LE5a5rGU",
+    "pred": "intents.near",
+    "recv": "buybacks.multisignature.near",
+    "action_kind": "TRANSFER",
+    "args_head": "{\"deposit\":\"246972601810563721561805547\"}"
+   },
+   {
+    "block_timestamp_utc": "2026-10-31 23:46:54.205042+00:00",
+    "receipt_id": "77JrcMLkKyrh9RNweNTJ8YMab3TFeatY3GGNbosvgEAZ",
+    "pred": "system",
+    "recv": "intents.near",
+    "action_kind": "TRANSFER",
+    "args_head": "{\"deposit\":\"200864306250000000000\"}"
+   }
+  ]
+ },
+ {
+  "label": "Q4h execution outcomes+logs of 33 receipts",
+  "sql": "SELECT receipt_id, executor_account_id, status, tokens_burnt, ARRAY(SELECT l.element FROM UNNEST(logs.list) l) AS logs FROM `bigquery-public-data.crypto_near_mainnet_us.execution_outcomes` WHERE block_date BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 3 DAY) AND DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY) AND receipt_id IN UNNEST(@ids)",
+  "dry_run_bytes": 3800104060,
+  "dry_run_gb": 3.8001,
+  "est_cost_usd_on_demand": 0.0238,
+  "status": "OK",
+  "bytes_billed": 3801088000,
+  "rows_returned": 30,
+  "rows": [
+   {
+    "receipt_id": "3pStbQ5QnJ2gk3kyyAArSRZUNcAh7neVRYBDreeyG5hU",
+    "executor_account_id": "intents.near",
+    "status": "SUCCESS_VALUE",
+    "tokens_burnt": 5.724651962246e+20,
+    "logs": [
+     "EVENT_JSON:{\"standard\":\"dip4\",\"version\":\"0.4.3\",\"event\":\"native_withdraw\",\"data\":[{\"intent_hash\":\"BhiiDsTL93FwfzTgVhS9QpNvK6cA8dkENBj7WuCvzaAs\",\"account_id\":\"3a4756bd54d8c4e241b7b14f83fd85cb7c496b1fcffb783a74cb87a3fc764a9a\",\"receiver_id\":\"buybacks.multisignature.near\",\"amount\":\"246972601810563721561805547\"}]}",
+     "EVENT_JSON:{\"standard\":\"dip4\",\"version\":\"0.4.3\",\"event\":\"intents_executed\",\"data\":[{\"intent_hash\":\"BhiiDsTL93FwfzTgVhS9QpNvK6cA8dkENBj7WuCvzaAs\",\"account_id\":\"3a4756bd54d8c4e241b7b14f83fd85cb7c496b1fcffb783a74cb87a3fc764a9a\",\"nonce\":\"Vij2xgAlKBKzQPp0S7T67Bidm7PkXr3EPgPXm24fhRQ=\"}]}",
+     "EVENT_JSON:{\"standard\":\"nep245\",\"version\":\"1.0.0\",\"event\":\"mt_burn\",\"data\":[{\"owner_id\":\"3a4756bd54d8c4e241b7b14f83fd85cb7c496b1fcffb783a74cb87a3fc764a9a\",\"token_ids\":[\"nep141:wrap.near\"],\"amounts\":[\"246972601810563721561805547\"],\"memo\":\"withdraw\"}]}"
+    ]
+   },
+   {
+    "receipt_id": "4vaexHnNZQYa6HVZMGpng84yj4WrzSD4AtCeWsiK8qLh",
+    "executor_account_id": "intents.near",
+    "status": "SUCCESS_VALUE",
+    "tokens_burnt": 0.0,
+    "logs": []
+   },
+   {
+    "receipt_id": "Hz1mUnSWSDzRu85b1CQJCp1m2giyZ9V56re697sYmyVL",
+    "executor_account_id": "wrap.near",
+    "status": "SUCCESS_RECEIPT_ID",
+    "tokens_burnt": 1.828499288568e+20,
+    "logs": [
+     "Withdraw 246972601810563721561805547 NEAR from intents.near"
+    ]
+   },
+   {
+    "receipt_id": "HKob1Zyh3Lq9DASaac6cEVvmLo4idsZhnmPHfW3L36mG",
+    "executor_account_id": "intents.near",
+    "status": "SUCCESS_VALUE",
+    "tokens_burnt": 2.231825625e+19,
+    "logs": []
+   },
+   {
+    "receipt_id": "9pgU7KBvqbfc8dLVkjrUtYqnVsdMLFBsfyEv1vRMXAix",
+    "executor_account_id": "intents.near",
+    "status": "SUCCESS_VALUE",
+    "tokens_burnt": 0.0,
+    "logs": []
+   },
+   {
+    "receipt_id": "5wwGZkRtwSPgvNHfgniEUqdBXcxvfckPimjrAj2c8Jm7",
+    "executor_account_id": "intents.near",
+    "status": "SUCCESS_VALUE",
+    "tokens_burnt": 0.0,
+    "logs": []
+   },
+   {
+    "receipt_id": "GDFjdCu1xvmYHYRfffjTkAnzP3Q4hxKnqMfxdWWjENPW",
+    "executor_account_id": "intents.near",
+    "status": "SUCCESS_RECEIPT_ID",
+    "tokens_burnt": 2.594826626931e+20,
+    "logs": []
+   },
+   {
+    "receipt_id": "HUY193r5L8c2zYxpdUM5PzegxD9svRrMbLz1LE5a5rGU",
+    "executor_account_id": "buybacks.multisignature.near",
+    "status": "SUCCESS_VALUE",
+    "tokens_burnt": 2.231825625e+19,
+    "logs": []
+   },
+   {
+    "receipt_id": "FrN5kg4HogdzsduREKnaiocmt5i6BNHkWPsbvtcfGsfj",
+    "executor_account_id": "intents.near",
+    "status": "SUCCESS_VALUE",
+    "tokens_burnt": 0.0,
+    "logs": []
+   },
+   {
+    "receipt_id": "77JrcMLkKyrh9RNweNTJ8YMab3TFeatY3GGNbosvgEAZ",
+    "executor_account_id": "intents.near",
+    "status": "SUCCESS_VALUE",
+    "tokens_burnt": 0.0,
+    "logs": []
+   },
+   {
+    "receipt_id": "11asN7qCuU3CGLDPXPAhM8kqBeojBgjSe5injBxGms1",
+    "executor_account_id": "intents.near",
+    "status": "SUCCESS_VALUE",
+    "tokens_burnt": 6.235560604616e+20,
+    "logs": [
+     "EVENT_JSON:{\"standard\":\"dip4\",\"version\":\"0.4.3\",\"event\":\"native_withdraw\",\"data\":[{\"intent_hash\":\"9fYi2hT7T9woDwzpPw3CYpkLGxDRUcTzhE2m4E79Az1U\",\"account_id\":\"5880ad2b362620fadf759cbceb1cd5737ce8c6ed7fb8e9942881e6731f9247dd\",\"receiver_id\":\"buybacks.multisignature.near\",\"amount\":\"226834706035559589942299690\"}]}",
+     "EVENT_JSON:{\"standard\":\"dip4\",\"version\":\"0.4.3\",\"event\":\"intents_executed\",\"data\":[{\"intent_hash\":\"9fYi2hT7T9woDwzpPw3CYpkLGxDRUcTzhE2m4E79Az1U\",\"account_id\":\"5880ad2b362620fadf759cbceb1cd5737ce8c6ed7fb8e9942881e6731f9247dd\",\"nonce\":\"Vij2xgAlKBKzwFTMntC84xgWOto8CGu+mJZapJAzFzU=\"}]}",
+     "EVENT_JSON:{\"standard\":\"nep245\",\"version\":\"1.0.0\",\"event\":\"mt_burn\",\"data\":[{\"owner_id\":\"5880ad2b362620fadf759cbceb1cd5737ce8c6ed7fb8e9942881e6731f9247dd\",\"token_ids\":[\"nep141:wrap.near\"],\"amounts\":[\"226834706035559589942299690\"],\"memo\":\"withdraw\"}]}"
+    ]
+   },
+   {
+    "receipt_id": "3tNKvwzwjJoL7GmaDvZmkMpnmASxV4VCHSqYWsqjNFrX",
+    "executor_account_id": "intents.near",
+    "status": "SUCCESS_VALUE",
+    "tokens_burnt": 0.0,
+    "logs": []
+   },
+   {
+    "receipt_id": "H6QejjKMbh9RCYhgJdfLL2sanBrEDmyYGqu7oWkr9Be6",
+    "executor_account_id": "wrap.near",
+    "status": "SUCCESS_RECEIPT_ID",
+    "tokens_burnt": 1.828499288568e+20,
+    "logs": [
+     "Withdraw 226834706035559589942299690 NEAR from intents.near"
+    ]
+   },
+   {
+    "receipt_id": "CbLwZB43AXqDCMDmEc6iN6dyeGx1j43LhrPGLMx8k7gp",
+    "executor_account_id": "intents.near",
+    "status": "SUCCESS_VALUE",
+    "tokens_burnt": 2.231825625e+19,
+    "logs": []
+   },
+   {
+    "receipt_id": "7zsXk23x2Xi1wYPEAy6CihyHHK3wR2BcFHqi25kc913U",
+    "executor_account_id": "intents.near",
+    "status": "SUCCESS_VALUE",
+    "tokens_burnt": 0.0,
+    "logs": []
+   },
+   {
+    "receipt_id": "FjokiEpHrQDyeDSY7gE6YiCbTayPRPK3cC54RNREdAL",
+    "executor_account_id": "intents.near",
+    "status": "SUCCESS_VALUE",
+    "tokens_burnt": 0.0,
+    "logs": []
+   },
+   {
+    "receipt_id": "BT2oq794sHZeWvxMcbDu578pZZthkUN6zSK4MgBZqoJ7",
+    "executor_account_id": "intents.near",
+    "status": "SUCCESS_RECEIPT_ID",
+    "tokens_burnt": 2.594826626931e+20,
+    "logs": []
+   },
+   {
+    "receipt_id": "4PLSH6a5yUDhuWTNnm11GN1ZcNp8hjjsicS8hpnR1Q5p",
+    "executor_account_id": "buybacks.multisignature.near",
+    "status": "SUCCESS_VALUE",
+    "tokens_burnt": 2.231825625e+19,
+    "logs": []
+   },
+   {
+    "receipt_id": "8kQELhr1fverrBntNjCwRL3czbG9rKmca9cr8DPNRTCT",
+    "executor_account_id": "intents.near",
+    "status": "SUCCESS_VALUE",
+    "tokens_burnt": 0.0,
+    "logs": []
+   },
+   {
+    "receipt_id": "3JqWv1HZFV4TH6D1rV3sDKtmj1CTZFu7FVtWBoQAAoub",
+    "executor_account_id": "intents.near",
+    "status": "SUCCESS_VALUE",
+    "tokens_burnt": 0.0,
+    "logs": []
+   },
+   {
+    "receipt_id": "D3w5BUPNDDxKR4QDQ1Z6kmsBk2huw5tsAvYfvnc5E6X7",
+    "executor_account_id": "intents.near",
+    "status": "SUCCESS_VALUE",
+    "tokens_burnt": 5.725141838836e+20,
+    "logs": [
+     "EVENT_JSON:{\"standard\":\"dip4\",\"version\":\"0.4.3\",\"event\":\"native_withdraw\",\"data\":[{\"intent_hash\":\"9imCFruq2nW4wLDwq4DYuQRBGXda79E8GYx4bM1DNcfi\",\"account_id\":\"28e920b29b3492e9d062563dc6cb45bd1374d12d30c13e19768bb3258ac2788e\",\"receiver_id\":\"fefundsadmin.sputnik-dao.near\",\"amount\":\"228108301086524260909833128\"}]}",
+     "EVENT_JSON:{\"standard\":\"dip4\",\"version\":\"0.4.3\",\"event\":\"intents_executed\",\"data\":[{\"intent_hash\":\"9imCFruq2nW4wLDwq4DYuQRBGXda79E8GYx4bM1DNcfi\",\"account_id\":\"28e920b29b3492e9d062563dc6cb45bd1374d12d30c13e19768bb3258ac2788e\",\"nonce\":\"Vij2xgAlKBKzQMZ06sH17BjxNapBcxayYDyPovku8SM=\"}]}",
+     "EVENT_JSON:{\"standard\":\"nep245\",\"version\":\"1.0.0\",\"event\":\"mt_burn\",\"data\":[{\"owner_id\":\"28e920b29b3492e9d062563dc6cb45bd1374d12d30c13e19768bb3258ac2788e\",\"token_ids\":[\"nep141:wrap.near\"],\"amounts\":[\"228108301086524260909833128\"],\"memo\":\"withdraw\"}]}"
+    ]
+   },
+   {
+    "receipt_id": "CjvrfzXq9hNPUiVUCkzNQVPEFWazrtAMJdeKGgVQRntS",
+    "executor_account_id": "intents.near",
+    "status": "SUCCESS_VALUE",
+    "tokens_burnt": 0.0,
+    "logs": []
+   },
+   {
+    "receipt_id": "EdCyGPimnY3NYGY14x51EEt7vDwxy5RW8pojdWQ9zeiu",
+    "executor_account_id": "wrap.near",
+    "status": "SUCCESS_RECEIPT_ID",
+    "tokens_burnt": 1.828499288568e+20,
+    "logs": [
+     "Withdraw 228108301086524260909833128 NEAR from intents.near"
+    ]
+   },
+   {
+    "receipt_id": "C3q1tmM8GFyBYMxKrXRanKJ238isYp3ewrucXnM4SSAG",
+    "executor_account_id": "intents.near",
+    "status": "SUCCESS_VALUE",
+    "tokens_burnt": 2.231825625e+19,
+    "logs": []
+   },
+   {
+    "receipt_id": "EXFboW79328T8y667o9niAtREjt5DiVu3CawGcmmNMhp",
+    "executor_account_id": "intents.near",
+    "status": "SUCCESS_VALUE",
+    "tokens_burnt": 0.0,
+    "logs": []
+   },
+   {
+    "receipt_id": "GkLFotcVrEikpuK12j4RWsWDSDzNfCQpCa5WfasgZ8X4",
+    "executor_account_id": "intents.near",
+    "status": "SUCCESS_VALUE",
+    "tokens_burnt": 0.0,
+    "logs": []
+   },
+   {
+    "receipt_id": "DSnznutiTSEScFM5b8M3S7npPVvhNodzMRa8JVnMx9ia",
+    "executor_account_id": "intents.near",
+    "status": "SUCCESS_RECEIPT_ID",
+    "tokens_burnt": 2.595210165367e+20,
+    "logs": []
+   },
+   {
+    "receipt_id": "F98aDrq5zP8z3GrRty6KtwBR75PqyuxsopaUnGWUeCo7",
+    "executor_account_id": "fefundsadmin.sputnik-dao.near",
+    "status": "SUCCESS_VALUE",
+    "tokens_burnt": 2.231825625e+19,
+    "logs": []
+   },
+   {
+    "receipt_id": "6xP1YPyzNm1FBBbZj5KidFQsjXTM6isoW6S6bfU4XJFD",
+    "executor_account_id": "intents.near",
+    "status": "SUCCESS_VALUE",
+    "tokens_burnt": 0.0,
+    "logs": []
+   },
+   {
+    "receipt_id": "7ZYZVxbqLfAE8D4hQcMJz1VMFPEdUR6mfr6axba1uqZU",
+    "executor_account_id": "intents.near",
+    "status": "SUCCESS_VALUE",
+    "tokens_burnt": 0.0,
+    "logs": []
+   }
+  ]
+ }
+]

@@ -1,0 +1,39 @@
+{
+ "rpc": "https://archival-rpc.mainnet.fastnear.com",
+ "queried_at_block": 222654348,
+ "queried_at_ns": 1793585136106555924,
+ "accounts": {
+  "intents.near": {
+   "balance_near": 132526.80224899223,
+   "code_hash": "BtA1BEFNS619KkvXFsgcpQ21Tb5yMm32aaUkn7xNothk",
+   "storage_usage": 13195786193
+  },
+  "fefundsadmin.sputnik-dao.near": {
+   "balance_near": 1965356.6830930486,
+   "code_hash": "4zSoHkLjJWZm34Psd4Eq2WUXHELt6LxtKmUXpsZWAECp",
+   "storage_usage": 550832
+  },
+  "1csfundsadmin.sputnik-dao.near": {
+   "balance_near": 270.87589141242086,
+   "code_hash": "4zSoHkLjJWZm34Psd4Eq2WUXHELt6LxtKmUXpsZWAECp",
+   "storage_usage": 553750
+  },
+  "buybacks.multisignature.near": {
+   "balance_near": 2150519.997554291,
+   "code_hash": "2v9kZJHN4sogHuKtKHaqYAqQBazkqH2cjY1rrjQYvNQa",
+   "storage_usage": 356468
+  },
+  "wrap.near": {
+   "balance_near": 34766509.27915599,
+   "code_hash": "DL2f5xmZ44cQRP6vBMt94rvseH5d5KKnAGis2WkTAsh1",
+   "storage_usage": 167869415
+  }
+ },
+ "sources": {
+  "revenue_near_org_sha256": "13693b44ae14c3b4c0f3b2ea98fc05656f3e241a13314f4feb1c75a8b952fb55",
+  "verifier_doc": "https://docs.near-intents.org/integration/verifier-contract/introduction.md",
+  "balances_doc": "https://docs.near-intents.org/integration/verifier-contract/deposits-and-withdrawals/balances.md",
+  "near_token_doc": "https://docs.near-intents.org/integration/verifier-contract/deposits-and-withdrawals/near-token.md"
+ },
+ "revenue_near_org_caveat": "Page states: 'Figures shown are illustrative.' All fees denominated in $NEAR."
+}

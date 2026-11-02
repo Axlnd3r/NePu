@@ -1,0 +1,41 @@
+{
+ "query": "SELECT block_date, MIN(block_height) AS h FROM `bigquery-public-data.crypto_near_mainnet_us.blocks` WHERE block_date IN ('2026-02-23','2026-03-01','2026-04-20','2026-04-25','2026-04-26') GROUP BY 1 ORDER BY 1",
+ "dry_run_bytes": 11499680,
+ "rpc_view_account": [
+  {
+   "date": "2026-02-23",
+   "height": 186724357,
+   "exists": false,
+   "balance_near": null,
+   "err": "UNKNOWN_ACCOUNT"
+  },
+  {
+   "date": "2026-03-01",
+   "height": 187573901,
+   "exists": false,
+   "balance_near": null,
+   "err": "UNKNOWN_ACCOUNT"
+  },
+  {
+   "date": "2026-04-20",
+   "height": 194749335,
+   "exists": true,
+   "balance_near": 39.99844276207886,
+   "err": null
+  },
+  {
+   "date": "2026-04-25",
+   "height": 195462530,
+   "exists": true,
+   "balance_near": 5066.129658362233,
+   "err": null
+  },
+  {
+   "date": "2026-04-26",
+   "height": 195608288,
+   "exists": true,
+   "balance_near": 7468.163880663338,
+   "err": null
+  }
+ ]
+}

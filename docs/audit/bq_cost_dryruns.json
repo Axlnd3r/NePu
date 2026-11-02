@@ -1,0 +1,91 @@
+[
+ {
+  "label": "P1 sweeps intents.near->wallets, since 2025-05-10 (DefiLlama start), no args",
+  "sql": "SELECT block_date, receipt_receiver_account_id, COUNT(*) AS n FROM `bigquery-public-data.crypto_near_mainnet_us.receipt_actions` WHERE block_date >= DATE '2025-05-10' AND action_kind='TRANSFER' AND receipt_predecessor_account_id='intents.near' AND receipt_receiver_account_id IN ('fefundsadmin.sputnik-dao.near','1csfundsadmin.sputnik-dao.near','buybacks.multisignature.near') GROUP BY 1,2",
+  "dry_run_bytes": 432247931351,
+  "gb": 432.25,
+  "tib": 0.3931,
+  "est_cost_usd_if_billed": 2.7,
+  "within_BQ_MAX_BYTES": false
+ },
+ {
+  "label": "P1w sweeps + args(deposit), since 2025-05-10",
+  "sql": "SELECT block_date, receipt_receiver_account_id, SUM(SAFE_CAST(JSON_VALUE(args,'$.deposit') AS FLOAT64)) AS yocto FROM `bigquery-public-data.crypto_near_mainnet_us.receipt_actions` WHERE block_date >= DATE '2025-05-10' AND action_kind='TRANSFER' AND receipt_predecessor_account_id='intents.near' AND receipt_receiver_account_id IN ('fefundsadmin.sputnik-dao.near','1csfundsadmin.sputnik-dao.near','buybacks.multisignature.near') GROUP BY 1,2",
+  "dry_run_bytes": 3146262955948,
+  "gb": 3146.26,
+  "tib": 2.8615,
+  "est_cost_usd_if_billed": 19.66,
+  "within_BQ_MAX_BYTES": false
+ },
+ {
+  "label": "P1w 30d chunk",
+  "sql": "SELECT block_date, receipt_receiver_account_id, SUM(SAFE_CAST(JSON_VALUE(args,'$.deposit') AS FLOAT64)) AS yocto FROM `bigquery-public-data.crypto_near_mainnet_us.receipt_actions` WHERE block_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY) AND action_kind='TRANSFER' AND receipt_predecessor_account_id='intents.near' AND receipt_receiver_account_id IN ('fefundsadmin.sputnik-dao.near','1csfundsadmin.sputnik-dao.near','buybacks.multisignature.near') GROUP BY 1,2",
+  "dry_run_bytes": 87322375399,
+  "gb": 87.32,
+  "tib": 0.0794,
+  "est_cost_usd_if_billed": 0.55,
+  "within_BQ_MAX_BYTES": false
+ },
+ {
+  "label": "P2 burn: execution_outcomes SUM(tokens_burnt) daily, since 2025-05-10",
+  "sql": "SELECT block_date, SUM(tokens_burnt) AS burnt_yocto, SUM(gas_burnt) AS gas FROM `bigquery-public-data.crypto_near_mainnet_us.execution_outcomes` WHERE block_date >= DATE '2025-05-10' GROUP BY 1",
+  "dry_run_bytes": 181308121848,
+  "gb": 181.31,
+  "tib": 0.1649,
+  "est_cost_usd_if_billed": 1.13,
+  "within_BQ_MAX_BYTES": false
+ },
+ {
+  "label": "P2b burn: transactions.receipt_conversion_tokens_burnt daily, since 2025-05-10",
+  "sql": "SELECT block_date, SUM(receipt_conversion_tokens_burnt) AS burnt_yocto FROM `bigquery-public-data.crypto_near_mainnet_us.transactions` WHERE block_date >= DATE '2025-05-10' GROUP BY 1",
+  "dry_run_bytes": 25224759808,
+  "gb": 25.22,
+  "tib": 0.0229,
+  "est_cost_usd_if_billed": 0.16,
+  "within_BQ_MAX_BYTES": false
+ },
+ {
+  "label": "P3 issuance: blocks total_supply daily, since 2025-05-10",
+  "sql": "SELECT block_date, MAX_BY(total_supply, block_height) AS total_supply FROM `bigquery-public-data.crypto_near_mainnet_us.blocks` WHERE block_date >= DATE '2025-05-10' GROUP BY 1",
+  "dry_run_bytes": 1833083496,
+  "gb": 1.83,
+  "tib": 0.0017,
+  "est_cost_usd_if_billed": 0.01,
+  "within_BQ_MAX_BYTES": true
+ },
+ {
+  "label": "P4 dev: DEPLOY_CONTRACT receipt_actions, since 2025-05-10",
+  "sql": "SELECT block_date, receipt_receiver_account_id FROM `bigquery-public-data.crypto_near_mainnet_us.receipt_actions` WHERE block_date >= DATE '2025-05-10' AND action_kind='DEPLOY_CONTRACT'",
+  "dry_run_bytes": 315134604498,
+  "gb": 315.13,
+  "tib": 0.2866,
+  "est_cost_usd_if_billed": 1.97,
+  "within_BQ_MAX_BYTES": false
+ },
+ {
+  "label": "P5 intents.near FUNCTION_CALL count daily, since 2025-05-10",
+  "sql": "SELECT block_date, COUNT(*) AS n FROM `bigquery-public-data.crypto_near_mainnet_us.receipt_actions` WHERE block_date >= DATE '2025-05-10' AND action_kind='FUNCTION_CALL' AND receipt_receiver_account_id='intents.near' GROUP BY 1",
+  "dry_run_bytes": 315134604498,
+  "gb": 315.13,
+  "tib": 0.2866,
+  "est_cost_usd_if_billed": 1.97,
+  "within_BQ_MAX_BYTES": false
+ },
+ {
+  "label": "S1 tokens_burnt unit sanity (1 day)",
+  "sql": "SELECT block_date, SUM(tokens_burnt) AS burnt_yocto, SUM(gas_burnt) AS gas_burnt FROM `bigquery-public-data.crypto_near_mainnet_us.execution_outcomes` WHERE block_date = DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY) GROUP BY 1",
+  "dry_run_bytes": 62516928,
+  "dry_run_gb": 0.0625,
+  "est_cost_usd_on_demand": 0.0004,
+  "status": "OK",
+  "bytes_billed": 62914560,
+  "rows_returned": 1,
+  "rows": [
+   {
+    "block_date": "2026-10-31",
+    "burnt_yocto": 6.870689866051053e+26,
+    "gas_burnt": 6.604971504003562e+18
+   }
+  ]
+ }
+]

@@ -1,0 +1,30 @@
+[
+ {
+  "label": "Q4c actions into the 3 wallets, 30d",
+  "sql": "SELECT receipt_receiver_account_id, receipt_predecessor_account_id, action_kind, COUNT(*) AS n_receipts, MIN(block_date) AS first_date, MAX(block_date) AS last_date FROM `bigquery-public-data.crypto_near_mainnet_us.receipt_actions` WHERE block_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY) AND receipt_receiver_account_id IN ('fefundsadmin.sputnik-dao.near','1csfundsadmin.sputnik-dao.near','buybacks.multisignature.near') GROUP BY 1,2,3 ORDER BY n_receipts DESC LIMIT 40",
+  "dry_run_bytes": 10474835996,
+  "dry_run_gb": 10.4748,
+  "est_cost_usd_on_demand": 0.0655,
+  "status": "OK",
+  "bytes_billed": 10475274240,
+  "rows_returned": 2,
+  "rows": [
+   {
+    "receipt_receiver_account_id": "buybacks.multisignature.near",
+    "receipt_predecessor_account_id": "intents.near",
+    "action_kind": "TRANSFER",
+    "n_receipts": 855,
+    "first_date": "2026-10-03",
+    "last_date": "2026-11-02"
+   },
+   {
+    "receipt_receiver_account_id": "fefundsadmin.sputnik-dao.near",
+    "receipt_predecessor_account_id": "intents.near",
+    "action_kind": "TRANSFER",
+    "n_receipts": 392,
+    "first_date": "2026-10-03",
+    "last_date": "2026-11-01"
+   }
+  ]
+ }
+]

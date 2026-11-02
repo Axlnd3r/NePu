@@ -1,0 +1,170 @@
+[
+ {
+  "label": "Q4e origin tx of 3 samples",
+  "sql": "SELECT receipt_id, originated_from_transaction_hash AS tx_hash FROM `bigquery-public-data.crypto_near_mainnet_us.receipt_origin_transaction` WHERE block_date BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 3 DAY) AND CURRENT_DATE() AND receipt_id IN UNNEST(@ids)",
+  "dry_run_bytes": 1033682830,
+  "dry_run_gb": 1.0337,
+  "est_cost_usd_on_demand": 0.0065,
+  "status": "OK",
+  "bytes_billed": 1033895936,
+  "rows_returned": 3,
+  "rows": [
+   {
+    "receipt_id": "4PLSH6a5yUDhuWTNnm11GN1ZcNp8hjjsicS8hpnR1Q5p",
+    "tx_hash": "9VtgWtqCj1ATjSJwWwrPLboLRbVsVodVRLYp66yz3Pwr"
+   },
+   {
+    "receipt_id": "F98aDrq5zP8z3GrRty6KtwBR75PqyuxsopaUnGWUeCo7",
+    "tx_hash": "Hbg8tYbHG9qqgiYurDXKVeUe4qDaQpHkrB8RtL3e1wam"
+   },
+   {
+    "receipt_id": "HUY193r5L8c2zYxpdUM5PzegxD9svRrMbLz1LE5a5rGU",
+    "tx_hash": "EXbQ3W9wLQZWbiBHwAgACAoL2aqzpVm7ebBCetJzUMd1"
+   }
+  ]
+ },
+ {
+  "label": "Q4f all receipts of those txs",
+  "sql": "SELECT receipt_id, originated_from_transaction_hash AS tx_hash FROM `bigquery-public-data.crypto_near_mainnet_us.receipt_origin_transaction` WHERE block_date BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 3 DAY) AND CURRENT_DATE() AND originated_from_transaction_hash IN UNNEST(@txs)",
+  "dry_run_bytes": 1033682830,
+  "dry_run_gb": 1.0337,
+  "est_cost_usd_on_demand": 0.0065,
+  "status": "OK",
+  "bytes_billed": 1033895936,
+  "rows_returned": 33,
+  "rows": [
+   {
+    "receipt_id": "3pStbQ5QnJ2gk3kyyAArSRZUNcAh7neVRYBDreeyG5hU",
+    "tx_hash": "EXbQ3W9wLQZWbiBHwAgACAoL2aqzpVm7ebBCetJzUMd1"
+   },
+   {
+    "receipt_id": "4vaexHnNZQYa6HVZMGpng84yj4WrzSD4AtCeWsiK8qLh",
+    "tx_hash": "EXbQ3W9wLQZWbiBHwAgACAoL2aqzpVm7ebBCetJzUMd1"
+   },
+   {
+    "receipt_id": "Hz1mUnSWSDzRu85b1CQJCp1m2giyZ9V56re697sYmyVL",
+    "tx_hash": "EXbQ3W9wLQZWbiBHwAgACAoL2aqzpVm7ebBCetJzUMd1"
+   },
+   {
+    "receipt_id": "HKob1Zyh3Lq9DASaac6cEVvmLo4idsZhnmPHfW3L36mG",
+    "tx_hash": "EXbQ3W9wLQZWbiBHwAgACAoL2aqzpVm7ebBCetJzUMd1"
+   },
+   {
+    "receipt_id": "9pgU7KBvqbfc8dLVkjrUtYqnVsdMLFBsfyEv1vRMXAix",
+    "tx_hash": "EXbQ3W9wLQZWbiBHwAgACAoL2aqzpVm7ebBCetJzUMd1"
+   },
+   {
+    "receipt_id": "5wwGZkRtwSPgvNHfgniEUqdBXcxvfckPimjrAj2c8Jm7",
+    "tx_hash": "EXbQ3W9wLQZWbiBHwAgACAoL2aqzpVm7ebBCetJzUMd1"
+   },
+   {
+    "receipt_id": "GDFjdCu1xvmYHYRfffjTkAnzP3Q4hxKnqMfxdWWjENPW",
+    "tx_hash": "EXbQ3W9wLQZWbiBHwAgACAoL2aqzpVm7ebBCetJzUMd1"
+   },
+   {
+    "receipt_id": "9pyGfJGxPtE5XbDG1sQPW14Byu2FJgXHR59YbKYbQcFq",
+    "tx_hash": "EXbQ3W9wLQZWbiBHwAgACAoL2aqzpVm7ebBCetJzUMd1"
+   },
+   {
+    "receipt_id": "HUY193r5L8c2zYxpdUM5PzegxD9svRrMbLz1LE5a5rGU",
+    "tx_hash": "EXbQ3W9wLQZWbiBHwAgACAoL2aqzpVm7ebBCetJzUMd1"
+   },
+   {
+    "receipt_id": "FrN5kg4HogdzsduREKnaiocmt5i6BNHkWPsbvtcfGsfj",
+    "tx_hash": "EXbQ3W9wLQZWbiBHwAgACAoL2aqzpVm7ebBCetJzUMd1"
+   },
+   {
+    "receipt_id": "77JrcMLkKyrh9RNweNTJ8YMab3TFeatY3GGNbosvgEAZ",
+    "tx_hash": "EXbQ3W9wLQZWbiBHwAgACAoL2aqzpVm7ebBCetJzUMd1"
+   },
+   {
+    "receipt_id": "11asN7qCuU3CGLDPXPAhM8kqBeojBgjSe5injBxGms1",
+    "tx_hash": "9VtgWtqCj1ATjSJwWwrPLboLRbVsVodVRLYp66yz3Pwr"
+   },
+   {
+    "receipt_id": "3tNKvwzwjJoL7GmaDvZmkMpnmASxV4VCHSqYWsqjNFrX",
+    "tx_hash": "9VtgWtqCj1ATjSJwWwrPLboLRbVsVodVRLYp66yz3Pwr"
+   },
+   {
+    "receipt_id": "H6QejjKMbh9RCYhgJdfLL2sanBrEDmyYGqu7oWkr9Be6",
+    "tx_hash": "9VtgWtqCj1ATjSJwWwrPLboLRbVsVodVRLYp66yz3Pwr"
+   },
+   {
+    "receipt_id": "CbLwZB43AXqDCMDmEc6iN6dyeGx1j43LhrPGLMx8k7gp",
+    "tx_hash": "9VtgWtqCj1ATjSJwWwrPLboLRbVsVodVRLYp66yz3Pwr"
+   },
+   {
+    "receipt_id": "7zsXk23x2Xi1wYPEAy6CihyHHK3wR2BcFHqi25kc913U",
+    "tx_hash": "9VtgWtqCj1ATjSJwWwrPLboLRbVsVodVRLYp66yz3Pwr"
+   },
+   {
+    "receipt_id": "FjokiEpHrQDyeDSY7gE6YiCbTayPRPK3cC54RNREdAL",
+    "tx_hash": "9VtgWtqCj1ATjSJwWwrPLboLRbVsVodVRLYp66yz3Pwr"
+   },
+   {
+    "receipt_id": "BT2oq794sHZeWvxMcbDu578pZZthkUN6zSK4MgBZqoJ7",
+    "tx_hash": "9VtgWtqCj1ATjSJwWwrPLboLRbVsVodVRLYp66yz3Pwr"
+   },
+   {
+    "receipt_id": "9Yrnyvmb55N6SEzh4bPjaR5GTN4p8tfDbiWbkK4JBtX",
+    "tx_hash": "9VtgWtqCj1ATjSJwWwrPLboLRbVsVodVRLYp66yz3Pwr"
+   },
+   {
+    "receipt_id": "4PLSH6a5yUDhuWTNnm11GN1ZcNp8hjjsicS8hpnR1Q5p",
+    "tx_hash": "9VtgWtqCj1ATjSJwWwrPLboLRbVsVodVRLYp66yz3Pwr"
+   },
+   {
+    "receipt_id": "8kQELhr1fverrBntNjCwRL3czbG9rKmca9cr8DPNRTCT",
+    "tx_hash": "9VtgWtqCj1ATjSJwWwrPLboLRbVsVodVRLYp66yz3Pwr"
+   },
+   {
+    "receipt_id": "3JqWv1HZFV4TH6D1rV3sDKtmj1CTZFu7FVtWBoQAAoub",
+    "tx_hash": "9VtgWtqCj1ATjSJwWwrPLboLRbVsVodVRLYp66yz3Pwr"
+   },
+   {
+    "receipt_id": "D3w5BUPNDDxKR4QDQ1Z6kmsBk2huw5tsAvYfvnc5E6X7",
+    "tx_hash": "Hbg8tYbHG9qqgiYurDXKVeUe4qDaQpHkrB8RtL3e1wam"
+   },
+   {
+    "receipt_id": "CjvrfzXq9hNPUiVUCkzNQVPEFWazrtAMJdeKGgVQRntS",
+    "tx_hash": "Hbg8tYbHG9qqgiYurDXKVeUe4qDaQpHkrB8RtL3e1wam"
+   },
+   {
+    "receipt_id": "EdCyGPimnY3NYGY14x51EEt7vDwxy5RW8pojdWQ9zeiu",
+    "tx_hash": "Hbg8tYbHG9qqgiYurDXKVeUe4qDaQpHkrB8RtL3e1wam"
+   },
+   {
+    "receipt_id": "C3q1tmM8GFyBYMxKrXRanKJ238isYp3ewrucXnM4SSAG",
+    "tx_hash": "Hbg8tYbHG9qqgiYurDXKVeUe4qDaQpHkrB8RtL3e1wam"
+   },
+   {
+    "receipt_id": "EXFboW79328T8y667o9niAtREjt5DiVu3CawGcmmNMhp",
+    "tx_hash": "Hbg8tYbHG9qqgiYurDXKVeUe4qDaQpHkrB8RtL3e1wam"
+   },
+   {
+    "receipt_id": "GkLFotcVrEikpuK12j4RWsWDSDzNfCQpCa5WfasgZ8X4",
+    "tx_hash": "Hbg8tYbHG9qqgiYurDXKVeUe4qDaQpHkrB8RtL3e1wam"
+   },
+   {
+    "receipt_id": "DSnznutiTSEScFM5b8M3S7npPVvhNodzMRa8JVnMx9ia",
+    "tx_hash": "Hbg8tYbHG9qqgiYurDXKVeUe4qDaQpHkrB8RtL3e1wam"
+   },
+   {
+    "receipt_id": "8yAi6rW23d1v8WcvaE52Rs67E5e3B7aNMWfnpmsp1Lhh",
+    "tx_hash": "Hbg8tYbHG9qqgiYurDXKVeUe4qDaQpHkrB8RtL3e1wam"
+   },
+   {
+    "receipt_id": "F98aDrq5zP8z3GrRty6KtwBR75PqyuxsopaUnGWUeCo7",
+    "tx_hash": "Hbg8tYbHG9qqgiYurDXKVeUe4qDaQpHkrB8RtL3e1wam"
+   },
+   {
+    "receipt_id": "6xP1YPyzNm1FBBbZj5KidFQsjXTM6isoW6S6bfU4XJFD",
+    "tx_hash": "Hbg8tYbHG9qqgiYurDXKVeUe4qDaQpHkrB8RtL3e1wam"
+   },
+   {
+    "receipt_id": "7ZYZVxbqLfAE8D4hQcMJz1VMFPEdUR6mfr6axba1uqZU",
+    "tx_hash": "Hbg8tYbHG9qqgiYurDXKVeUe4qDaQpHkrB8RtL3e1wam"
+   }
+  ]
+ }
+]

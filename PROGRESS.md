@@ -11,7 +11,7 @@ Living log. Claude updates this at the end of every session. Newest entry on top
 | Phase | Dates | Status | Notes |
 |---|---|---|---|
 | F0 Setup repo | 2 Nov | done | `make all` green locally; CI not yet run (no remote) |
-| F1 Data verification | 2–3 Nov | todo | |
+| F1 Data verification | 2–3 Nov | done, awaiting Gate 1 confirmation | Recommendation GO-WITH-FALLBACK, see DATA_AUDIT.md |
 | F2 Ingestion + snapshot | 3–5 Nov | todo | |
 | F3 Coverage ratio + tests | 5–7 Nov | todo | |
 | F4 Distribution Map | 7–9 Nov | todo | |
@@ -21,6 +21,17 @@ Living log. Claude updates this at the end of every session. Newest entry on top
 | F8 Demo + submission | 13–14 Nov | todo | |
 
 ## Session log
+### 2026-11-02 — F1
+- Done: checks 1-10 in DATA_AUDIT.md with evidence in docs/audit/ (SHA256SUMS). Statuses: 1, 2, 3, 4, 6, 7 OK; 5, 8, 9, 10 PARTIAL. Added git remote `origin` (not pushed), filled README links, added BQ_MAX_BYTES default and COINGECKO_API_KEY to .env.example, created local .env (gitignored).
+- Numbers found (source file):
+  - BigQuery fresh to 2026-11-02 for blocks/transactions/receipt_actions (docs/audit/bq_freshness_schema.json).
+  - Net supply growth 2.467 % to 2.479 % annualised over 28 to 365 days (docs/audit/rpc_total_supply.json).
+  - Fees reach wallets as native NEAR TRANSFER from intents.near: 855 receipts to buybacks.multisignature.near and 392 to fefundsadmin.sputnik-dao.near over 30 days (docs/audit/bq_q4c_actions.json).
+  - On-chain wallet inflow 2026-10-03..11-01 is 1.016x DefiLlama dailyRevenue (docs/audit/sanity_onchain_vs_defillama.json). Sanity check only, not the F3 reconciliation.
+- Decisions: wallet flows from ft_balances_daily (0.98 GB), not receipt_actions.args (3.1 TB); internal wallet transfers must be netted (2026-09-09: 1csfundsadmin -502,791.6 NEAR, buybacks +514,257.6 NEAR); buyback value defined from 2026-04-26.
+- Blockers: no Intents Explorer JWT (Distribution Map degraded without it); buyback destination 2026-02-23 to ~April unknown (account created between 2026-03-01 and 2026-04-20); "permanent capital vehicle" not found in any source; BigQuery sandbox quota 1 TiB per month and one full extract is about 0.5 TiB.
+- Next: you confirm Gate 1 (and supply a JWT, optionally a CoinGecko key); then F2 ingestion. Decide the developer-indicator window before F2 because of cost.
+
 ### 2026-11-02 — F0
 - Done: git init + tag `pre-hackathon` on planning-docs commit (187cbf0). Scaffold per CLAUDE.md Layout:
   pyproject (uv, py3.12) + uv.lock, Makefile (setup/extract/build/build-live/verify/site/proof/all),

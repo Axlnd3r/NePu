@@ -1,0 +1,28 @@
+[
+ {
+  "label": "Q4a receiver LIKE fundsadmin 30d (receipt_actions)",
+  "sql": "SELECT DISTINCT receipt_receiver_account_id AS account_id FROM `bigquery-public-data.crypto_near_mainnet_us.receipt_actions` WHERE block_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY) AND receipt_receiver_account_id LIKE '%fundsadmin%'",
+  "dry_run_bytes": 5421364462,
+  "dry_run_gb": 5.4214,
+  "est_cost_usd_on_demand": 0.0339,
+  "status": "OK",
+  "bytes_billed": 5422186496,
+  "rows_returned": 1,
+  "rows": [
+   {
+    "account_id": "fefundsadmin.sputnik-dao.near"
+   }
+  ]
+ },
+ {
+  "label": "Q4b ft_events involving the 3 wallets, 30d",
+  "sql": "SELECT block_date, standard, contract_account_id, affected_account_id, involved_account_id, delta_amount, cause, status, receipt_id, token_id FROM `bigquery-public-data.crypto_near_mainnet_us.ft_events` WHERE block_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY) AND (affected_account_id IN ('fefundsadmin.sputnik-dao.near','1csfundsadmin.sputnik-dao.near','buybacks.multisignature.near') OR involved_account_id IN ('fefundsadmin.sputnik-dao.near','1csfundsadmin.sputnik-dao.near','buybacks.multisignature.near'))",
+  "dry_run_bytes": 4171039866,
+  "dry_run_gb": 4.171,
+  "est_cost_usd_on_demand": 0.0261,
+  "status": "OK",
+  "bytes_billed": 4171235328,
+  "rows_returned": 0,
+  "rows": []
+ }
+]

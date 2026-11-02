@@ -1,0 +1,1298 @@
+[
+ {
+  "label": "Q1b partition ranges (metadata)",
+  "sql": "SELECT table_name, MIN(partition_id) AS min_partition, MAX(partition_id) AS max_partition, COUNT(*) AS n_partitions, SUM(total_rows) AS total_rows, SUM(total_logical_bytes) AS logical_bytes FROM `bigquery-public-data.crypto_near_mainnet_us.INFORMATION_SCHEMA.PARTITIONS` WHERE partition_id NOT IN ('__NULL__','__UNPARTITIONED__') GROUP BY table_name ORDER BY table_name",
+  "dry_run_bytes": 10485760,
+  "dry_run_gb": 0.0105,
+  "est_cost_usd_on_demand": 0.0001,
+  "status": "OK",
+  "bytes_billed": 10485760,
+  "rows_returned": 12,
+  "rows": [
+   {
+    "table_name": "account_changes",
+    "min_partition": "20200722",
+    "max_partition": "20261102",
+    "n_partitions": 2295,
+    "total_rows": 36504919909,
+    "logical_bytes": 8864207855339
+   },
+   {
+    "table_name": "blocks",
+    "min_partition": "20200721",
+    "max_partition": "20261102",
+    "n_partitions": 2296,
+    "total_rows": 212451871,
+    "logical_bytes": 34636221383
+   },
+   {
+    "table_name": "chunks",
+    "min_partition": "20200722",
+    "max_partition": "20261102",
+    "n_partitions": 2295,
+    "total_rows": 1170155710,
+    "logical_bytes": 314731063323
+   },
+   {
+    "table_name": "execution_outcomes",
+    "min_partition": "20200723",
+    "max_partition": "20261102",
+    "n_partitions": 2283,
+    "total_rows": 22673259218,
+    "logical_bytes": 10594319658392
+   },
+   {
+    "table_name": "ft_balances_daily",
+    "min_partition": "20230101",
+    "max_partition": "20261101",
+    "n_partitions": 1384,
+    "total_rows": 27229154,
+    "logical_bytes": 4844931487
+   },
+   {
+    "table_name": "ft_events",
+    "min_partition": "20220223",
+    "max_partition": "20261102",
+    "n_partitions": 1705,
+    "total_rows": 13732062793,
+    "logical_bytes": 4711913586611
+   },
+   {
+    "table_name": "nft_events",
+    "min_partition": "20211123",
+    "max_partition": "20261102",
+    "n_partitions": 1806,
+    "total_rows": 60632854,
+    "logical_bytes": 26085505082
+   },
+   {
+    "table_name": "receipt_actions",
+    "min_partition": "20200723",
+    "max_partition": "20261102",
+    "n_partitions": 2283,
+    "total_rows": 23291392174,
+    "logical_bytes": 14089654317949
+   },
+   {
+    "table_name": "receipt_details",
+    "min_partition": "20200723",
+    "max_partition": "20261102",
+    "n_partitions": 2283,
+    "total_rows": 24408661716,
+    "logical_bytes": 21615950220599
+   },
+   {
+    "table_name": "receipt_origin_transaction",
+    "min_partition": "20200723",
+    "max_partition": "20261102",
+    "n_partitions": 2283,
+    "total_rows": 24429489736,
+    "logical_bytes": 3104042201587
+   },
+   {
+    "table_name": "transaction_actions",
+    "min_partition": "20200723",
+    "max_partition": "20261102",
+    "n_partitions": 2283,
+    "total_rows": 6022677760,
+    "logical_bytes": 5261021137333
+   },
+   {
+    "table_name": "transactions",
+    "min_partition": "20200723",
+    "max_partition": "20261102",
+    "n_partitions": 2283,
+    "total_rows": 5477045695,
+    "logical_bytes": 2575268921916
+   }
+  ]
+ },
+ {
+  "label": "Q2 schema (metadata)",
+  "sql": "SELECT table_name, column_name, data_type, is_partitioning_column FROM `bigquery-public-data.crypto_near_mainnet_us.INFORMATION_SCHEMA.COLUMNS` ORDER BY table_name, ordinal_position",
+  "dry_run_bytes": 10485760,
+  "dry_run_gb": 0.0105,
+  "est_cost_usd_on_demand": 0.0001,
+  "status": "OK",
+  "bytes_billed": 10485760,
+  "rows_returned": 191,
+  "rows": [
+   {
+    "table_name": "account_changes",
+    "column_name": "block_date",
+    "data_type": "DATE",
+    "is_partitioning_column": "YES"
+   },
+   {
+    "table_name": "account_changes",
+    "column_name": "block_height",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "account_changes",
+    "column_name": "block_timestamp",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "account_changes",
+    "column_name": "block_timestamp_utc",
+    "data_type": "TIMESTAMP",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "account_changes",
+    "column_name": "block_hash",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "account_changes",
+    "column_name": "chunk_hash",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "account_changes",
+    "column_name": "index_in_block",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "account_changes",
+    "column_name": "affected_account_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "account_changes",
+    "column_name": "caused_by_transaction_hash",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "account_changes",
+    "column_name": "caused_by_receipt_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "account_changes",
+    "column_name": "update_reason",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "account_changes",
+    "column_name": "affected_account_nonstaked_balance",
+    "data_type": "FLOAT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "account_changes",
+    "column_name": "affected_account_staked_balance",
+    "data_type": "FLOAT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "account_changes",
+    "column_name": "affected_account_storage_usage",
+    "data_type": "FLOAT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "accounts",
+    "column_name": "block_date",
+    "data_type": "DATE",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "accounts",
+    "column_name": "block_height",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "accounts",
+    "column_name": "block_timestamp",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "accounts",
+    "column_name": "block_timestamp_utc",
+    "data_type": "TIMESTAMP",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "accounts",
+    "column_name": "block_hash",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "accounts",
+    "column_name": "chunk_hash",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "accounts",
+    "column_name": "shard_id",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "accounts",
+    "column_name": "index_in_action_receipt",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "accounts",
+    "column_name": "receipt_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "accounts",
+    "column_name": "account_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "accounts",
+    "column_name": "action_kind",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "accounts",
+    "column_name": "is_active",
+    "data_type": "BOOL",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "blocks",
+    "column_name": "block_date",
+    "data_type": "DATE",
+    "is_partitioning_column": "YES"
+   },
+   {
+    "table_name": "blocks",
+    "column_name": "block_height",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "blocks",
+    "column_name": "block_timestamp",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "blocks",
+    "column_name": "block_timestamp_utc",
+    "data_type": "TIMESTAMP",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "blocks",
+    "column_name": "block_hash",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "blocks",
+    "column_name": "prev_block_hash",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "blocks",
+    "column_name": "total_supply",
+    "data_type": "FLOAT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "blocks",
+    "column_name": "gas_price",
+    "data_type": "FLOAT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "blocks",
+    "column_name": "author_account_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "chunks",
+    "column_name": "block_date",
+    "data_type": "DATE",
+    "is_partitioning_column": "YES"
+   },
+   {
+    "table_name": "chunks",
+    "column_name": "block_height",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "chunks",
+    "column_name": "block_timestamp",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "chunks",
+    "column_name": "block_timestamp_utc",
+    "data_type": "TIMESTAMP",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "chunks",
+    "column_name": "block_hash",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "chunks",
+    "column_name": "chunk_hash",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "chunks",
+    "column_name": "shard_id",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "chunks",
+    "column_name": "signature",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "chunks",
+    "column_name": "gas_limit",
+    "data_type": "FLOAT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "chunks",
+    "column_name": "gas_used",
+    "data_type": "FLOAT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "chunks",
+    "column_name": "author_account_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "circulating_supply",
+    "column_name": "block_date",
+    "data_type": "DATE",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "circulating_supply",
+    "column_name": "computed_at_block_timestamp",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "circulating_supply",
+    "column_name": "computed_at_block_hash",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "circulating_supply",
+    "column_name": "computed_at_block_height",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "circulating_supply",
+    "column_name": "circulating_tokens_supply",
+    "data_type": "FLOAT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "circulating_supply",
+    "column_name": "total_tokens_supply",
+    "data_type": "FLOAT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "execution_outcomes",
+    "column_name": "block_date",
+    "data_type": "DATE",
+    "is_partitioning_column": "YES"
+   },
+   {
+    "table_name": "execution_outcomes",
+    "column_name": "block_height",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "execution_outcomes",
+    "column_name": "block_timestamp",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "execution_outcomes",
+    "column_name": "block_timestamp_utc",
+    "data_type": "TIMESTAMP",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "execution_outcomes",
+    "column_name": "block_hash",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "execution_outcomes",
+    "column_name": "chunk_hash",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "execution_outcomes",
+    "column_name": "shard_id",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "execution_outcomes",
+    "column_name": "receipt_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "execution_outcomes",
+    "column_name": "executed_in_block_hash",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "execution_outcomes",
+    "column_name": "outcome_receipt_ids",
+    "data_type": "STRUCT<list ARRAY<STRUCT<element STRING>>>",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "execution_outcomes",
+    "column_name": "index_in_chunk",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "execution_outcomes",
+    "column_name": "gas_burnt",
+    "data_type": "FLOAT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "execution_outcomes",
+    "column_name": "tokens_burnt",
+    "data_type": "FLOAT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "execution_outcomes",
+    "column_name": "executor_account_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "execution_outcomes",
+    "column_name": "status",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "execution_outcomes",
+    "column_name": "logs",
+    "data_type": "STRUCT<list ARRAY<STRUCT<element STRING>>>",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "ft_balances_daily",
+    "column_name": "epoch_date",
+    "data_type": "DATE",
+    "is_partitioning_column": "YES"
+   },
+   {
+    "table_name": "ft_balances_daily",
+    "column_name": "epoch_block_height",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "ft_balances_daily",
+    "column_name": "account_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "ft_balances_daily",
+    "column_name": "liquid",
+    "data_type": "FLOAT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "ft_balances_daily",
+    "column_name": "storage_usage",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "ft_balances_daily",
+    "column_name": "unstaked_not_liquid",
+    "data_type": "FLOAT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "ft_balances_daily",
+    "column_name": "staked",
+    "data_type": "FLOAT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "ft_balances_daily",
+    "column_name": "reward",
+    "data_type": "FLOAT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "ft_balances_daily",
+    "column_name": "lockup_account_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "ft_balances_daily",
+    "column_name": "lockup_liquid",
+    "data_type": "FLOAT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "ft_balances_daily",
+    "column_name": "lockup_unstaked_not_liquid",
+    "data_type": "FLOAT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "ft_balances_daily",
+    "column_name": "lockup_staked",
+    "data_type": "FLOAT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "ft_balances_daily",
+    "column_name": "lockup_reward",
+    "data_type": "FLOAT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "ft_events",
+    "column_name": "block_date",
+    "data_type": "DATE",
+    "is_partitioning_column": "YES"
+   },
+   {
+    "table_name": "ft_events",
+    "column_name": "block_height",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "ft_events",
+    "column_name": "block_timestamp",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "ft_events",
+    "column_name": "block_timestamp_utc",
+    "data_type": "TIMESTAMP",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "ft_events",
+    "column_name": "block_hash",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "ft_events",
+    "column_name": "chunk_hash",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "ft_events",
+    "column_name": "shard_id",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "ft_events",
+    "column_name": "standard",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "ft_events",
+    "column_name": "receipt_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "ft_events",
+    "column_name": "contract_account_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "ft_events",
+    "column_name": "affected_account_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "ft_events",
+    "column_name": "involved_account_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "ft_events",
+    "column_name": "delta_amount",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "ft_events",
+    "column_name": "cause",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "ft_events",
+    "column_name": "status",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "ft_events",
+    "column_name": "event_memo",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "ft_events",
+    "column_name": "event_index",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "ft_events",
+    "column_name": "token_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "ft_events_contracts_by_account",
+    "column_name": "affected_account_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "ft_events_contracts_by_account",
+    "column_name": "contract_account_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "nft_events",
+    "column_name": "block_date",
+    "data_type": "DATE",
+    "is_partitioning_column": "YES"
+   },
+   {
+    "table_name": "nft_events",
+    "column_name": "block_height",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "nft_events",
+    "column_name": "block_timestamp",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "nft_events",
+    "column_name": "block_timestamp_utc",
+    "data_type": "TIMESTAMP",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "nft_events",
+    "column_name": "block_hash",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "nft_events",
+    "column_name": "chunk_hash",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "nft_events",
+    "column_name": "shard_id",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "nft_events",
+    "column_name": "standard",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "nft_events",
+    "column_name": "receipt_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "nft_events",
+    "column_name": "contract_account_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "nft_events",
+    "column_name": "token_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "nft_events",
+    "column_name": "old_owner_account_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "nft_events",
+    "column_name": "new_owner_account_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "nft_events",
+    "column_name": "authorized_account_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "nft_events",
+    "column_name": "cause",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "nft_events",
+    "column_name": "status",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "nft_events",
+    "column_name": "event_memo",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "nft_events",
+    "column_name": "event_index",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "nft_events_contracts_by_account",
+    "column_name": "old_owner_account_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "nft_events_contracts_by_account",
+    "column_name": "new_owner_account_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "nft_events_contracts_by_account",
+    "column_name": "contract_account_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_actions",
+    "column_name": "block_date",
+    "data_type": "DATE",
+    "is_partitioning_column": "YES"
+   },
+   {
+    "table_name": "receipt_actions",
+    "column_name": "block_height",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_actions",
+    "column_name": "block_timestamp",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_actions",
+    "column_name": "block_timestamp_utc",
+    "data_type": "TIMESTAMP",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_actions",
+    "column_name": "block_hash",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_actions",
+    "column_name": "chunk_hash",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_actions",
+    "column_name": "shard_id",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_actions",
+    "column_name": "index_in_action_receipt",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_actions",
+    "column_name": "receipt_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_actions",
+    "column_name": "gas_price",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_actions",
+    "column_name": "signer_account_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_actions",
+    "column_name": "signer_public_key",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_actions",
+    "column_name": "args",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_actions",
+    "column_name": "receipt_predecessor_account_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_actions",
+    "column_name": "action_kind",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_actions",
+    "column_name": "receipt_receiver_account_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_actions",
+    "column_name": "is_delegate_action",
+    "data_type": "BOOL",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_details",
+    "column_name": "block_date",
+    "data_type": "DATE",
+    "is_partitioning_column": "YES"
+   },
+   {
+    "table_name": "receipt_details",
+    "column_name": "block_height",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_details",
+    "column_name": "block_timestamp",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_details",
+    "column_name": "block_timestamp_utc",
+    "data_type": "TIMESTAMP",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_details",
+    "column_name": "block_hash",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_details",
+    "column_name": "chunk_hash",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_details",
+    "column_name": "shard_id",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_details",
+    "column_name": "index_in_chunk",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_details",
+    "column_name": "receipt_kind",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_details",
+    "column_name": "receipt_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_details",
+    "column_name": "data_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_details",
+    "column_name": "predecessor_account_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_details",
+    "column_name": "receiver_account_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_details",
+    "column_name": "receipt",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_origin_transaction",
+    "column_name": "block_date",
+    "data_type": "DATE",
+    "is_partitioning_column": "YES"
+   },
+   {
+    "table_name": "receipt_origin_transaction",
+    "column_name": "block_height",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_origin_transaction",
+    "column_name": "receipt_kind",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_origin_transaction",
+    "column_name": "receipt_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_origin_transaction",
+    "column_name": "data_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_origin_transaction",
+    "column_name": "originated_from_transaction_hash",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "receipt_origin_transaction",
+    "column_name": "_record_last_updated_utc",
+    "data_type": "TIMESTAMP",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "transaction_actions",
+    "column_name": "block_date",
+    "data_type": "DATE",
+    "is_partitioning_column": "YES"
+   },
+   {
+    "table_name": "transaction_actions",
+    "column_name": "block_height",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "transaction_actions",
+    "column_name": "block_timestamp",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "transaction_actions",
+    "column_name": "block_timestamp_utc",
+    "data_type": "TIMESTAMP",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "transaction_actions",
+    "column_name": "transaction_hash",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "transaction_actions",
+    "column_name": "transaction_status",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "transaction_actions",
+    "column_name": "converted_into_receipt_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "transaction_actions",
+    "column_name": "signer_account_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "transaction_actions",
+    "column_name": "signer_public_key",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "transaction_actions",
+    "column_name": "receiver_account_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "transaction_actions",
+    "column_name": "index_in_transaction",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "transaction_actions",
+    "column_name": "action_kind",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "transaction_actions",
+    "column_name": "args",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "transactions",
+    "column_name": "block_date",
+    "data_type": "DATE",
+    "is_partitioning_column": "YES"
+   },
+   {
+    "table_name": "transactions",
+    "column_name": "block_height",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "transactions",
+    "column_name": "block_timestamp",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "transactions",
+    "column_name": "block_timestamp_utc",
+    "data_type": "TIMESTAMP",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "transactions",
+    "column_name": "block_hash",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "transactions",
+    "column_name": "chunk_hash",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "transactions",
+    "column_name": "shard_id",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "transactions",
+    "column_name": "transaction_hash",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "transactions",
+    "column_name": "index_in_chunk",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "transactions",
+    "column_name": "signer_account_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "transactions",
+    "column_name": "signer_public_key",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "transactions",
+    "column_name": "nonce",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "transactions",
+    "column_name": "receiver_account_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "transactions",
+    "column_name": "signature",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "transactions",
+    "column_name": "status",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "transactions",
+    "column_name": "converted_into_receipt_id",
+    "data_type": "STRING",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "transactions",
+    "column_name": "receipt_conversion_gas_burnt",
+    "data_type": "INT64",
+    "is_partitioning_column": "NO"
+   },
+   {
+    "table_name": "transactions",
+    "column_name": "receipt_conversion_tokens_burnt",
+    "data_type": "FLOAT64",
+    "is_partitioning_column": "NO"
+   }
+  ]
+ },
+ {
+  "label": "Q1c freshness transactions",
+  "sql": "SELECT MAX(block_date) AS max_block_date FROM `bigquery-public-data.crypto_near_mainnet_us.transactions` WHERE block_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 60 DAY)",
+  "dry_run_bytes": 366931856,
+  "dry_run_gb": 0.3669,
+  "est_cost_usd_on_demand": 0.0023,
+  "status": "OK",
+  "bytes_billed": 367001600,
+  "rows_returned": 1,
+  "rows": [
+   {
+    "max_block_date": "2026-11-02"
+   }
+  ]
+ },
+ {
+  "label": "Q1c freshness receipt_actions",
+  "sql": "SELECT MAX(block_date) AS max_block_date FROM `bigquery-public-data.crypto_near_mainnet_us.receipt_actions` WHERE block_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 60 DAY)",
+  "dry_run_bytes": 2418662752,
+  "dry_run_gb": 2.4187,
+  "est_cost_usd_on_demand": 0.0151,
+  "status": "OK",
+  "bytes_billed": 2419064832,
+  "rows_returned": 1,
+  "rows": [
+   {
+    "max_block_date": "2026-11-02"
+   }
+  ]
+ }
+]

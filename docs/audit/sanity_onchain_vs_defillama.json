@@ -1,0 +1,26 @@
+{
+ "purpose": "order-of-magnitude sanity check for Gate 1, NOT a reconciliation (F3)",
+ "window": [
+  "2026-10-03",
+  "2026-11-01"
+ ],
+ "onchain_inflow_near_buybacks_plus_fefunds_positive_daily_balance_deltas": 431566.9,
+ "onchain_inflow_usd_at_daily_mean_coingecko_price": 2096410,
+ "defillama_dailyRevenue_usd_same_window": 2063429,
+ "ratio_onchain_usd_over_defillama": 1.016,
+ "coingecko": {
+  "endpoint": "https://api.coingecko.com/api/v3/coins/near/market_chart/range?vs_currency=usd&from=2026-10-01&to=2026-11-02",
+  "key_used": false,
+  "points": 769,
+  "first_utc": "2026-10-01T00:00:00+00:00",
+  "last_utc": "2026-11-02T00:00:00+00:00",
+  "granularity": "hourly (range <= 90 days)",
+  "fields": [
+   "prices",
+   "market_caps",
+   "total_volumes"
+  ],
+  "sha256_raw": "3ea9aca8e2b0ec601a716db99cf4b61173c2344da0c03515acd705f7bbe60c90",
+  "mean_daily_price_usd_window": 4.869
+ }
+}

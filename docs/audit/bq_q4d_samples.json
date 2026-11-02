@@ -1,0 +1,122 @@
+[
+ {
+  "label": "Q4d sample TRANSFER receipts from intents.near (2 days)",
+  "sql": "SELECT block_date, block_timestamp_utc, receipt_id, receipt_predecessor_account_id, receipt_receiver_account_id, action_kind, args FROM `bigquery-public-data.crypto_near_mainnet_us.receipt_actions` WHERE block_date BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 3 DAY) AND DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY) AND receipt_receiver_account_id IN ('fefundsadmin.sputnik-dao.near','buybacks.multisignature.near') AND receipt_predecessor_account_id = 'intents.near' ORDER BY block_timestamp_utc DESC LIMIT 12",
+  "dry_run_bytes": 5191216923,
+  "dry_run_gb": 5.1912,
+  "est_cost_usd_on_demand": 0.0324,
+  "status": "OK",
+  "bytes_billed": 5191499776,
+  "rows_returned": 12,
+  "rows": [
+   {
+    "block_date": "2026-10-31",
+    "block_timestamp_utc": "2026-10-31 23:46:53.718587+00:00",
+    "receipt_id": "HUY193r5L8c2zYxpdUM5PzegxD9svRrMbLz1LE5a5rGU",
+    "receipt_predecessor_account_id": "intents.near",
+    "receipt_receiver_account_id": "buybacks.multisignature.near",
+    "action_kind": "TRANSFER",
+    "args": "{\"deposit\":\"246972601810563721561805547\"}"
+   },
+   {
+    "block_date": "2026-10-31",
+    "block_timestamp_utc": "2026-10-31 22:16:13.851371+00:00",
+    "receipt_id": "F98aDrq5zP8z3GrRty6KtwBR75PqyuxsopaUnGWUeCo7",
+    "receipt_predecessor_account_id": "intents.near",
+    "receipt_receiver_account_id": "fefundsadmin.sputnik-dao.near",
+    "action_kind": "TRANSFER",
+    "args": "{\"deposit\":\"228108301086524260909833128\"}"
+   },
+   {
+    "block_date": "2026-10-31",
+    "block_timestamp_utc": "2026-10-31 22:08:23.951703+00:00",
+    "receipt_id": "4PLSH6a5yUDhuWTNnm11GN1ZcNp8hjjsicS8hpnR1Q5p",
+    "receipt_predecessor_account_id": "intents.near",
+    "receipt_receiver_account_id": "buybacks.multisignature.near",
+    "action_kind": "TRANSFER",
+    "args": "{\"deposit\":\"226834706035559589942299690\"}"
+   },
+   {
+    "block_date": "2026-10-31",
+    "block_timestamp_utc": "2026-10-31 20:57:02.528577+00:00",
+    "receipt_id": "C81yEfpKDxukLGxLw1DmEx18PTHt4V7XN4EVZzXCPYm3",
+    "receipt_predecessor_account_id": "intents.near",
+    "receipt_receiver_account_id": "buybacks.multisignature.near",
+    "action_kind": "TRANSFER",
+    "args": "{\"deposit\":\"264692481840442534823502339\"}"
+   },
+   {
+    "block_date": "2026-10-31",
+    "block_timestamp_utc": "2026-10-31 20:46:11.130574+00:00",
+    "receipt_id": "9xfXzVNmMh7uDB9NnXdNDo7PpQP5uu8xCnQ1c8NxdRH5",
+    "receipt_predecessor_account_id": "intents.near",
+    "receipt_receiver_account_id": "fefundsadmin.sputnik-dao.near",
+    "action_kind": "TRANSFER",
+    "args": "{\"deposit\":\"238317331072459260535013325\"}"
+   },
+   {
+    "block_date": "2026-10-31",
+    "block_timestamp_utc": "2026-10-31 20:16:59.261121+00:00",
+    "receipt_id": "J6QBVmrFYaG41gGDs8ouimgprB4EmT1puzWJioZVGa5n",
+    "receipt_predecessor_account_id": "intents.near",
+    "receipt_receiver_account_id": "buybacks.multisignature.near",
+    "action_kind": "TRANSFER",
+    "args": "{\"deposit\":\"321889000242696490476608890\"}"
+   },
+   {
+    "block_date": "2026-10-31",
+    "block_timestamp_utc": "2026-10-31 19:53:12.355379+00:00",
+    "receipt_id": "s2nUZEjCRT5ukyJst4917Rr9CXFE9BERTXgH7YQr3ux",
+    "receipt_predecessor_account_id": "intents.near",
+    "receipt_receiver_account_id": "buybacks.multisignature.near",
+    "action_kind": "TRANSFER",
+    "args": "{\"deposit\":\"280613970605825540533683717\"}"
+   },
+   {
+    "block_date": "2026-10-31",
+    "block_timestamp_utc": "2026-10-31 19:26:12.158423+00:00",
+    "receipt_id": "3thkdv7cmwUwoYnmWyQytVewYvqgDEouxeqXPjadd4Ba",
+    "receipt_predecessor_account_id": "intents.near",
+    "receipt_receiver_account_id": "fefundsadmin.sputnik-dao.near",
+    "action_kind": "TRANSFER",
+    "args": "{\"deposit\":\"234406316679109184872441903\"}"
+   },
+   {
+    "block_date": "2026-10-31",
+    "block_timestamp_utc": "2026-10-31 18:23:02.634286+00:00",
+    "receipt_id": "DgqxenesvghckYK8n1kduYsAWgexdZ8LSe7sGhPNtZ8D",
+    "receipt_predecessor_account_id": "intents.near",
+    "receipt_receiver_account_id": "buybacks.multisignature.near",
+    "action_kind": "TRANSFER",
+    "args": "{\"deposit\":\"597505775578795604726232062\"}"
+   },
+   {
+    "block_date": "2026-10-31",
+    "block_timestamp_utc": "2026-10-31 17:54:23.410865+00:00",
+    "receipt_id": "CtuRmHJRYvPvLHifHzXTjqGrnTsUJBbveFr5ww1Qytvp",
+    "receipt_predecessor_account_id": "intents.near",
+    "receipt_receiver_account_id": "buybacks.multisignature.near",
+    "action_kind": "TRANSFER",
+    "args": "{\"deposit\":\"223005821796806430088097151\"}"
+   },
+   {
+    "block_date": "2026-10-31",
+    "block_timestamp_utc": "2026-10-31 16:53:27.824546+00:00",
+    "receipt_id": "DApPnPtywz7CSLU3K5t4bgXUEziJwpUJneWeNXkm3bcG",
+    "receipt_predecessor_account_id": "intents.near",
+    "receipt_receiver_account_id": "buybacks.multisignature.near",
+    "action_kind": "TRANSFER",
+    "args": "{\"deposit\":\"490478733736475450985816094\"}"
+   },
+   {
+    "block_date": "2026-10-31",
+    "block_timestamp_utc": "2026-10-31 15:22:44.620421+00:00",
+    "receipt_id": "8vHwtbuT7kFefFj6J8TMZxFSGSKiZwJUszG2SqtM3HuK",
+    "receipt_predecessor_account_id": "intents.near",
+    "receipt_receiver_account_id": "buybacks.multisignature.near",
+    "action_kind": "TRANSFER",
+    "args": "{\"deposit\":\"394734724890200123910773332\"}"
+   }
+  ]
+ }
+]

@@ -1,0 +1,163 @@
+[
+ {
+  "label": "Q3 top FUNCTION_CALL receivers 7d",
+  "sql": "SELECT receipt_receiver_account_id, COUNT(*) AS n_receipts FROM `bigquery-public-data.crypto_near_mainnet_us.receipt_actions` WHERE block_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY) AND action_kind = 'FUNCTION_CALL' GROUP BY 1 ORDER BY n_receipts DESC LIMIT 20",
+  "dry_run_bytes": 994529078,
+  "dry_run_gb": 0.9945,
+  "est_cost_usd_on_demand": 0.0062,
+  "status": "OK",
+  "bytes_billed": 995098624,
+  "rows_returned": 20,
+  "rows": [
+   {
+    "receipt_receiver_account_id": "token.sweat",
+    "n_receipts": 1060264
+   },
+   {
+    "receipt_receiver_account_id": "intents.near",
+    "n_receipts": 914323
+   },
+   {
+    "receipt_receiver_account_id": "wrap.near",
+    "n_receipts": 673943
+   },
+   {
+    "receipt_receiver_account_id": "game.hot.tg",
+    "n_receipts": 640008
+   },
+   {
+    "receipt_receiver_account_id": "dclv2.ref-labs.near",
+    "n_receipts": 606576
+   },
+   {
+    "receipt_receiver_account_id": "17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1",
+    "n_receipts": 508783
+   },
+   {
+    "receipt_receiver_account_id": "v2.ref-finance.near",
+    "n_receipts": 480201
+   },
+   {
+    "receipt_receiver_account_id": "v2.jars.sweat",
+    "n_receipts": 475219
+   },
+   {
+    "receipt_receiver_account_id": "claim.sweat",
+    "n_receipts": 409571
+   },
+   {
+    "receipt_receiver_account_id": "omni.bridge.near",
+    "n_receipts": 315102
+   },
+   {
+    "receipt_receiver_account_id": "v1.signer",
+    "n_receipts": 312041
+   },
+   {
+    "receipt_receiver_account_id": "aggregate-oracle.near",
+    "n_receipts": 204541
+   },
+   {
+    "receipt_receiver_account_id": "sol.omft.near",
+    "n_receipts": 188712
+   },
+   {
+    "receipt_receiver_account_id": "aa-harvest-moon.near",
+    "n_receipts": 170745
+   },
+   {
+    "receipt_receiver_account_id": "stader-labs.near",
+    "n_receipts": 159016
+   },
+   {
+    "receipt_receiver_account_id": "vaa-prover-0_4_13.bridge.near",
+    "n_receipts": 128154
+   },
+   {
+    "receipt_receiver_account_id": "btc-connector.bridge.near",
+    "n_receipts": 92586
+   },
+   {
+    "receipt_receiver_account_id": "fast-auth.near",
+    "n_receipts": 88321
+   },
+   {
+    "receipt_receiver_account_id": "omft.near",
+    "n_receipts": 83597
+   },
+   {
+    "receipt_receiver_account_id": "meteor.poolv1.near",
+    "n_receipts": 82683
+   }
+  ]
+ },
+ {
+  "label": "Q2 circulating_supply latest",
+  "sql": "SELECT block_date, computed_at_block_height, circulating_tokens_supply, total_tokens_supply FROM `bigquery-public-data.crypto_near_mainnet_us.circulating_supply` ORDER BY block_date DESC LIMIT 5",
+  "dry_run_bytes": 44864,
+  "dry_run_gb": 0.0,
+  "est_cost_usd_on_demand": 0.0,
+  "status": "OK",
+  "bytes_billed": 10485760,
+  "rows_returned": 5,
+  "rows": [
+   {
+    "block_date": "2026-11-01",
+    "computed_at_block_height": 222640687,
+    "circulating_tokens_supply": 1.3084108670987034e+33,
+    "total_tokens_supply": 1.3105760281832879e+33
+   },
+   {
+    "block_date": "2026-10-31",
+    "computed_at_block_height": 222490835,
+    "circulating_tokens_supply": 1.3083008656713554e+33,
+    "total_tokens_supply": 1.3104729774673259e+33
+   },
+   {
+    "block_date": "2026-10-30",
+    "computed_at_block_height": 222342629,
+    "circulating_tokens_supply": 1.3082163441575707e+33,
+    "total_tokens_supply": 1.3103954066510462e+33
+   },
+   {
+    "block_date": "2026-10-29",
+    "computed_at_block_height": 222194439,
+    "circulating_tokens_supply": 1.3081316782561472e+33,
+    "total_tokens_supply": 1.3103176913268957e+33
+   },
+   {
+    "block_date": "2026-10-28",
+    "computed_at_block_height": 222046652,
+    "circulating_tokens_supply": 1.308020887169517e+33,
+    "total_tokens_supply": 1.3102138509458594e+33
+   }
+  ]
+ },
+ {
+  "label": "Q2 blocks.total_supply units (latest block)",
+  "sql": "SELECT block_date, block_height, total_supply, gas_price FROM `bigquery-public-data.crypto_near_mainnet_us.blocks` WHERE block_date = DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY) ORDER BY block_height DESC LIMIT 1",
+  "dry_run_bytes": 4794688,
+  "dry_run_gb": 0.0048,
+  "est_cost_usd_on_demand": 0.0,
+  "status": "OK",
+  "bytes_billed": 10485760,
+  "rows_returned": 1,
+  "rows": [
+   {
+    "block_date": "2026-11-01",
+    "block_height": 222641209,
+    "total_supply": 1.3105760263527385e+33,
+    "gas_price": 100000000.0
+   }
+  ]
+ },
+ {
+  "label": "Q4 accounts LIKE fundsadmin 30d",
+  "sql": "SELECT DISTINCT account_id FROM `bigquery-public-data.crypto_near_mainnet_us.accounts` WHERE block_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY) AND account_id LIKE '%fundsadmin%'",
+  "dry_run_bytes": 1128737042045,
+  "dry_run_gb": 1128.737,
+  "est_cost_usd_on_demand": 7.0546,
+  "status": "SKIPPED: dry-run bytes exceed BQ_MAX_BYTES",
+  "rows": null
+ }
+]

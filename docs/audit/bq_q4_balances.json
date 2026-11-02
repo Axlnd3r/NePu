@@ -1,0 +1,4094 @@
+[
+ {
+  "label": "A account_changes wallets, 30d",
+  "sql": "SELECT block_date, affected_account_id, update_reason, affected_account_nonstaked_balance FROM `bigquery-public-data.crypto_near_mainnet_us.account_changes` WHERE block_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY) AND affected_account_id IN ('fefundsadmin.sputnik-dao.near','1csfundsadmin.sputnik-dao.near','buybacks.multisignature.near')",
+  "dry_run_bytes": 14626730787
+ },
+ {
+  "label": "A account_changes wallets, since 2025-05-10",
+  "sql": "SELECT block_date, affected_account_id, update_reason, affected_account_nonstaked_balance FROM `bigquery-public-data.crypto_near_mainnet_us.account_changes` WHERE block_date >= DATE '2025-05-10' AND affected_account_id IN ('fefundsadmin.sputnik-dao.near','1csfundsadmin.sputnik-dao.near','buybacks.multisignature.near')",
+  "dry_run_bytes": 699436157542
+ },
+ {
+  "label": "B ft_balances_daily wallets since 2025-05-10",
+  "sql": "SELECT epoch_date, account_id, liquid FROM `bigquery-public-data.crypto_near_mainnet_us.ft_balances_daily` WHERE epoch_date >= DATE '2025-05-10' AND account_id IN ('fefundsadmin.sputnik-dao.near','1csfundsadmin.sputnik-dao.near','buybacks.multisignature.near') ORDER BY account_id, epoch_date",
+  "dry_run_bytes": 977390990,
+  "dry_run_gb": 0.9774,
+  "est_cost_usd_on_demand": 0.0061,
+  "status": "OK",
+  "bytes_billed": 978321408,
+  "rows_returned": 814,
+  "rows": [
+   {
+    "epoch_date": "2026-02-03",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 13694.880431470205
+   },
+   {
+    "epoch_date": "2026-02-04",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 25444.80856495895
+   },
+   {
+    "epoch_date": "2026-02-05",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 33695.38483765615
+   },
+   {
+    "epoch_date": "2026-02-06",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 43643.132528680435
+   },
+   {
+    "epoch_date": "2026-02-07",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 45629.4379981693
+   },
+   {
+    "epoch_date": "2026-02-08",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 48023.70284251336
+   },
+   {
+    "epoch_date": "2026-02-09",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 57342.03822828462
+   },
+   {
+    "epoch_date": "2026-02-10",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 65708.64443138786
+   },
+   {
+    "epoch_date": "2026-02-11",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 76771.95502641198
+   },
+   {
+    "epoch_date": "2026-02-12",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 88529.5953845205
+   },
+   {
+    "epoch_date": "2026-02-13",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 96469.39953101019
+   },
+   {
+    "epoch_date": "2026-02-14",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 104214.15903444172
+   },
+   {
+    "epoch_date": "2026-02-15",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 114201.17660428905
+   },
+   {
+    "epoch_date": "2026-02-16",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 115334.84729020875
+   },
+   {
+    "epoch_date": "2026-02-17",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 116317.99585082856
+   },
+   {
+    "epoch_date": "2026-02-18",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 118265.23294949056
+   },
+   {
+    "epoch_date": "2026-02-19",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 119426.95211974054
+   },
+   {
+    "epoch_date": "2026-02-20",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 120406.89058653993
+   },
+   {
+    "epoch_date": "2026-02-21",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 121642.95036178264
+   },
+   {
+    "epoch_date": "2026-02-22",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 123021.08126738374
+   },
+   {
+    "epoch_date": "2026-02-23",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 129428.82223887858
+   },
+   {
+    "epoch_date": "2026-02-24",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 137754.58691992736
+   },
+   {
+    "epoch_date": "2026-02-25",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 149721.95679591273
+   },
+   {
+    "epoch_date": "2026-02-26",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 171158.41817002447
+   },
+   {
+    "epoch_date": "2026-02-27",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 181918.3910590139
+   },
+   {
+    "epoch_date": "2026-02-28",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 182977.2166948638
+   },
+   {
+    "epoch_date": "2026-03-01",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 187486.50700895904
+   },
+   {
+    "epoch_date": "2026-03-02",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 201376.24791271996
+   },
+   {
+    "epoch_date": "2026-03-03",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 215446.97386292534
+   },
+   {
+    "epoch_date": "2026-03-04",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 219168.3864535836
+   },
+   {
+    "epoch_date": "2026-03-05",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 220737.64165351156
+   },
+   {
+    "epoch_date": "2026-03-06",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 223632.15349529858
+   },
+   {
+    "epoch_date": "2026-03-07",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 230778.58086056286
+   },
+   {
+    "epoch_date": "2026-03-08",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 234219.39266662314
+   },
+   {
+    "epoch_date": "2026-03-09",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 236858.04012024755
+   },
+   {
+    "epoch_date": "2026-03-10",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 244702.77723900627
+   },
+   {
+    "epoch_date": "2026-03-11",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 253324.74616752885
+   },
+   {
+    "epoch_date": "2026-03-12",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 258759.79654636013
+   },
+   {
+    "epoch_date": "2026-03-13",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 274313.56058421195
+   },
+   {
+    "epoch_date": "2026-03-14",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 278435.5256203943
+   },
+   {
+    "epoch_date": "2026-03-15",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 286566.1047381955
+   },
+   {
+    "epoch_date": "2026-03-16",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 296008.16630650393
+   },
+   {
+    "epoch_date": "2026-03-17",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 303014.4019143585
+   },
+   {
+    "epoch_date": "2026-03-18",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 311508.2440199433
+   },
+   {
+    "epoch_date": "2026-03-19",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 320274.93181769835
+   },
+   {
+    "epoch_date": "2026-03-20",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 326184.48836314335
+   },
+   {
+    "epoch_date": "2026-03-21",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 332379.5729852426
+   },
+   {
+    "epoch_date": "2026-03-22",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 336831.35470726626
+   },
+   {
+    "epoch_date": "2026-03-23",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 348793.92512133805
+   },
+   {
+    "epoch_date": "2026-03-24",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 353810.0489884577
+   },
+   {
+    "epoch_date": "2026-03-25",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 360418.371484459
+   },
+   {
+    "epoch_date": "2026-03-26",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 366138.7255901517
+   },
+   {
+    "epoch_date": "2026-03-27",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 375000.02526372095
+   },
+   {
+    "epoch_date": "2026-03-28",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 382115.02197831305
+   },
+   {
+    "epoch_date": "2026-03-29",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 385747.9874288152
+   },
+   {
+    "epoch_date": "2026-03-30",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 392872.9511366086
+   },
+   {
+    "epoch_date": "2026-03-31",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 404445.89813489234
+   },
+   {
+    "epoch_date": "2026-04-01",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 413084.2920227911
+   },
+   {
+    "epoch_date": "2026-04-02",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 422711.6758654716
+   },
+   {
+    "epoch_date": "2026-04-03",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 428977.28637712967
+   },
+   {
+    "epoch_date": "2026-04-04",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 431709.96483167855
+   },
+   {
+    "epoch_date": "2026-04-05",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 435087.18151638185
+   },
+   {
+    "epoch_date": "2026-04-06",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 441463.3602272663
+   },
+   {
+    "epoch_date": "2026-04-07",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 448651.48821931466
+   },
+   {
+    "epoch_date": "2026-04-08",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 458441.73680478113
+   },
+   {
+    "epoch_date": "2026-04-09",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 465716.3251813343
+   },
+   {
+    "epoch_date": "2026-04-10",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 473714.6317952536
+   },
+   {
+    "epoch_date": "2026-04-11",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 475244.8293600694
+   },
+   {
+    "epoch_date": "2026-04-12",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 481032.1427597635
+   },
+   {
+    "epoch_date": "2026-04-13",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 492757.53261077945
+   },
+   {
+    "epoch_date": "2026-04-14",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 500373.05897237547
+   },
+   {
+    "epoch_date": "2026-04-15",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 507698.8556522212
+   },
+   {
+    "epoch_date": "2026-04-16",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 509272.84996371047
+   },
+   {
+    "epoch_date": "2026-04-21",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 536987.6797848654
+   },
+   {
+    "epoch_date": "2026-04-22",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 491977.7177233078
+   },
+   {
+    "epoch_date": "2026-04-23",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-04-24",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-04-25",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-04-26",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-04-27",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-04-28",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-04-29",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-04-30",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-05-01",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-05-02",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-05-03",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-05-04",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-05-05",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-05-06",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-05-07",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-05-08",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-05-09",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-05-10",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-05-11",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-05-12",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-05-13",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-05-14",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-05-15",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-05-16",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-05-17",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-05-18",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-05-19",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-05-20",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-05-21",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-05-22",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-05-23",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-05-24",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-05-25",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-05-26",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-05-27",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-05-28",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-05-29",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-05-30",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-05-31",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-06-01",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-06-02",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-06-03",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-06-04",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-06-05",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-06-06",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-06-07",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-06-08",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-06-09",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-06-10",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-06-11",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-06-12",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-06-13",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-06-14",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-06-15",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-06-16",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-06-17",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-06-18",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-06-19",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-06-20",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-06-21",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-06-22",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-06-23",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-06-24",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-06-25",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-06-26",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-06-27",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-06-28",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-06-29",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-06-30",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-07-01",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-07-02",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-07-03",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-07-04",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-07-05",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-07-06",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-07-07",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-07-08",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-07-09",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510072.904032798
+   },
+   {
+    "epoch_date": "2026-07-10",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510073.138050101
+   },
+   {
+    "epoch_date": "2026-07-11",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510073.138050101
+   },
+   {
+    "epoch_date": "2026-07-12",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510073.138050101
+   },
+   {
+    "epoch_date": "2026-07-13",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 510073.138050101
+   },
+   {
+    "epoch_date": "2026-07-14",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-07-15",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-07-16",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-07-17",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-07-18",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-07-19",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-07-20",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-07-21",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-07-22",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-07-23",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-07-24",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-07-25",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-07-26",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-07-27",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-07-28",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-07-29",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-07-30",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-07-31",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-08-01",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-08-02",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-08-03",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-08-04",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-08-05",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-08-06",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-08-07",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-08-08",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-08-09",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-08-10",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-08-11",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-08-12",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-08-13",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-08-14",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-08-15",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-08-16",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-08-17",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-08-18",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-08-19",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-08-20",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-08-21",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-08-22",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-08-23",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-08-24",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-08-25",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-08-26",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502798.9385260001
+   },
+   {
+    "epoch_date": "2026-08-27",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502799.2503269973
+   },
+   {
+    "epoch_date": "2026-08-28",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502799.25058726786
+   },
+   {
+    "epoch_date": "2026-08-29",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502799.25058726786
+   },
+   {
+    "epoch_date": "2026-08-30",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502799.25058726786
+   },
+   {
+    "epoch_date": "2026-08-31",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502799.25058726786
+   },
+   {
+    "epoch_date": "2026-09-01",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502799.25058726786
+   },
+   {
+    "epoch_date": "2026-09-02",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502799.25058726786
+   },
+   {
+    "epoch_date": "2026-09-03",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502799.25058726786
+   },
+   {
+    "epoch_date": "2026-09-04",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502799.25058726786
+   },
+   {
+    "epoch_date": "2026-09-05",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502799.25058726786
+   },
+   {
+    "epoch_date": "2026-09-06",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502799.25058726786
+   },
+   {
+    "epoch_date": "2026-09-07",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502799.25058726786
+   },
+   {
+    "epoch_date": "2026-09-08",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 502799.25058726786
+   },
+   {
+    "epoch_date": "2026-09-09",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 7.669830931317124
+   },
+   {
+    "epoch_date": "2026-09-10",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 7.669830931317124
+   },
+   {
+    "epoch_date": "2026-09-11",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 7.669830931317124
+   },
+   {
+    "epoch_date": "2026-09-12",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 7.669830931317124
+   },
+   {
+    "epoch_date": "2026-09-13",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 7.669830931317124
+   },
+   {
+    "epoch_date": "2026-09-14",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 7.669830931317124
+   },
+   {
+    "epoch_date": "2026-09-15",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 7.669830931317124
+   },
+   {
+    "epoch_date": "2026-09-16",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 7.669830931317124
+   },
+   {
+    "epoch_date": "2026-09-17",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 7.669830931317124
+   },
+   {
+    "epoch_date": "2026-09-18",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 7.669830931317124
+   },
+   {
+    "epoch_date": "2026-09-19",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.7768352524309
+   },
+   {
+    "epoch_date": "2026-09-20",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.7768352524309
+   },
+   {
+    "epoch_date": "2026-09-21",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.7768352524309
+   },
+   {
+    "epoch_date": "2026-09-22",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.7768352524309
+   },
+   {
+    "epoch_date": "2026-09-23",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.7768352524309
+   },
+   {
+    "epoch_date": "2026-09-24",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.7768352524309
+   },
+   {
+    "epoch_date": "2026-09-25",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.7768352524309
+   },
+   {
+    "epoch_date": "2026-09-26",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-09-27",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-09-28",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-09-29",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-09-30",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-10-01",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-10-02",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-10-03",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-10-04",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-10-05",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-10-06",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-10-07",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-10-08",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-10-09",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-10-10",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-10-11",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-10-12",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-10-13",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-10-14",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-10-15",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-10-16",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-10-17",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-10-18",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-10-19",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-10-20",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-10-21",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-10-22",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-10-23",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-10-24",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-10-25",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-10-26",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-10-27",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-10-28",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-10-29",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-10-30",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-10-31",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-11-01",
+    "account_id": "1csfundsadmin.sputnik-dao.near",
+    "liquid": 270.87589141242086
+   },
+   {
+    "epoch_date": "2026-04-26",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 11801.591002655881
+   },
+   {
+    "epoch_date": "2026-04-27",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 17674.674906870343
+   },
+   {
+    "epoch_date": "2026-04-28",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 21618.919208327203
+   },
+   {
+    "epoch_date": "2026-04-29",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 28616.96220524195
+   },
+   {
+    "epoch_date": "2026-04-30",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 34648.5527229624
+   },
+   {
+    "epoch_date": "2026-05-01",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 44137.37277006804
+   },
+   {
+    "epoch_date": "2026-05-02",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 47374.67659827016
+   },
+   {
+    "epoch_date": "2026-05-03",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 53005.618949751464
+   },
+   {
+    "epoch_date": "2026-05-04",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 59813.319057709625
+   },
+   {
+    "epoch_date": "2026-05-05",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 74232.55623786438
+   },
+   {
+    "epoch_date": "2026-05-06",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 86142.6332073954
+   },
+   {
+    "epoch_date": "2026-05-07",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 90808.83790205703
+   },
+   {
+    "epoch_date": "2026-05-08",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 96714.68198979589
+   },
+   {
+    "epoch_date": "2026-05-09",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 100173.46224068255
+   },
+   {
+    "epoch_date": "2026-05-10",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 103411.97397036574
+   },
+   {
+    "epoch_date": "2026-05-11",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 109851.55777767174
+   },
+   {
+    "epoch_date": "2026-05-12",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 115658.20846330284
+   },
+   {
+    "epoch_date": "2026-05-13",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 119876.21141060132
+   },
+   {
+    "epoch_date": "2026-05-14",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 126206.77543216645
+   },
+   {
+    "epoch_date": "2026-05-15",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 134265.44948306552
+   },
+   {
+    "epoch_date": "2026-05-16",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 141605.5540554702
+   },
+   {
+    "epoch_date": "2026-05-17",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 146161.05101891875
+   },
+   {
+    "epoch_date": "2026-05-18",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 153422.72198000402
+   },
+   {
+    "epoch_date": "2026-05-19",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 159803.2550992546
+   },
+   {
+    "epoch_date": "2026-05-20",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 165852.8710132693
+   },
+   {
+    "epoch_date": "2026-05-21",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 172822.7956675468
+   },
+   {
+    "epoch_date": "2026-05-22",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 181408.5614373539
+   },
+   {
+    "epoch_date": "2026-05-23",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 195982.75806713122
+   },
+   {
+    "epoch_date": "2026-05-24",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 202405.87168323188
+   },
+   {
+    "epoch_date": "2026-05-25",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 212345.95026346392
+   },
+   {
+    "epoch_date": "2026-05-26",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 227701.4534457593
+   },
+   {
+    "epoch_date": "2026-05-27",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 236369.1765795812
+   },
+   {
+    "epoch_date": "2026-05-28",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 240788.63493771155
+   },
+   {
+    "epoch_date": "2026-05-29",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 244755.39282015656
+   },
+   {
+    "epoch_date": "2026-05-30",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 252962.29508608996
+   },
+   {
+    "epoch_date": "2026-05-31",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 262591.09450151725
+   },
+   {
+    "epoch_date": "2026-06-01",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 271744.0836570616
+   },
+   {
+    "epoch_date": "2026-06-02",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 280643.07230755314
+   },
+   {
+    "epoch_date": "2026-06-03",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 286832.14087935915
+   },
+   {
+    "epoch_date": "2026-06-04",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 310901.01366016624
+   },
+   {
+    "epoch_date": "2026-06-05",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 359301.806817868
+   },
+   {
+    "epoch_date": "2026-06-06",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 365835.5410126165
+   },
+   {
+    "epoch_date": "2026-06-07",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 373850.9923811659
+   },
+   {
+    "epoch_date": "2026-06-08",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 380809.3434615354
+   },
+   {
+    "epoch_date": "2026-06-09",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 387748.3507357486
+   },
+   {
+    "epoch_date": "2026-06-10",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 394585.48624143517
+   },
+   {
+    "epoch_date": "2026-06-11",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 399557.22424234374
+   },
+   {
+    "epoch_date": "2026-06-12",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 407643.63302858436
+   },
+   {
+    "epoch_date": "2026-06-13",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 409312.547781211
+   },
+   {
+    "epoch_date": "2026-06-14",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 413998.7441066647
+   },
+   {
+    "epoch_date": "2026-06-15",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 422840.6383103993
+   },
+   {
+    "epoch_date": "2026-06-16",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 429142.8383967793
+   },
+   {
+    "epoch_date": "2026-06-17",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 433503.729160877
+   },
+   {
+    "epoch_date": "2026-06-18",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 437175.9563337651
+   },
+   {
+    "epoch_date": "2026-06-19",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 439778.624643291
+   },
+   {
+    "epoch_date": "2026-06-20",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 443890.3030094231
+   },
+   {
+    "epoch_date": "2026-06-21",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 446823.0942599952
+   },
+   {
+    "epoch_date": "2026-06-22",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 452969.32404079125
+   },
+   {
+    "epoch_date": "2026-06-23",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 455670.41792979225
+   },
+   {
+    "epoch_date": "2026-06-24",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 461911.76439927384
+   },
+   {
+    "epoch_date": "2026-06-25",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 466740.81431469583
+   },
+   {
+    "epoch_date": "2026-06-26",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 470978.99775974755
+   },
+   {
+    "epoch_date": "2026-06-27",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 473237.5483117281
+   },
+   {
+    "epoch_date": "2026-06-28",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 477118.2657862439
+   },
+   {
+    "epoch_date": "2026-06-29",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 481915.8505509395
+   },
+   {
+    "epoch_date": "2026-06-30",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 486474.57915967755
+   },
+   {
+    "epoch_date": "2026-07-01",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 493373.90369002725
+   },
+   {
+    "epoch_date": "2026-07-02",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 498788.15051236487
+   },
+   {
+    "epoch_date": "2026-07-03",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 504063.2697489959
+   },
+   {
+    "epoch_date": "2026-07-04",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 506850.29468171764
+   },
+   {
+    "epoch_date": "2026-07-05",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 509981.28633100656
+   },
+   {
+    "epoch_date": "2026-07-06",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 516405.66302237206
+   },
+   {
+    "epoch_date": "2026-07-07",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 523259.69759453234
+   },
+   {
+    "epoch_date": "2026-07-08",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 530963.635114763
+   },
+   {
+    "epoch_date": "2026-07-09",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 537410.9887332079
+   },
+   {
+    "epoch_date": "2026-07-10",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 531146.3449092503
+   },
+   {
+    "epoch_date": "2026-07-11",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 534003.3652735524
+   },
+   {
+    "epoch_date": "2026-07-12",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 537926.8543295957
+   },
+   {
+    "epoch_date": "2026-07-13",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 544402.3701542671
+   },
+   {
+    "epoch_date": "2026-07-14",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 558222.0587467741
+   },
+   {
+    "epoch_date": "2026-07-15",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 565022.9200211772
+   },
+   {
+    "epoch_date": "2026-07-16",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 572854.3768044017
+   },
+   {
+    "epoch_date": "2026-07-17",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 578989.3555411
+   },
+   {
+    "epoch_date": "2026-07-18",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 584381.8527786372
+   },
+   {
+    "epoch_date": "2026-07-19",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 588278.4303019188
+   },
+   {
+    "epoch_date": "2026-07-20",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 593989.5899067256
+   },
+   {
+    "epoch_date": "2026-07-21",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 601341.886285625
+   },
+   {
+    "epoch_date": "2026-07-22",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 616161.2684580641
+   },
+   {
+    "epoch_date": "2026-07-23",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 622015.7434806532
+   },
+   {
+    "epoch_date": "2026-07-24",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 625857.4366214991
+   },
+   {
+    "epoch_date": "2026-07-25",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 628918.9824958945
+   },
+   {
+    "epoch_date": "2026-07-26",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 633117.9974218818
+   },
+   {
+    "epoch_date": "2026-07-27",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 638403.4567705111
+   },
+   {
+    "epoch_date": "2026-07-28",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 644113.7878108848
+   },
+   {
+    "epoch_date": "2026-07-29",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 649820.0900333539
+   },
+   {
+    "epoch_date": "2026-07-30",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 657445.3097965629
+   },
+   {
+    "epoch_date": "2026-07-31",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 662716.1285910424
+   },
+   {
+    "epoch_date": "2026-08-01",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 668725.7589390681
+   },
+   {
+    "epoch_date": "2026-08-02",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 671232.5810250067
+   },
+   {
+    "epoch_date": "2026-08-03",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 676054.6445101699
+   },
+   {
+    "epoch_date": "2026-08-04",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 681128.9199329958
+   },
+   {
+    "epoch_date": "2026-08-05",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 688765.6846767683
+   },
+   {
+    "epoch_date": "2026-08-06",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 693263.0204349871
+   },
+   {
+    "epoch_date": "2026-08-07",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 702074.0048980226
+   },
+   {
+    "epoch_date": "2026-08-08",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 707657.2572276802
+   },
+   {
+    "epoch_date": "2026-08-09",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 713642.5395751571
+   },
+   {
+    "epoch_date": "2026-08-10",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 720349.4742488402
+   },
+   {
+    "epoch_date": "2026-08-11",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 727779.0057387643
+   },
+   {
+    "epoch_date": "2026-08-12",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 734655.2247537893
+   },
+   {
+    "epoch_date": "2026-08-13",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 739566.0929710509
+   },
+   {
+    "epoch_date": "2026-08-14",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 745300.287420095
+   },
+   {
+    "epoch_date": "2026-08-15",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 748489.5635625437
+   },
+   {
+    "epoch_date": "2026-08-16",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 751922.8241182859
+   },
+   {
+    "epoch_date": "2026-08-17",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 761874.8665542699
+   },
+   {
+    "epoch_date": "2026-08-18",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 767992.5866586976
+   },
+   {
+    "epoch_date": "2026-08-19",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 791402.8786413962
+   },
+   {
+    "epoch_date": "2026-08-20",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 808097.8407573549
+   },
+   {
+    "epoch_date": "2026-08-21",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 832164.5635746185
+   },
+   {
+    "epoch_date": "2026-08-22",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 846982.7162371926
+   },
+   {
+    "epoch_date": "2026-08-23",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 858247.4312216997
+   },
+   {
+    "epoch_date": "2026-08-24",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 873450.0426802429
+   },
+   {
+    "epoch_date": "2026-08-25",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 883412.2843151116
+   },
+   {
+    "epoch_date": "2026-08-26",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 895666.0458329583
+   },
+   {
+    "epoch_date": "2026-08-27",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 906457.1662330548
+   },
+   {
+    "epoch_date": "2026-08-28",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 916822.710026741
+   },
+   {
+    "epoch_date": "2026-08-29",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 923543.5175614436
+   },
+   {
+    "epoch_date": "2026-08-30",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 933011.5155440319
+   },
+   {
+    "epoch_date": "2026-08-31",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 940841.3352666011
+   },
+   {
+    "epoch_date": "2026-09-01",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 949702.4866061651
+   },
+   {
+    "epoch_date": "2026-09-02",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 961643.5405469903
+   },
+   {
+    "epoch_date": "2026-09-03",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 987184.3962232976
+   },
+   {
+    "epoch_date": "2026-09-04",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1022209.0556717546
+   },
+   {
+    "epoch_date": "2026-09-05",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1031612.1775864849
+   },
+   {
+    "epoch_date": "2026-09-06",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1052107.809781278
+   },
+   {
+    "epoch_date": "2026-09-07",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1060055.1693323376
+   },
+   {
+    "epoch_date": "2026-09-08",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1068049.926121874
+   },
+   {
+    "epoch_date": "2026-09-09",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1582307.487661397
+   },
+   {
+    "epoch_date": "2026-09-10",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1592590.176145491
+   },
+   {
+    "epoch_date": "2026-09-11",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1604240.272379129
+   },
+   {
+    "epoch_date": "2026-09-12",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1613881.1335760718
+   },
+   {
+    "epoch_date": "2026-09-13",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1623303.537675679
+   },
+   {
+    "epoch_date": "2026-09-14",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1633124.3038797386
+   },
+   {
+    "epoch_date": "2026-09-15",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1644486.7614417407
+   },
+   {
+    "epoch_date": "2026-09-16",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1657044.3815855093
+   },
+   {
+    "epoch_date": "2026-09-17",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1681554.2498820592
+   },
+   {
+    "epoch_date": "2026-09-18",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1705372.747628076
+   },
+   {
+    "epoch_date": "2026-09-19",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1717196.4488350647
+   },
+   {
+    "epoch_date": "2026-09-20",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1724794.7160735407
+   },
+   {
+    "epoch_date": "2026-09-21",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1742992.5984297488
+   },
+   {
+    "epoch_date": "2026-09-22",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1760301.717824408
+   },
+   {
+    "epoch_date": "2026-09-23",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1776994.9053139947
+   },
+   {
+    "epoch_date": "2026-09-24",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1788829.9407587082
+   },
+   {
+    "epoch_date": "2026-09-25",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1801649.7178927034
+   },
+   {
+    "epoch_date": "2026-09-26",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1807246.6678134224
+   },
+   {
+    "epoch_date": "2026-09-27",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1813443.511436417
+   },
+   {
+    "epoch_date": "2026-09-28",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1822893.9967350427
+   },
+   {
+    "epoch_date": "2026-09-29",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1834601.9083340315
+   },
+   {
+    "epoch_date": "2026-09-30",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1847957.216946444
+   },
+   {
+    "epoch_date": "2026-10-01",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1858577.0719640318
+   },
+   {
+    "epoch_date": "2026-10-02",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1865978.650570758
+   },
+   {
+    "epoch_date": "2026-10-03",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1869710.144071649
+   },
+   {
+    "epoch_date": "2026-10-04",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1875048.2760239432
+   },
+   {
+    "epoch_date": "2026-10-05",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1882924.6097509412
+   },
+   {
+    "epoch_date": "2026-10-06",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1890307.1983206645
+   },
+   {
+    "epoch_date": "2026-10-07",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1898065.5456929938
+   },
+   {
+    "epoch_date": "2026-10-08",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1913969.7027698809
+   },
+   {
+    "epoch_date": "2026-10-09",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1932550.6215241586
+   },
+   {
+    "epoch_date": "2026-10-10",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1941541.424418627
+   },
+   {
+    "epoch_date": "2026-10-11",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1952347.3814975603
+   },
+   {
+    "epoch_date": "2026-10-12",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1960313.7931318234
+   },
+   {
+    "epoch_date": "2026-10-13",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1967461.9546699964
+   },
+   {
+    "epoch_date": "2026-10-14",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1991343.916046627
+   },
+   {
+    "epoch_date": "2026-10-15",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 1997792.3417932459
+   },
+   {
+    "epoch_date": "2026-10-16",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 2003725.1087790998
+   },
+   {
+    "epoch_date": "2026-10-17",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 2009023.2023376701
+   },
+   {
+    "epoch_date": "2026-10-18",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 2014966.8712357897
+   },
+   {
+    "epoch_date": "2026-10-19",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 2022180.0879153663
+   },
+   {
+    "epoch_date": "2026-10-20",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 2034014.5563403668
+   },
+   {
+    "epoch_date": "2026-10-21",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 2041715.5491728573
+   },
+   {
+    "epoch_date": "2026-10-22",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 2050189.6361691207
+   },
+   {
+    "epoch_date": "2026-10-23",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 2056758.6226798974
+   },
+   {
+    "epoch_date": "2026-10-24",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 2063890.0543383725
+   },
+   {
+    "epoch_date": "2026-10-25",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 2073656.6089096754
+   },
+   {
+    "epoch_date": "2026-10-26",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 2086721.8968297876
+   },
+   {
+    "epoch_date": "2026-10-27",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 2098965.500546599
+   },
+   {
+    "epoch_date": "2026-10-28",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 2108423.316725835
+   },
+   {
+    "epoch_date": "2026-10-29",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 2124354.63006343
+   },
+   {
+    "epoch_date": "2026-10-30",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 2137353.2335751913
+   },
+   {
+    "epoch_date": "2026-10-31",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 2145322.7151635853
+   },
+   {
+    "epoch_date": "2026-11-01",
+    "account_id": "buybacks.multisignature.near",
+    "liquid": 2150197.476174271
+   },
+   {
+    "epoch_date": "2025-11-07",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 153342.05070364842
+   },
+   {
+    "epoch_date": "2025-11-08",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 153342.05070364842
+   },
+   {
+    "epoch_date": "2025-11-09",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 153342.05070364842
+   },
+   {
+    "epoch_date": "2025-11-10",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 153342.05070364842
+   },
+   {
+    "epoch_date": "2025-11-11",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 153342.05070364842
+   },
+   {
+    "epoch_date": "2025-11-12",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 153342.05070364842
+   },
+   {
+    "epoch_date": "2025-11-13",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 215138.48096676153
+   },
+   {
+    "epoch_date": "2025-11-14",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 215138.48096676153
+   },
+   {
+    "epoch_date": "2025-11-15",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 215138.48096676153
+   },
+   {
+    "epoch_date": "2025-11-16",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 215138.48096676153
+   },
+   {
+    "epoch_date": "2025-11-17",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 215138.48096676153
+   },
+   {
+    "epoch_date": "2025-11-18",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 215138.48096676153
+   },
+   {
+    "epoch_date": "2025-11-19",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 215138.48096676153
+   },
+   {
+    "epoch_date": "2025-11-20",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 215138.48096676153
+   },
+   {
+    "epoch_date": "2025-11-21",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 319050.16122875974
+   },
+   {
+    "epoch_date": "2025-11-22",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 319050.16122875974
+   },
+   {
+    "epoch_date": "2025-11-23",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 319050.16122875974
+   },
+   {
+    "epoch_date": "2025-11-24",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 319050.16122875974
+   },
+   {
+    "epoch_date": "2025-11-25",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 319050.16122875974
+   },
+   {
+    "epoch_date": "2025-11-26",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 319050.16122875974
+   },
+   {
+    "epoch_date": "2025-11-27",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 319050.16122875974
+   },
+   {
+    "epoch_date": "2025-11-28",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 319050.16122875974
+   },
+   {
+    "epoch_date": "2025-11-29",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 319050.16122875974
+   },
+   {
+    "epoch_date": "2025-11-30",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 319050.16122875974
+   },
+   {
+    "epoch_date": "2025-12-01",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1014885556
+   },
+   {
+    "epoch_date": "2025-12-02",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1014885556
+   },
+   {
+    "epoch_date": "2025-12-03",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1014885556
+   },
+   {
+    "epoch_date": "2025-12-04",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1014885556
+   },
+   {
+    "epoch_date": "2025-12-05",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1014885556
+   },
+   {
+    "epoch_date": "2025-12-06",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1014885556
+   },
+   {
+    "epoch_date": "2025-12-07",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1014885556
+   },
+   {
+    "epoch_date": "2025-12-08",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1014885556
+   },
+   {
+    "epoch_date": "2025-12-09",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1014885556
+   },
+   {
+    "epoch_date": "2025-12-10",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1014885556
+   },
+   {
+    "epoch_date": "2025-12-11",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1014885556
+   },
+   {
+    "epoch_date": "2025-12-12",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1014885556
+   },
+   {
+    "epoch_date": "2025-12-13",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1014885556
+   },
+   {
+    "epoch_date": "2025-12-14",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1014885556
+   },
+   {
+    "epoch_date": "2025-12-15",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1014885556
+   },
+   {
+    "epoch_date": "2025-12-16",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1017239185
+   },
+   {
+    "epoch_date": "2025-12-17",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1017239185
+   },
+   {
+    "epoch_date": "2025-12-18",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1017239185
+   },
+   {
+    "epoch_date": "2025-12-19",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1017239185
+   },
+   {
+    "epoch_date": "2025-12-20",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1017239185
+   },
+   {
+    "epoch_date": "2025-12-21",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1017239185
+   },
+   {
+    "epoch_date": "2025-12-22",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1017239185
+   },
+   {
+    "epoch_date": "2025-12-23",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1017239185
+   },
+   {
+    "epoch_date": "2025-12-24",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1017239185
+   },
+   {
+    "epoch_date": "2025-12-25",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1017239185
+   },
+   {
+    "epoch_date": "2025-12-26",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1017239185
+   },
+   {
+    "epoch_date": "2025-12-27",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1017239185
+   },
+   {
+    "epoch_date": "2025-12-28",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1017239185
+   },
+   {
+    "epoch_date": "2025-12-29",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1017239185
+   },
+   {
+    "epoch_date": "2025-12-30",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1017239185
+   },
+   {
+    "epoch_date": "2025-12-31",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1017239185
+   },
+   {
+    "epoch_date": "2026-01-01",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1017239185
+   },
+   {
+    "epoch_date": "2026-01-02",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1017239185
+   },
+   {
+    "epoch_date": "2026-01-03",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1017239185
+   },
+   {
+    "epoch_date": "2026-01-04",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1017239185
+   },
+   {
+    "epoch_date": "2026-01-05",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1017239185
+   },
+   {
+    "epoch_date": "2026-01-06",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1017239185
+   },
+   {
+    "epoch_date": "2026-01-07",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.1017239185
+   },
+   {
+    "epoch_date": "2026-01-08",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.10195881897
+   },
+   {
+    "epoch_date": "2026-01-09",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.10195881897
+   },
+   {
+    "epoch_date": "2026-01-10",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.10195881897
+   },
+   {
+    "epoch_date": "2026-01-11",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.10195881897
+   },
+   {
+    "epoch_date": "2026-01-12",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.10195881897
+   },
+   {
+    "epoch_date": "2026-01-13",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.10195881897
+   },
+   {
+    "epoch_date": "2026-01-14",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 427518.10195881897
+   },
+   {
+    "epoch_date": "2026-01-15",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 634329.8262935539
+   },
+   {
+    "epoch_date": "2026-01-16",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 634329.8262935539
+   },
+   {
+    "epoch_date": "2026-01-17",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 634329.8262935539
+   },
+   {
+    "epoch_date": "2026-01-18",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 634329.8262935539
+   },
+   {
+    "epoch_date": "2026-01-19",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 634329.8262935539
+   },
+   {
+    "epoch_date": "2026-01-20",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 634329.8262935539
+   },
+   {
+    "epoch_date": "2026-01-21",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 634329.8262935539
+   },
+   {
+    "epoch_date": "2026-01-22",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 634329.8262935539
+   },
+   {
+    "epoch_date": "2026-01-23",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 634329.8262935539
+   },
+   {
+    "epoch_date": "2026-01-24",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 634329.8262935539
+   },
+   {
+    "epoch_date": "2026-01-25",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 634329.8262935539
+   },
+   {
+    "epoch_date": "2026-01-26",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 634329.8262935539
+   },
+   {
+    "epoch_date": "2026-01-27",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 634329.8262935539
+   },
+   {
+    "epoch_date": "2026-01-28",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 634329.8262935539
+   },
+   {
+    "epoch_date": "2026-01-29",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 634329.8262935539
+   },
+   {
+    "epoch_date": "2026-01-30",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 634329.8262935539
+   },
+   {
+    "epoch_date": "2026-01-31",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 634329.8262935539
+   },
+   {
+    "epoch_date": "2026-02-01",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 634329.8262935539
+   },
+   {
+    "epoch_date": "2026-02-02",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 861521.9476641254
+   },
+   {
+    "epoch_date": "2026-02-03",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 861521.9476641254
+   },
+   {
+    "epoch_date": "2026-02-04",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 861521.9476641254
+   },
+   {
+    "epoch_date": "2026-02-05",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 861521.9476641254
+   },
+   {
+    "epoch_date": "2026-02-06",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 924285.5957188981
+   },
+   {
+    "epoch_date": "2026-02-07",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 924285.5957188981
+   },
+   {
+    "epoch_date": "2026-02-08",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 924285.5957188981
+   },
+   {
+    "epoch_date": "2026-02-09",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 924285.5957188981
+   },
+   {
+    "epoch_date": "2026-02-10",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 924285.5957188981
+   },
+   {
+    "epoch_date": "2026-02-11",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 924285.5957188981
+   },
+   {
+    "epoch_date": "2026-02-12",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 924285.5957188981
+   },
+   {
+    "epoch_date": "2026-02-13",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 924285.5957188981
+   },
+   {
+    "epoch_date": "2026-02-14",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 924285.5957188981
+   },
+   {
+    "epoch_date": "2026-02-15",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 924285.5957188981
+   },
+   {
+    "epoch_date": "2026-02-16",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 924285.5957188981
+   },
+   {
+    "epoch_date": "2026-02-17",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 924285.5957188981
+   },
+   {
+    "epoch_date": "2026-02-18",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 924285.5957188981
+   },
+   {
+    "epoch_date": "2026-02-19",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 924285.5957188981
+   },
+   {
+    "epoch_date": "2026-02-20",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 924285.5957188981
+   },
+   {
+    "epoch_date": "2026-02-21",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 924285.5957188981
+   },
+   {
+    "epoch_date": "2026-02-22",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 924285.5957188981
+   },
+   {
+    "epoch_date": "2026-02-23",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 924285.5957188981
+   },
+   {
+    "epoch_date": "2026-02-24",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 924285.5957188981
+   },
+   {
+    "epoch_date": "2026-02-25",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 924285.5957188981
+   },
+   {
+    "epoch_date": "2026-02-26",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1040973.4838324585
+   },
+   {
+    "epoch_date": "2026-02-27",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1040973.4838324585
+   },
+   {
+    "epoch_date": "2026-02-28",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1040973.4838324585
+   },
+   {
+    "epoch_date": "2026-03-01",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1040973.4838324585
+   },
+   {
+    "epoch_date": "2026-03-02",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1040973.4838324585
+   },
+   {
+    "epoch_date": "2026-03-03",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1040973.4838324585
+   },
+   {
+    "epoch_date": "2026-03-04",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1040973.4838324585
+   },
+   {
+    "epoch_date": "2026-03-05",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1040973.4838324585
+   },
+   {
+    "epoch_date": "2026-03-06",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1040973.4838324585
+   },
+   {
+    "epoch_date": "2026-03-07",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1040973.4838324585
+   },
+   {
+    "epoch_date": "2026-03-08",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1040973.4838324585
+   },
+   {
+    "epoch_date": "2026-03-09",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1040973.4902677123
+   },
+   {
+    "epoch_date": "2026-03-10",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1040973.4902677123
+   },
+   {
+    "epoch_date": "2026-03-11",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1040973.4902677123
+   },
+   {
+    "epoch_date": "2026-03-12",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1068789.013362485
+   },
+   {
+    "epoch_date": "2026-03-13",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1068789.013362485
+   },
+   {
+    "epoch_date": "2026-03-14",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1068789.013362485
+   },
+   {
+    "epoch_date": "2026-03-15",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1068789.013362485
+   },
+   {
+    "epoch_date": "2026-03-16",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1068789.013362485
+   },
+   {
+    "epoch_date": "2026-03-17",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1068789.013362485
+   },
+   {
+    "epoch_date": "2026-03-18",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1068789.013362485
+   },
+   {
+    "epoch_date": "2026-03-19",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1068789.013362485
+   },
+   {
+    "epoch_date": "2026-03-20",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1068789.013362485
+   },
+   {
+    "epoch_date": "2026-03-21",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1068789.013362485
+   },
+   {
+    "epoch_date": "2026-03-22",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1068789.013362485
+   },
+   {
+    "epoch_date": "2026-03-23",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1068789.013362485
+   },
+   {
+    "epoch_date": "2026-03-24",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1068789.013362485
+   },
+   {
+    "epoch_date": "2026-03-25",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1068789.013362485
+   },
+   {
+    "epoch_date": "2026-03-26",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1068789.0151271962
+   },
+   {
+    "epoch_date": "2026-03-27",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1270362.8368917983
+   },
+   {
+    "epoch_date": "2026-03-28",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1270362.8368917983
+   },
+   {
+    "epoch_date": "2026-03-29",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1270362.8368917983
+   },
+   {
+    "epoch_date": "2026-03-30",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1270362.8368917983
+   },
+   {
+    "epoch_date": "2026-03-31",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1270362.8368917983
+   },
+   {
+    "epoch_date": "2026-04-01",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1270362.8368917983
+   },
+   {
+    "epoch_date": "2026-04-02",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1270362.8368917983
+   },
+   {
+    "epoch_date": "2026-04-03",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1270362.8368917983
+   },
+   {
+    "epoch_date": "2026-04-04",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1270362.8368917983
+   },
+   {
+    "epoch_date": "2026-04-05",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1270362.8368917983
+   },
+   {
+    "epoch_date": "2026-04-06",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1270362.8368917983
+   },
+   {
+    "epoch_date": "2026-04-07",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1270362.8368917983
+   },
+   {
+    "epoch_date": "2026-04-08",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1270362.8368917983
+   },
+   {
+    "epoch_date": "2026-04-09",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1270362.8368917983
+   },
+   {
+    "epoch_date": "2026-04-10",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1270362.8368917983
+   },
+   {
+    "epoch_date": "2026-04-11",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1270362.8368917983
+   },
+   {
+    "epoch_date": "2026-04-12",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1270362.8368917983
+   },
+   {
+    "epoch_date": "2026-04-13",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1270362.8368917983
+   },
+   {
+    "epoch_date": "2026-04-14",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1270362.8368917983
+   },
+   {
+    "epoch_date": "2026-04-15",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1270362.8368917983
+   },
+   {
+    "epoch_date": "2026-04-16",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1270362.8368917983
+   },
+   {
+    "epoch_date": "2026-04-21",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1270362.8368917983
+   },
+   {
+    "epoch_date": "2026-04-22",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1270362.8368917983
+   },
+   {
+    "epoch_date": "2026-04-23",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1271093.7871002473
+   },
+   {
+    "epoch_date": "2026-04-24",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1271093.7871002473
+   },
+   {
+    "epoch_date": "2026-04-25",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1271887.7155482573
+   },
+   {
+    "epoch_date": "2026-04-26",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1271887.7155482573
+   },
+   {
+    "epoch_date": "2026-04-27",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1273794.004769442
+   },
+   {
+    "epoch_date": "2026-04-28",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1274542.7225806606
+   },
+   {
+    "epoch_date": "2026-04-29",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1276760.488480905
+   },
+   {
+    "epoch_date": "2026-04-30",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1278484.0004091752
+   },
+   {
+    "epoch_date": "2026-05-01",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1279281.1182852834
+   },
+   {
+    "epoch_date": "2026-05-02",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1280391.1396172324
+   },
+   {
+    "epoch_date": "2026-05-03",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1282175.3184903376
+   },
+   {
+    "epoch_date": "2026-05-04",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1283910.953409102
+   },
+   {
+    "epoch_date": "2026-05-05",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1286667.0866024774
+   },
+   {
+    "epoch_date": "2026-05-06",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1289107.9641766977
+   },
+   {
+    "epoch_date": "2026-05-07",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1291359.2140025466
+   },
+   {
+    "epoch_date": "2026-05-08",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1294075.6399900669
+   },
+   {
+    "epoch_date": "2026-05-09",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1295572.7983154948
+   },
+   {
+    "epoch_date": "2026-05-10",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1297166.8175199153
+   },
+   {
+    "epoch_date": "2026-05-11",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1299318.8956509111
+   },
+   {
+    "epoch_date": "2026-05-12",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1302277.0431075569
+   },
+   {
+    "epoch_date": "2026-05-13",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1303125.839916736
+   },
+   {
+    "epoch_date": "2026-05-14",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1305566.3811199307
+   },
+   {
+    "epoch_date": "2026-05-15",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1308323.7238500202
+   },
+   {
+    "epoch_date": "2026-05-16",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1310075.7499649855
+   },
+   {
+    "epoch_date": "2026-05-17",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1312664.2254249055
+   },
+   {
+    "epoch_date": "2026-05-18",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1315161.7830522268
+   },
+   {
+    "epoch_date": "2026-05-19",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1317465.6610060558
+   },
+   {
+    "epoch_date": "2026-05-20",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1319514.9865884956
+   },
+   {
+    "epoch_date": "2026-05-21",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1322447.1974455966
+   },
+   {
+    "epoch_date": "2026-05-22",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1327247.5009769734
+   },
+   {
+    "epoch_date": "2026-05-23",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1336521.133294162
+   },
+   {
+    "epoch_date": "2026-05-24",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1339730.8832067866
+   },
+   {
+    "epoch_date": "2026-05-25",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1345474.8585230177
+   },
+   {
+    "epoch_date": "2026-05-26",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1355827.4420206973
+   },
+   {
+    "epoch_date": "2026-05-27",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1360471.6106105247
+   },
+   {
+    "epoch_date": "2026-05-28",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1361832.6884577135
+   },
+   {
+    "epoch_date": "2026-05-29",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1363695.5477495568
+   },
+   {
+    "epoch_date": "2026-05-30",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1369309.68981514
+   },
+   {
+    "epoch_date": "2026-05-31",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1374378.948650342
+   },
+   {
+    "epoch_date": "2026-06-01",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1378017.0658067092
+   },
+   {
+    "epoch_date": "2026-06-02",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1381301.5341578512
+   },
+   {
+    "epoch_date": "2026-06-03",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1382818.573211998
+   },
+   {
+    "epoch_date": "2026-06-04",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1391414.9833271515
+   },
+   {
+    "epoch_date": "2026-06-05",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1403241.2699493582
+   },
+   {
+    "epoch_date": "2026-06-06",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1405223.3107392327
+   },
+   {
+    "epoch_date": "2026-06-07",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1408295.9061610072
+   },
+   {
+    "epoch_date": "2026-06-08",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1410895.1793251547
+   },
+   {
+    "epoch_date": "2026-06-09",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1413734.235419459
+   },
+   {
+    "epoch_date": "2026-06-10",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1415508.4032371864
+   },
+   {
+    "epoch_date": "2026-06-11",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1416023.2300740525
+   },
+   {
+    "epoch_date": "2026-06-12",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1416516.0848592017
+   },
+   {
+    "epoch_date": "2026-06-13",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1417642.6090984903
+   },
+   {
+    "epoch_date": "2026-06-14",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1418887.6524180486
+   },
+   {
+    "epoch_date": "2026-06-15",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1423088.97996575
+   },
+   {
+    "epoch_date": "2026-06-16",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1424605.5701677713
+   },
+   {
+    "epoch_date": "2026-06-17",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1426649.7244481514
+   },
+   {
+    "epoch_date": "2026-06-18",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1428164.5473253075
+   },
+   {
+    "epoch_date": "2026-06-19",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1428742.7462456976
+   },
+   {
+    "epoch_date": "2026-06-20",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1432250.8665112725
+   },
+   {
+    "epoch_date": "2026-06-21",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1432788.0292668357
+   },
+   {
+    "epoch_date": "2026-06-22",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1433893.7764321882
+   },
+   {
+    "epoch_date": "2026-06-23",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1434930.443051213
+   },
+   {
+    "epoch_date": "2026-06-24",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1436675.704188606
+   },
+   {
+    "epoch_date": "2026-06-25",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1437796.7785060871
+   },
+   {
+    "epoch_date": "2026-06-26",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1438994.052523861
+   },
+   {
+    "epoch_date": "2026-06-27",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1439573.5361410505
+   },
+   {
+    "epoch_date": "2026-06-28",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1440882.4962640908
+   },
+   {
+    "epoch_date": "2026-06-29",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1441998.4885922174
+   },
+   {
+    "epoch_date": "2026-06-30",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1443174.497429331
+   },
+   {
+    "epoch_date": "2026-07-01",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1444998.8252480698
+   },
+   {
+    "epoch_date": "2026-07-02",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1447296.951232284
+   },
+   {
+    "epoch_date": "2026-07-03",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1450504.4684882085
+   },
+   {
+    "epoch_date": "2026-07-04",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1451104.8422557293
+   },
+   {
+    "epoch_date": "2026-07-05",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1453423.2373374896
+   },
+   {
+    "epoch_date": "2026-07-06",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1456101.1521511374
+   },
+   {
+    "epoch_date": "2026-07-07",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1458356.536119217
+   },
+   {
+    "epoch_date": "2026-07-08",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1463427.0031430072
+   },
+   {
+    "epoch_date": "2026-07-09",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1465148.8395905332
+   },
+   {
+    "epoch_date": "2026-07-10",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1466846.2523233192
+   },
+   {
+    "epoch_date": "2026-07-11",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1467907.4984334768
+   },
+   {
+    "epoch_date": "2026-07-12",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1469583.5617440254
+   },
+   {
+    "epoch_date": "2026-07-13",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1470936.2640867052
+   },
+   {
+    "epoch_date": "2026-07-14",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1473582.3552858846
+   },
+   {
+    "epoch_date": "2026-07-15",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1476212.9829703788
+   },
+   {
+    "epoch_date": "2026-07-16",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1479626.2560883581
+   },
+   {
+    "epoch_date": "2026-07-17",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1482127.7603931795
+   },
+   {
+    "epoch_date": "2026-07-18",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1485727.2818401698
+   },
+   {
+    "epoch_date": "2026-07-19",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1487480.7920479227
+   },
+   {
+    "epoch_date": "2026-07-20",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1489534.4843862145
+   },
+   {
+    "epoch_date": "2026-07-21",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1493377.7468310113
+   },
+   {
+    "epoch_date": "2026-07-22",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1501608.4011528292
+   },
+   {
+    "epoch_date": "2026-07-23",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1503342.9003952793
+   },
+   {
+    "epoch_date": "2026-07-24",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1504875.7001270154
+   },
+   {
+    "epoch_date": "2026-07-25",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1506225.5075016876
+   },
+   {
+    "epoch_date": "2026-07-26",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1508519.7907618657
+   },
+   {
+    "epoch_date": "2026-07-27",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1510976.6463535975
+   },
+   {
+    "epoch_date": "2026-07-28",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1513498.315645385
+   },
+   {
+    "epoch_date": "2026-07-29",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1515632.9814558814
+   },
+   {
+    "epoch_date": "2026-07-30",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1519045.8674981194
+   },
+   {
+    "epoch_date": "2026-07-31",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1522523.288298446
+   },
+   {
+    "epoch_date": "2026-08-01",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1525247.3930808324
+   },
+   {
+    "epoch_date": "2026-08-02",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1525837.5353182314
+   },
+   {
+    "epoch_date": "2026-08-03",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1527837.9601241169
+   },
+   {
+    "epoch_date": "2026-08-04",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1528977.5811880457
+   },
+   {
+    "epoch_date": "2026-08-05",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1531339.507730932
+   },
+   {
+    "epoch_date": "2026-08-06",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1532700.5999873679
+   },
+   {
+    "epoch_date": "2026-08-07",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1537438.609501504
+   },
+   {
+    "epoch_date": "2026-08-08",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1540390.366100939
+   },
+   {
+    "epoch_date": "2026-08-09",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1544793.8740857171
+   },
+   {
+    "epoch_date": "2026-08-10",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1547680.8131202138
+   },
+   {
+    "epoch_date": "2026-08-11",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1550966.3266247718
+   },
+   {
+    "epoch_date": "2026-08-12",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1554357.680440253
+   },
+   {
+    "epoch_date": "2026-08-13",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1556399.8561242493
+   },
+   {
+    "epoch_date": "2026-08-14",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1558850.8177875762
+   },
+   {
+    "epoch_date": "2026-08-15",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1560129.383000894
+   },
+   {
+    "epoch_date": "2026-08-16",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1560750.6492613675
+   },
+   {
+    "epoch_date": "2026-08-17",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1566618.7123611984
+   },
+   {
+    "epoch_date": "2026-08-18",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1570947.3335057194
+   },
+   {
+    "epoch_date": "2026-08-19",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1581913.374081481
+   },
+   {
+    "epoch_date": "2026-08-20",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1590191.0552724516
+   },
+   {
+    "epoch_date": "2026-08-21",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1602493.033537228
+   },
+   {
+    "epoch_date": "2026-08-22",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1605286.0751408944
+   },
+   {
+    "epoch_date": "2026-08-23",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1611323.586817168
+   },
+   {
+    "epoch_date": "2026-08-24",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1615298.9370420368
+   },
+   {
+    "epoch_date": "2026-08-25",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1618713.3563054209
+   },
+   {
+    "epoch_date": "2026-08-26",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1626492.7618027711
+   },
+   {
+    "epoch_date": "2026-08-27",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1629371.6702439962
+   },
+   {
+    "epoch_date": "2026-08-28",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1635182.7863780682
+   },
+   {
+    "epoch_date": "2026-08-29",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1639639.9371470688
+   },
+   {
+    "epoch_date": "2026-08-30",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1645858.8749327264
+   },
+   {
+    "epoch_date": "2026-08-31",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1649784.4007874704
+   },
+   {
+    "epoch_date": "2026-09-01",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1654272.218022939
+   },
+   {
+    "epoch_date": "2026-09-02",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1657063.8652980311
+   },
+   {
+    "epoch_date": "2026-09-03",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1664735.2705352511
+   },
+   {
+    "epoch_date": "2026-09-04",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1681411.1359900704
+   },
+   {
+    "epoch_date": "2026-09-05",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1683801.5265131698
+   },
+   {
+    "epoch_date": "2026-09-06",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1691586.1168133079
+   },
+   {
+    "epoch_date": "2026-09-07",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1693870.158289402
+   },
+   {
+    "epoch_date": "2026-09-08",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1697031.8468611322
+   },
+   {
+    "epoch_date": "2026-09-09",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1700943.1742300442
+   },
+   {
+    "epoch_date": "2026-09-10",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1705070.2973715933
+   },
+   {
+    "epoch_date": "2026-09-11",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1709217.4641617972
+   },
+   {
+    "epoch_date": "2026-09-12",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1711276.430516182
+   },
+   {
+    "epoch_date": "2026-09-13",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1714846.0383747374
+   },
+   {
+    "epoch_date": "2026-09-14",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1719131.5250611133
+   },
+   {
+    "epoch_date": "2026-09-15",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1722258.4319503126
+   },
+   {
+    "epoch_date": "2026-09-16",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1726084.9622994205
+   },
+   {
+    "epoch_date": "2026-09-17",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1734947.9200935925
+   },
+   {
+    "epoch_date": "2026-09-18",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1743004.722779856
+   },
+   {
+    "epoch_date": "2026-09-19",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1748211.2809052516
+   },
+   {
+    "epoch_date": "2026-09-20",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1751878.2361402407
+   },
+   {
+    "epoch_date": "2026-09-21",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1761898.0512418465
+   },
+   {
+    "epoch_date": "2026-09-22",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1771064.8439443095
+   },
+   {
+    "epoch_date": "2026-09-23",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1779065.8131650586
+   },
+   {
+    "epoch_date": "2026-09-24",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1784558.754235569
+   },
+   {
+    "epoch_date": "2026-09-25",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1790634.328140916
+   },
+   {
+    "epoch_date": "2026-09-26",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1793417.571988595
+   },
+   {
+    "epoch_date": "2026-09-27",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1796277.3121184541
+   },
+   {
+    "epoch_date": "2026-09-28",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1800029.6738653085
+   },
+   {
+    "epoch_date": "2026-09-29",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1804065.0763540003
+   },
+   {
+    "epoch_date": "2026-09-30",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1809615.3334455618
+   },
+   {
+    "epoch_date": "2026-10-01",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1814301.66042311
+   },
+   {
+    "epoch_date": "2026-10-02",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1818008.649290411
+   },
+   {
+    "epoch_date": "2026-10-03",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1819616.5622632878
+   },
+   {
+    "epoch_date": "2026-10-04",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1844627.1244934876
+   },
+   {
+    "epoch_date": "2026-10-05",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1846388.444276968
+   },
+   {
+    "epoch_date": "2026-10-06",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1851007.290625289
+   },
+   {
+    "epoch_date": "2026-10-07",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1855544.5095471186
+   },
+   {
+    "epoch_date": "2026-10-08",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1865616.7772466063
+   },
+   {
+    "epoch_date": "2026-10-09",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1873475.169327775
+   },
+   {
+    "epoch_date": "2026-10-10",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1876118.6855609734
+   },
+   {
+    "epoch_date": "2026-10-11",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1879834.5476307312
+   },
+   {
+    "epoch_date": "2026-10-12",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1883948.3057429115
+   },
+   {
+    "epoch_date": "2026-10-13",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1887875.9359136499
+   },
+   {
+    "epoch_date": "2026-10-14",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1901884.9363931178
+   },
+   {
+    "epoch_date": "2026-10-15",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1905170.6279364028
+   },
+   {
+    "epoch_date": "2026-10-16",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1908368.5953236518
+   },
+   {
+    "epoch_date": "2026-10-17",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1910800.9190634277
+   },
+   {
+    "epoch_date": "2026-10-18",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1913463.4506616497
+   },
+   {
+    "epoch_date": "2026-10-19",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1916643.242806074
+   },
+   {
+    "epoch_date": "2026-10-20",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1920982.8869119203
+   },
+   {
+    "epoch_date": "2026-10-21",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1925109.6567534336
+   },
+   {
+    "epoch_date": "2026-10-22",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1928945.6108496839
+   },
+   {
+    "epoch_date": "2026-10-23",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1931173.3552924192
+   },
+   {
+    "epoch_date": "2026-10-24",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1934209.9180815334
+   },
+   {
+    "epoch_date": "2026-10-25",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1937438.668383017
+   },
+   {
+    "epoch_date": "2026-10-26",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1941978.7120682152
+   },
+   {
+    "epoch_date": "2026-10-27",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1947016.5616311508
+   },
+   {
+    "epoch_date": "2026-10-28",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1949087.8858074069
+   },
+   {
+    "epoch_date": "2026-10-29",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1956892.390430936
+   },
+   {
+    "epoch_date": "2026-10-30",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1961221.3321391547
+   },
+   {
+    "epoch_date": "2026-10-31",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1963841.8635934955
+   },
+   {
+    "epoch_date": "2026-11-01",
+    "account_id": "fefundsadmin.sputnik-dao.near",
+    "liquid": 1965356.6830930486
+   }
+  ]
+ }
+]

@@ -1,0 +1,98 @@
+{
+ "rpc": "https://archival-rpc.mainnet.fastnear.com",
+ "method": "block",
+ "field": "header.total_supply (yoctoNEAR)",
+ "points": [
+  {
+   "label": "tip",
+   "height": 222654048,
+   "timestamp_ns": 1793584966432673806,
+   "total_supply_yocto": "1310575956851766975156275663774687",
+   "utc": "2026-11-02T02:02:46Z",
+   "total_supply_near": 1310575956.851767
+  },
+  {
+   "label": "~30d",
+   "height": 218506848,
+   "timestamp_ns": 1791122557825063697,
+   "total_supply_yocto": "1308056198433554014398472676114730",
+   "utc": "2026-10-04T14:02:37Z",
+   "total_supply_near": 1308056198.433554
+  },
+  {
+   "label": "~60d",
+   "height": 214359648,
+   "timestamp_ns": 1788596757886640337,
+   "total_supply_yocto": "1305478233111225849723685256538102",
+   "utc": "2026-09-05T08:25:57Z",
+   "total_supply_near": 1305478233.1112258
+  },
+  {
+   "label": "~90d",
+   "height": 210212448,
+   "timestamp_ns": 1786045393049803867,
+   "total_supply_yocto": "1302873173301807145714653107431215",
+   "utc": "2026-08-06T19:43:13Z",
+   "total_supply_near": 1302873173.3018072
+  },
+  {
+   "label": "~365d",
+   "height": 170853509,
+   "timestamp_ns": 1762048966839562407,
+   "total_supply_yocto": "1278875396187285196314026351748388",
+   "utc": "2025-11-02T02:02:46Z",
+   "total_supply_near": 1278875396.1872852
+  }
+ ],
+ "vs_tip": [
+  {
+   "from": "~30d",
+   "actual_days": 28.5,
+   "supply_change_near": 2519758.418212961,
+   "pct_over_window": 0.1926,
+   "annualised_simple_pct": 2.4671,
+   "annualised_compound_pct": 2.4953
+  },
+  {
+   "from": "~60d",
+   "actual_days": 57.734,
+   "supply_change_near": 5097723.740541126,
+   "pct_over_window": 0.3905,
+   "annualised_simple_pct": 2.4687,
+   "annualised_compound_pct": 2.4945
+  },
+  {
+   "from": "~90d",
+   "actual_days": 87.264,
+   "supply_change_near": 7702783.549959829,
+   "pct_over_window": 0.5912,
+   "annualised_simple_pct": 2.4729,
+   "annualised_compound_pct": 2.4963
+  },
+  {
+   "from": "~365d",
+   "actual_days": 365.0,
+   "supply_change_near": 31700560.664481778,
+   "pct_over_window": 2.4788,
+   "annualised_simple_pct": 2.4788,
+   "annualised_compound_pct": 2.4788
+  }
+ ],
+ "consecutive": [
+  {
+   "window": "~60d->~30d",
+   "actual_days": 29.234,
+   "annualised_simple_pct": 2.4656
+  },
+  {
+   "window": "~90d->~60d",
+   "actual_days": 29.53,
+   "annualised_simple_pct": 2.4714
+  },
+  {
+   "window": "~365d->~90d",
+   "actual_days": 277.736,
+   "annualised_simple_pct": 2.4661
+  }
+ ]
+}

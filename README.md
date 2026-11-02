@@ -20,7 +20,7 @@ No credentials needed. Builds from `data/snapshot/`.
 Requirements: [uv](https://docs.astral.sh/uv/), Node 24, GNU make, git.
 
 ```sh
-git clone <repo-url> && cd <repo>
+git clone https://github.com/Axlnd3r/NePu---NEAR-Pulse-.git && cd NePu---NEAR-Pulse-
 make all
 ```
 
@@ -60,7 +60,7 @@ TODO.
 
 ## Hackathon diff
 Work done during the hackathon:
-`https://github.com/<owner>/<repo>/compare/pre-hackathon...hackathon-submission`
+`https://github.com/Axlnd3r/NePu---NEAR-Pulse-/compare/pre-hackathon...hackathon-submission`
 
 - Tag `pre-hackathon`: planning documents only (CLAUDE.md, PROGRESS.md, runbook commands).
 - Tag `hackathon-submission`: the submitted state.
