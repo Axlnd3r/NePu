@@ -1,0 +1,156 @@
+{
+ "request": {
+  "endpoint": "/api/v0/transactions",
+  "params": {
+   "numberOfTransactions": 3,
+   "statuses": "SUCCESS",
+   "startTimestampUnix": 1793595227,
+   "endTimestampUnix": 1793598827
+  },
+  "auth": "Bearer [JWT-REDACTED]"
+ },
+ "http": 200,
+ "response": [
+  {
+   "originAsset": "nep141:arb-0xaf88d065e77c8cc2239327c5edb3a432268e5831.omft.near",
+   "destinationAsset": "nep141:arb-0x912ce59144191c1204e64559fe8253a0e49e6548.omft.near",
+   "depositAddress": "0xB474b27916af6E5f7f9062a0d0F42cB80370276c",
+   "depositMemo": null,
+   "depositAddressAndMemo": "0xB474b27916af6E5f7f9062a0d0F42cB80370276c",
+   "recipient": "0x5ce43599bc188b5635ff07d0213EB1E4Ca5Cd566",
+   "status": "SUCCESS",
+   "createdAt": "2026-11-02T05:52:43.979Z",
+   "createdAtTimestamp": 1793598763,
+   "intentHashes": "F4tndRtAYcQxaxrS92h47Q7Q18ctA5oDaxRwoggk5FAa",
+   "referral": "swapkit",
+   "amountInFormatted": "1.108282",
+   "amountOutFormatted": "6.743982676873479055",
+   "appFees": [
+    {
+     "recipient": "trustswapkit.near",
+     "fee": 70
+    }
+   ],
+   "nearTxHashes": [
+    "52xS4ueDmje8swyqEbofzhZoc2V4M2TSBz1vtqGqSLcu",
+    "35dHQCtEqrG7gxejTqfHnVBznyxJvPRLHv9dQRTQ96fC"
+   ],
+   "originChainTxHashes": [
+    "0xf39d11ff7bc4ff128d25a5300107cba3c9594be25569d340e9a0062e9ccfa9c1"
+   ],
+   "destinationChainTxHashes": [
+    "0x349dc4130926d129d6df0c8106682986d3a59c72aed97ea8a305d21dda38d095"
+   ],
+   "amountIn": "1108282",
+   "amountInUsd": "1.107779948254",
+   "amountOut": "6743982676873479055",
+   "amountOutUsd": "1.099424287932",
+   "refundTo": "0x5ce43599bc188b5635ff07d0213EB1E4Ca5Cd566",
+   "senders": [
+    "0x5ce43599bc188b5635ff07d0213EB1E4Ca5Cd566"
+   ],
+   "refundReason": null,
+   "refundFee": "5300",
+   "refundFeeFormatted": "0.0053",
+   "depositType": "ORIGIN_CHAIN",
+   "recipientType": "DESTINATION_CHAIN",
+   "refundType": "ORIGIN_CHAIN"
+  },
+  {
+   "originAsset": "nep141:xrp.omft.near",
+   "destinationAsset": "nep141:eth.omft.near",
+   "depositAddress": "rpjmY2mUQWEHgA8Z1UUYNVBJg8Lg2RLc2q",
+   "depositMemo": null,
+   "depositAddressAndMemo": "rpjmY2mUQWEHgA8Z1UUYNVBJg8Lg2RLc2q",
+   "recipient": "0x7E690b745676F247f3A140C9F050b5e3A5974051",
+   "status": "SUCCESS",
+   "createdAt": "2026-11-02T05:51:41.331Z",
+   "createdAtTimestamp": 1793598701,
+   "intentHashes": "FAUqBcDfXyzdZFKUBwfnq5BQ4CsX5WpPoBavDdM1Qdej",
+   "referral": "swapkit",
+   "amountInFormatted": "39.789899",
+   "amountOutFormatted": "0.02157154542881827",
+   "appFees": [
+    {
+     "recipient": "trustswapkit.near",
+     "fee": 70
+    }
+   ],
+   "nearTxHashes": [
+    "FoTte6kGFM2fcu1t2rvMuaQ3D2cogutvScVZzNqmEFzq",
+    "FN5DtzefGfPRmWnmsiVU62caWtJL5SyQyTpps7JsTmDQ",
+    "7Q1zmD7YxBzybUt6mH3JLou2nVLKkbQCTJnJnfip1uW3",
+    "CKMygLD7Rpr7RR5EDhH1evAQBMhzw3UfjwWeJW3BNq19"
+   ],
+   "originChainTxHashes": [
+    "599E09D3BA6C9845C79A97F37408242F2F8E1BC286DA827B97C51D1DE417D9F8",
+    "9232804BEFE79CC7E57D68E0AE45762D86CC1255C560114345C1404BD7CE05FB",
+    "530DEB626E19B6DC00DA7AEDDE1551A31F484A5AE933CFD5D7B5744A2A4376A7"
+   ],
+   "destinationChainTxHashes": [
+    "0x8d770906ca5a21e7178d83e3b23ac88acbc7203590b523656f63af66814275a2"
+   ],
+   "amountIn": "39789899",
+   "amountInUsd": "49.737373750000",
+   "amountOut": "21571545428818270",
+   "amountOutUsd": "49.442413553760",
+   "refundTo": "rwiuTmtt8nbpWGFTCeNxtkydHZphhsgoau",
+   "senders": [
+    "rwiuTmtt8nbpWGFTCeNxtkydHZphhsgoau",
+    "rwLCaBLPKcE55pjgmEicUYTtXHr8VawD9Z",
+    "r9d7SBJAcfjzhP87CJb4aWrK7Z7dXj73TT"
+   ],
+   "refundReason": null,
+   "refundFee": "10",
+   "refundFeeFormatted": "0.00001",
+   "depositType": "ORIGIN_CHAIN",
+   "recipientType": "DESTINATION_CHAIN",
+   "refundType": "ORIGIN_CHAIN"
+  },
+  {
+   "originAsset": "nep141:hood.omft.near",
+   "destinationAsset": "nep141:sol.omft.near",
+   "depositAddress": "0x139939cA77f5fcC44fC52c09DE9b50E2616B61C6",
+   "depositMemo": null,
+   "depositAddressAndMemo": "0x139939cA77f5fcC44fC52c09DE9b50E2616B61C6",
+   "recipient": "3iFTBwy5hBPn5sWRWGhEfqGakwjkQf6BZtyX9HdExnB6",
+   "status": "SUCCESS",
+   "createdAt": "2026-11-02T05:51:39.659Z",
+   "createdAtTimestamp": 1793598699,
+   "intentHashes": "81zmnntrkq4nGNMVrSTtjppJZz9VBhZVraneevuNayUX",
+   "referral": "swapkit",
+   "amountInFormatted": "0.00072",
+   "amountOutFormatted": "0.017129823",
+   "appFees": [
+    {
+     "recipient": "trustswapkit.near",
+     "fee": 70
+    }
+   ],
+   "nearTxHashes": [
+    "9typ5z7QmGprkSVGxDpFQ9vkC4VoJCfAkzwcDns7BMW1",
+    "9mK5cNyhsnb9w6Ta5HwnGi3RSaR7G6DfvemB11UncL7i"
+   ],
+   "originChainTxHashes": [
+    "0xb23207f6c840b49ce395f3a6190bb241442f276bfeee14dc1bcd7cc07f015192"
+   ],
+   "destinationChainTxHashes": [
+    "4bE53ra1XvSZjH1HD694P5khYV7jpEkaNs9a7gpu3P2UCf3kyv6NoTwf76x1BEBDpaxxRJmDQVq7ZYTr27nyXBnU"
+   ],
+   "amountIn": "720000000000000",
+   "amountInUsd": "1.650715200000",
+   "amountOut": "17129823",
+   "amountOutUsd": "1.626305395620",
+   "refundTo": "0x5a7C8900E941707D5d8e998bE092f9631E26f1E2",
+   "senders": [
+    "0x5a7c8900e941707d5d8e998be092f9631e26f1e2"
+   ],
+   "refundReason": null,
+   "refundFee": "10000000000000",
+   "refundFeeFormatted": "0.00001",
+   "depositType": "ORIGIN_CHAIN",
+   "recipientType": "DESTINATION_CHAIN",
+   "refundType": "ORIGIN_CHAIN"
+  }
+ ]
+}

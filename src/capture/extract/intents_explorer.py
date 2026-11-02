@@ -3,8 +3,8 @@
 Needs INTENTS_EXPLORER_JWT. Limit: 1 request per 5 seconds per partner. Every response is cached
 under the cache directory, keyed by the request parameters, so re-runs never repeat a request.
 
-Not yet exercised against the real API (no JWT at F2 time); see DATA_AUDIT.md check 8. Unverified:
-the unit of appFees[].fee (so fee_usd is left empty) and how the chain is encoded in asset ids.
+Checked against the real API in F2 (DATA_AUDIT.md check 8): appFees[].fee is in basis points of
+amountIn (official docs), and asset ids follow the patterns handled by chain_of().
 """
 
 from __future__ import annotations
@@ -77,7 +77,7 @@ class ExplorerClient:
             resp.raise_for_status()
             data = resp.json()
             self.cache_dir.mkdir(parents=True, exist_ok=True)
-            cached.write_text(json.dumps(data), encoding="utf-8")
+            cached.write_text(json.dumps(data), encoding="utf-8", newline="\n")
             return data
         raise RuntimeError("Explorer API kept answering 429")
 
@@ -104,25 +104,39 @@ class ExplorerClient:
 
 
 def chain_of(asset_id: str) -> str:
-    """Best-effort chain from an asset id such as nep141:eth-0x....omft.near (unverified)."""
-    if asset_id in {"nep141:wrap.near", "nep141:near"}:
+    """Origin-chain label of an asset id, as encoded in the id (patterns seen in real data).
+
+    nep141:<chain>-<address>.omft.near  -> <chain>   (eth, arb, base, tron, sol, gnosis, ...)
+    nep141:<name>.omft.near             -> <name>    (native assets such as sol, xrp, zec)
+    nep141:<anything else>              -> near      (token contract on NEAR, e.g. wrap.near)
+    nep245:v2_1.omni.hot.tg:<id>_<addr> -> hot:<id>  (HOT omni id, left unmapped)
+    1cs_v1:<chain>:<kind>:<id>          -> <chain>   (chain is written in the id)
+    """
+    standard, _, name = asset_id.partition(":")
+    if standard == "nep141":
+        if name.endswith(".omft.near"):
+            return name.removesuffix(".omft.near").split("-", 1)[0]
         return "near"
-    name = asset_id.split(":", 1)[-1]
-    if name.endswith(".omft.near") and "-" in name:
-        return name.split("-", 1)[0]
+    if standard == "nep245" and name.startswith("v2_1.omni.hot.tg:"):
+        return "hot:" + name.split(":", 1)[1].split("_", 1)[0]
+    if standard == "1cs_v1" and ":" in name:
+        return name.split(":", 1)[0]
     return "unknown"
 
 
 def aggregate_day(day: date, transactions: list[dict]) -> list[dict]:
     """Group one day of transactions by (affiliate, asset_in, asset_out, chain)."""
     groups: dict[tuple[str, str, str, str], dict] = defaultdict(
-        lambda: {"volume_usd": 0.0, "tx_count": 0}
+        lambda: {"volume_usd": 0.0, "fee_usd": 0.0, "tx_count": 0}
     )
     for tx in transactions:
         affiliate = ",".join(sorted({f["recipient"] for f in tx.get("appFees") or []}))
         asset_in, asset_out = tx["originAsset"], tx["destinationAsset"]
         g = groups[(affiliate, asset_in, asset_out, chain_of(asset_in))]
-        g["volume_usd"] += float(tx.get("amountInUsd") or 0)
+        amount_in_usd = float(tx.get("amountInUsd") or 0)
+        fee_bps = sum(f["fee"] for f in tx.get("appFees") or [])
+        g["volume_usd"] += amount_in_usd
+        g["fee_usd"] += amount_in_usd * fee_bps / 10_000
         g["tx_count"] += 1
     return [
         {
@@ -132,7 +146,10 @@ def aggregate_day(day: date, transactions: list[dict]) -> list[dict]:
             "asset_out": a_out,
             "chain": chain,
             "volume_usd": g["volume_usd"],
-            "fee_usd": None,  # appFees[].fee unit is undocumented; not guessed
+            # Requested app fee: amountInUsd x fee_bps / 10,000 summed over appFees. With a
+            # partner key it is shared with 1Click (docs: resources/fees), so it is not what
+            # the recipient nets.
+            "fee_usd": g["fee_usd"],
             "tx_count": g["tx_count"],
         }
         for (aff, a_in, a_out, chain), g in sorted(groups.items())

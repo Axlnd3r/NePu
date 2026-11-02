@@ -1,0 +1,202 @@
+{
+ "fetched_utc": "2026-11-02T05:55:44Z",
+ "request": {
+  "endpoint": "/api/v0/transactions",
+  "params": {
+   "numberOfTransactions": 1000,
+   "statuses": "SUCCESS",
+   "startTimestampUnix": 1793584542,
+   "endTimestampUnix": 1793598942
+  },
+  "auth": "Bearer [JWT-REDACTED]"
+ },
+ "items": 1000,
+ "span_hours": 2.16,
+ "fields": [
+  "amountIn",
+  "amountInFormatted",
+  "amountInUsd",
+  "amountOut",
+  "amountOutFormatted",
+  "amountOutUsd",
+  "appFees",
+  "createdAt",
+  "createdAtTimestamp",
+  "depositAddress",
+  "depositAddressAndMemo",
+  "depositMemo",
+  "depositType",
+  "destinationAsset",
+  "destinationChainTxHashes",
+  "intentHashes",
+  "nearTxHashes",
+  "originAsset",
+  "originChainTxHashes",
+  "recipient",
+  "recipientType",
+  "referral",
+  "refundFee",
+  "refundFeeFormatted",
+  "refundReason",
+  "refundTo",
+  "refundType",
+  "senders",
+  "status"
+ ],
+ "fee_unit": {
+  "docs": "api-reference/oneclick/request-a-swap-quote.md: 'Fee for this recipient as part of amountIn in basis points'",
+  "txs_with_appFees_and_usd_ge_20": 548,
+  "corr_fee_vs_observed_spread": 0.662,
+  "share_spread_ge_declared_fee": 0.898
+ },
+ "chain_of_unknown_share_tx_weighted": 0.079,
+ "unknown_examples": [
+  "nep141:17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1",
+  "1cs_v1:btc:native:coin",
+  "1cs_v1:starknet:erc20:0x05ce53b9b68fb8e9ecab9283a96d97948914733fd6ed8d9a53a276a419497841",
+  "1cs_v1:sol:spl:A7bdiYdS5GjqGFtxf17ppRHtDKPkkRqbKtR27dxvQXaS",
+  "1cs_v1:near:nep141:zec.omft.near"
+ ],
+ "origin_chain_counts": [
+  [
+   "eth",
+   220
+  ],
+  [
+   "sol",
+   146
+  ],
+  [
+   "base",
+   122
+  ],
+  [
+   "unknown",
+   120
+  ],
+  [
+   "tron",
+   112
+  ],
+  [
+   "zec",
+   47
+  ],
+  [
+   "hot:56",
+   36
+  ],
+  [
+   "arb",
+   31
+  ],
+  [
+   "near",
+   28
+  ],
+  [
+   "ltc",
+   26
+  ],
+  [
+   "xrp",
+   21
+  ],
+  [
+   "hot:1117",
+   21
+  ]
+ ],
+ "appFee_recipient_counts": [
+  [
+   "buybacks.multisignature.near",
+   384
+  ],
+  [
+   "trustswapkit.near",
+   249
+  ],
+  [
+   "swapkit.near",
+   75
+  ],
+  [
+   "lifi_int.near",
+   66
+  ],
+  [
+   "widget_collect.sputnik-dao.near",
+   61
+  ],
+  [
+   "ledgerswapkit.near",
+   56
+  ],
+  [
+   "rangoni.near",
+   53
+  ],
+  [
+   "tangemswapkit.near",
+   44
+  ],
+  [
+   "0xa6BfeA38fDddefE2E2987b486957714256d3C970",
+   38
+  ],
+  [
+   "rewardsgenerator.near",
+   18
+  ],
+  [
+   "zodlswaps.near",
+   18
+  ],
+  [
+   "hvlnear.near",
+   10
+  ]
+ ],
+ "referral_counts": [
+  [
+   "swapkit",
+   389
+  ],
+  [
+   null,
+   297
+  ],
+  [
+   "lifi",
+   66
+  ],
+  [
+   "rango",
+   58
+  ],
+  [
+   "aurora-widget-cmrakvhfr00sd0ci61bhajpgn",
+   38
+  ],
+  [
+   "aurora-hfmj8cn56c",
+   18
+  ],
+  [
+   "zodl",
+   18
+  ],
+  [
+   "intents.tg",
+   16
+  ],
+  [
+   "cow",
+   10
+  ],
+  [
+   "gemwallet",
+   9
+  ]
+ ]
+}

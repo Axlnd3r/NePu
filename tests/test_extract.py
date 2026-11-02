@@ -268,9 +268,31 @@ def test_explorer_aggregate_day() -> None:
         "volume_usd"
     ] == pytest.approx(21.0)
     assert by_aff[""]["tx_count"] == 1
-    assert all(r["fee_usd"] is None for r in rows)  # unit of appFees.fee is not guessed
-    assert intents_explorer.chain_of("nep141:eth-0xabc.omft.near") == "eth"
-    assert intents_explorer.chain_of("nep141:wrap.near") == "near"
+    # fee is in basis points of amountIn: 2 txs x 10.5 USD x 50 bps
+    assert by_aff["near.near"]["fee_usd"] == pytest.approx(21.0 * 50 / 10_000)
+    assert by_aff[""]["fee_usd"] == 0.0
+
+
+@pytest.mark.parametrize(
+    ("asset", "chain"),
+    [
+        ("nep141:eth-0xabc.omft.near", "eth"),
+        ("nep141:arb-0xaf88d065e77c8cc2239327c5edb3a432268e5831.omft.near", "arb"),
+        ("nep141:sol.omft.near", "sol"),
+        ("nep141:xrp.omft.near", "xrp"),
+        ("nep141:wrap.near", "near"),
+        ("nep141:usdt.tether-token.near", "near"),
+        ("nep245:v2_1.omni.hot.tg:56_2CMMyVTGZkeyNZTSvS5sarzfir6g", "hot:56"),
+        ("nep245:v2_1.omni.hot.tg:1117_", "hot:1117"),
+        ("nep141:17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1", "near"),
+        ("1cs_v1:btc:native:coin", "btc"),
+        ("1cs_v1:starknet:erc20:0x05ce53b9b68fb8e9ecab9283a96d97948914733fd6ed", "starknet"),
+        ("1cs_v1:near:nep141:zec.omft.near", "near"),
+        ("weird", "unknown"),
+    ],
+)
+def test_chain_of_patterns_seen_in_real_data(asset: str, chain: str) -> None:
+    assert intents_explorer.chain_of(asset) == chain
 
 
 def test_store_table_records_manifest_and_coverage(tmp_path: Path) -> None:
