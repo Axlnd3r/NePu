@@ -192,6 +192,74 @@ matches training, `null` otherwise, and `insufficient_data` if a lag cannot be e
   either direction, describes how two short series moved together. It does not show cause or
   effect.
 
+## Valuation Lab (`valuation.json`)
+
+Two outputs, both conditional on stated assumptions and neither a forecast. No price is predicted
+and no price target is given (CLAUDE.md rule 7).
+
+**Model.** With V the 30-day average daily Intents volume (USD), tau the buyback take rate, P the
+NEAR price, S the total supply, i the annual inflation and b the gas burn in NEAR per day:
+
+    CR = (tau x V + b x P) / (i x S / 365 x P)        CR = 1  <=>  V = V*(i, tau)
+
+V* here is the same break-even as in the sensitivity grid (a test checks they agree). The start
+is measured at the last day where every input exists: V, b (30-day averages), tau (buyback wallet
+inflow in USD / volume, 30 days), S and P.
+
+**1. Reverse break-even.** Required compound annual growth of V to reach V* in 1, 3 and 5 years,
+`(V* / V0)^(1/T) - 1`, with tau and P at their current values, for i = 2.5 % and 1.6 %, on two
+bases of tau: the buyback wallet (the basis of CR_float, used in the Monte Carlo) and all protocol
+revenue (the definition in CLAUDE.md, shown for comparison). A negative value means volume could
+fall and still reach V*.
+
+**2. Monte Carlo.** 10,000 paths, 60 monthly steps, seed `config.RANDOM_SEED`; every run uses the
+same draws (common random numbers), so runs differ only in the assumption being varied.
+- *Growth sample:* monthly log change of the monthly average of daily volume (DefiLlama) from
+  2025-06, drawn as consecutive blocks of 3 months (moving blocks, no wrap-around, 14 blocks from
+  16 monthly changes). `n_months`, mean and standard deviation are in the output.
+- *Scenarios:* **historical** uses the draws as they are. **flat** subtracts the sample mean from
+  every draw: zero drift, historical volatility. **decay** is flat plus the sample mean times
+  `0.5^((t-1)/12)`, so the expected growth halves every 12 months and volatility does not decay.
+  For a positive sample mean this orders the three paths one by one: flat <= decay <= historical.
+- *tau:* one value per path, uniform between the lowest and highest observed monthly buyback take
+  rate (months with at least 90 % of their days observed in both series).
+- *Inflation:* 2.5 % constant, or linear from 2.5 % to 1.6 % over 24 months and then held.
+  2.5 % is the observed net supply growth (DATA_AUDIT.md Check 6). **The 1.6 % figure is a
+  scenario supplied by the user; no source for it is recorded, and it is labelled as such.**
+- *Price:* **held constant in USD at its latest value in every run.** It is not simulated and not
+  predicted. Runs at 0.5x and 2x of that value are sensitivities: the buyback is tau x V in USD,
+  so a lower price buys more NEAR per issued NEAR and raises CR, while burn is in NEAR.
+- *Supply and burn:* S at its latest value (as in V\*), b at its 30-day average.
+- *Output per run:* P(CR >= 1) at months 12, 36 and 60 (the share of paths above 1 in that month,
+  not "ever"); the share of paths that ever reach 1; the median month of the first CR >= 1 over
+  all paths, or "not reached" when fewer than half of the paths get there; p10, p50 and p90 of CR
+  per month; and the median volume the run implies (`volume_p50_usd_per_day`).
+
+**Checks (`tests/test_valuation_golden.py`, `tests/test_valuation.py`).** Hand-computed CR (0.8,
+and 0.425 at twice the price), the equality with the sensitivity grid, probabilities in [0, 1],
+identical output for the same seed and different output for another, scenario C never more
+optimistic than A on the median (and B between them), CR falling as the price multiple rises and
+as inflation falls, and a month-0 check against the measured CR_float.
+
+**Reading the results.**
+- *The historical and decay scenarios inherit the launch phase.* The mean monthly log growth of the
+  sample is far above its mean after 2025-12 (see `growth.mean_all` and `growth.mean_after_launch`).
+  Extrapolated for 60 months it implies volumes far outside anything observed
+  (`volume_p50_usd_per_day`), so a probability near 1 there is a consequence of that volume, not
+  evidence about future behaviour. The flat scenario is the one that does not rely on it.
+- *Month 0 versus the measurement.* The buyback is USD converted at the price used. At the latest
+  price the model starts above the measured CR_float because the NEAR price fell during the 30-day
+  window; at the window's mean price it reproduces it (`start.cr_model_month0_at_window_price`).
+  Issuance at 2.5 % agrees with the derived gross issuance of the same window to within 0.1 %.
+- *The tau range sits mostly below the current tau.* The latest month is its maximum, so the drawn
+  tau is below the current one on average and the flat scenario's median CR starts below the
+  measured one.
+
+**Limitations.** Sixteen monthly growth observations, six months of buyback tau (rising) and a
+price held constant are thin. Real supply grows with issuance (not modelled, mildly optimistic).
+The growth sample is DefiLlama volume, a third-party definition. Nothing here is a statement about
+what volume, tau, inflation or price will be.
+
 ## Limitations of the coverage ratio
 
 - Wallet data is end-of-day balance (float64), so a day with an inflow and an outflow shows only

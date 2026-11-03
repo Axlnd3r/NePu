@@ -14,11 +14,12 @@ import subprocess
 from datetime import UTC, datetime
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from capture import config
 from capture import manifest as mf
-from capture.models import breakeven, coverage, developer, distribution
+from capture.models import breakeven, coverage, developer, distribution, valuation
 
 ROOT = Path(__file__).resolve().parents[2]
 SITE_DATA = ROOT / "site" / "public" / "data"
@@ -409,6 +410,181 @@ def developer_payload(data_dir: Path, source: str) -> dict:
     }
 
 
+VALUATION_TABLES = REQUIRED_TABLES
+# Volume growth before this month is the launch phase; reported next to the full-sample mean.
+LAUNCH_END = "2025-12"
+VALUATION_ASSUMPTIONS = {
+    "price": (
+        "The NEAR price in USD is held constant at its latest value in every run. This isolates "
+        "volume, take rate and inflation; it is not a forecast and no price level is predicted. "
+        "The 0.5x and 2x runs are sensitivities to that assumption."
+    ),
+    "supply": "Total supply is held at its latest value, as in V*; real supply grows.",
+    "burn": "Gas burn is held at its 30-day average in NEAR per day.",
+    "volume": (
+        "Start: the 30-day average daily Intents volume (DefiLlama). Each month multiplies it by "
+        "exp(growth); growth is bootstrapped from monthly log changes of the monthly average "
+        "since 2025-06, in blocks of 3 months."
+    ),
+    "tau": (
+        "Buyback take rate (buyback wallet inflow / Intents volume, the basis of CR_float), one "
+        "value per path drawn uniformly between the lowest and highest observed monthly value."
+    ),
+    "inflation": (
+        "Two annual rates: 2.5 % constant (observed net supply growth is about 2.5 %, "
+        "DATA_AUDIT.md Check 6) and a path falling linearly from 2.5 % to 1.6 % over 24 months. "
+        "The 1.6 % figure is a scenario supplied by the user and is not verified against a source."
+    ),
+    "scenarios": {
+        "historical": "bootstrapped growth as drawn (its drift is the history's)",
+        "decay": "zero-mean draws plus the historical drift, which halves every 12 months",
+        "flat": "zero-mean draws: no drift, historical volatility",
+    },
+}
+VALUATION_DEFINITIONS = {
+    "cr": "(tau x V + burn_near x P) / (inflation x supply / 365 x P), V the 30-day average volume",
+    "p_cr_ge_1": "share of paths with CR >= 1 in that month (at that month, not 'ever')",
+    "median_first_month": (
+        "median over all paths of the first month with CR >= 1; 'not reached' if fewer than "
+        "half of the paths get there within the horizon"
+    ),
+    "fan": "p10, p50 and p90 of CR across paths, months 1 to 60",
+    "required_cagr": "annual growth of the 30-day volume needed to reach V* in the horizon",
+}
+VALUATION_NOTES = [
+    "Results are conditional on the stated assumptions, not forecasts; no price is predicted.",
+    "The growth sample is short and dominated by the launch phase: see growth.n_months, "
+    "growth.mean_all and growth.mean_after_launch.",
+    "The historical and decay scenarios inherit a mean growth set by the launch phase; "
+    "volume_p50_usd_per_day shows the volume each run implies. A probability close to 1 there "
+    "rests on that volume, not on observed behaviour after the launch.",
+    "The tau range is the lowest to highest of a few complete months and the latest month is its "
+    "maximum, so the drawn tau is below the current one on average and the flat scenario's "
+    "median CR starts below the measured CR.",
+    "The buyback take rate has few complete months and was rising; its range is crude.",
+    "Real supply grows with issuance, which lowers CR slightly: the runs are a bit optimistic.",
+    "Buybacks are not burns (CLAUDE.md rule 6): CR is the float view, buyback plus gas burn.",
+    "Month 0 at the latest price differs from the measured CR_float because the buyback is USD "
+    "converted at that price; at the mean price of the same 30 days the model reproduces it "
+    "(start.cr_model_month0_at_window_price). CR in every run is therefore price-dependent.",
+]
+
+
+def valuation_payload(
+    data_dir: Path,
+    source: str,
+    seed: int = config.RANDOM_SEED,
+    n_paths: int = config.MC_PATHS,
+) -> dict:
+    """valuation.json: reverse break-even table and Monte Carlo of CR_float (no price forecast)."""
+    frame = coverage.build_inputs(load_tables(data_dir))
+    table = coverage.coverage_table(frame)
+    volume, near_usd = frame["volume_usd"], table["near_usd"]
+    tau_bb = breakeven.tau_eff_buyback(table["buyback_near"], near_usd, volume, TAU_WINDOW)
+    burn_avg = table["burnt_near"].rolling(TAU_WINDOW, min_periods=TAU_WINDOW).mean()
+    volume_avg = volume.rolling(TAU_WINDOW, min_periods=TAU_WINDOW).mean()
+    ready = pd.concat(
+        [tau_bb, burn_avg, volume_avg, table["tau_eff_30"], table["cr_float_30"], near_usd], axis=1
+    ).dropna()
+    as_of = ready.index[-1]
+
+    monthly_tau = valuation.monthly_tau(table["buyback_near"] * near_usd, volume)
+    inputs = valuation.Inputs(
+        volume_usd_per_day=float(volume_avg[as_of]),
+        total_supply_near=float(table.loc[as_of, "total_supply_near"]),
+        near_usd=float(near_usd[as_of]),
+        burnt_near_per_day=float(burn_avg[as_of]),
+        tau_min=float(monthly_tau.min()),
+        tau_max=float(monthly_tau.max()),
+    )
+    taus = {"buyback": float(tau_bb[as_of]), "revenue": float(table.loc[as_of, "tau_eff_30"])}
+    reverse = valuation.reverse_table(
+        inputs, taus, (config.INFLATION_CURRENT, config.INFLATION_PROPOSAL)
+    )
+
+    growth = valuation.monthly_log_growth(volume, pd.Timestamp(config.GROWTH_START))
+    inflation_paths = {
+        f"constant_{config.INFLATION_CURRENT * 100:g}": valuation.inflation_path(
+            config.MC_MONTHS, config.INFLATION_CURRENT
+        ),
+        f"ramp_to_{config.INFLATION_PROPOSAL * 100:g}": valuation.inflation_path(
+            config.MC_MONTHS,
+            config.INFLATION_CURRENT,
+            config.INFLATION_PROPOSAL,
+            config.INFLATION_RAMP_MONTHS,
+        ),
+    }
+    runs = valuation.run_scenarios(
+        inputs,
+        growth.to_numpy(),
+        seed=seed,
+        n_paths=n_paths,
+        n_months=config.MC_MONTHS,
+        block=config.MC_BLOCK_MONTHS,
+        half_life_months=config.DECAY_HALF_LIFE_MONTHS,
+        inflation_paths=inflation_paths,
+    )
+    month0 = valuation.cr_paths(
+        np.zeros((1, 1)),
+        np.array([taus["buyback"]]),
+        valuation.inflation_path(1, config.INFLATION_CURRENT),
+        inputs,
+    )
+    window_price = float(near_usd[as_of - pd.Timedelta(days=TAU_WINDOW - 1) : as_of].mean())
+    month0_window_price = valuation.cr_paths(
+        np.zeros((1, 1)),
+        np.array([taus["buyback"]]),
+        valuation.inflation_path(1, config.INFLATION_CURRENT),
+        inputs,
+        price_multiplier=window_price / inputs.near_usd,
+    )
+    after_launch = growth[growth.index >= pd.Timestamp(f"{LAUNCH_END}-01")]
+    return {
+        "schema_version": 1,
+        "source": f"data/{source}",
+        "inputs": manifest_inputs(data_dir, VALUATION_TABLES),
+        "seed": seed,
+        "n_paths": n_paths,
+        "n_months": config.MC_MONTHS,
+        "block_months": config.MC_BLOCK_MONTHS,
+        "definitions": VALUATION_DEFINITIONS,
+        "assumptions": VALUATION_ASSUMPTIONS,
+        "start": {
+            "as_of": as_of.date().isoformat(),
+            "volume_usd_per_day": inputs.volume_usd_per_day,
+            "near_usd": inputs.near_usd,
+            "total_supply_near": inputs.total_supply_near,
+            "burnt_near_per_day": inputs.burnt_near_per_day,
+            "tau_buyback_30": taus["buyback"],
+            "tau_revenue_30": taus["revenue"],
+            "tau_monthly_range": {
+                "min": inputs.tau_min,
+                "max": inputs.tau_max,
+                "months": records(monthly_tau.rename("tau_buyback").to_frame(), "month"),
+            },
+            "cr_float_30_observed": float(table.loc[as_of, "cr_float_30"]),
+            "cr_model_month0": float(month0[0, 0]),
+            "near_usd_window_mean": window_price,
+            "cr_model_month0_at_window_price": float(month0_window_price[0, 0]),
+        },
+        "growth": {
+            "start": config.GROWTH_START.isoformat(),
+            "first_month": growth.index[0].strftime("%Y-%m"),
+            "n_months": len(growth),
+            "n_blocks_available": len(growth) - config.MC_BLOCK_MONTHS + 1,
+            "mean_all": float(growth.mean()),
+            "std_all": float(growth.std()),
+            "launch_phase_ends": LAUNCH_END,
+            "mean_after_launch": float(after_launch.mean()),
+            "n_months_after_launch": len(after_launch),
+            "rows": records(growth.rename("log_growth").to_frame(), "month"),
+        },
+        "reverse": {"rows": _frame_records(reverse)},
+        "scenarios": runs,
+        "notes": VALUATION_NOTES,
+    }
+
+
 def write_json(path: Path, payload: dict) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     text = json.dumps(payload, allow_nan=False, indent=1) + "\n"
@@ -428,4 +604,5 @@ def build(source: str, out_dir: Path = SITE_DATA) -> list[Path]:
         write_json(out_dir / "coverage.json", coverage_payload(data_dir, source)),
         write_json(out_dir / "distribution.json", distribution_payload(data_dir, source)),
         write_json(out_dir / "developer.json", developer_payload(data_dir, source)),
+        write_json(out_dir / "valuation.json", valuation_payload(data_dir, source)),
     ]

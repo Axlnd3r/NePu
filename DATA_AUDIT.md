@@ -325,6 +325,54 @@ Open limits: Explorer volumes are requested amounts and declared fees are split 
 key; recipient volumes do not add up because a transaction with several recipients counts in each.
 `gcloud-login.sh` in the repo root is an untracked local helper and is not part of F4.
 
+## F5 Valuation Lab (2026-11-03)
+
+Offline from `data/snapshot` (v3); no new external source and no BigQuery query. Output:
+`site/public/data/valuation.json` (10,000 paths, 60 months, seed `config.RANDOM_SEED`).
+
+Facts relied on and how each was handled:
+- **Inflation 2.5 %.** Matches the observed net supply growth of 2.467 to 2.479 % (Check 6) and the derived
+  gross issuance of the start window: 2,692,593 NEAR modelled against 2,691,996 NEAR measured over
+  2026-10-01..10-30 (0.02 % apart; computed in this session from `supply_daily`).
+- **Inflation 1.6 % ("proposal").** **Not verified.** It was supplied by the user, no source is recorded in the
+  repo (it was already in the F3 sensitivity grid without one). `valuation.json` labels it "a scenario supplied by
+  the user and not verified against a source". If a source is found, record the link here and drop the label.
+- **Volume** is DefiLlama's `volume_usd` (Check 7, assumed to be Intents volume). Growth sample: monthly mean of
+  daily volume, 2025-06..2026-10, 16 monthly changes (2026-10 has 30 of 31 days, so a mean is used, not a sum).
+- **tau (buyback basis)** from `fee_wallet_inflows_daily` (buyback wallet from 2026-04-26) and `price_daily`;
+  monthly values need 90 % of the month's days observed in both series, which leaves 2026-05..2026-10.
+
+Numbers (source: `valuation.json`, as of 2026-10-30):
+- Start: volume 130.4 M USD/day (30d), NEAR 4.05 USD, supply 1,310.4 M NEAR, burn 1,291 NEAR/day,
+  tau buyback 0.0362 %, tau all revenue 0.0548 %.
+- Month 0 CR at the latest price 0.144; measured CR_float (30d) 0.122; model at the window's mean price (4.92)
+  0.121. The gap is the price: it fell from 5.34 to 4.05 inside the window, and buyback USD converted at a lower
+  price buys more NEAR (349.6 K modelled at the latest price, 289.4 K bought in the window).
+- tau monthly range 0.0150 % (2026-07) to 0.0362 % (2026-10): the current value is the maximum.
+- Reverse break-even, required annual growth of 30d volume (V* in M USD/day; buyback basis / all-revenue basis):
+
+| Inflation | V* buyback | V* revenue | 1 year | 3 years | 5 years |
+|---|---|---|---|---|---|
+| 2.5 % | 989.9 | 654.3 | +659 % / +402 % | +96.5 % / +71.2 % | +50.0 % / +38.1 % |
+| 1.6 % | 628.3 | 415.3 | +382 % / +219 % | +68.9 % / +47.1 % | +37.0 % / +26.1 % |
+
+- Monte Carlo at a constant price, inflation 2.5 %, P(CR >= 1) at months 12 / 36 / 60, median first month:
+  - historical: 45 % / 96 % / 99.7 %, month 12; median volume 1.2 B / 132 B / 13.8 T USD per day.
+  - decay: 33 % / 59 % / 61 %, month 15; median volume 0.65 B / 2.7 B / 3.9 B USD per day.
+  - flat: 9 % / 21 % / 28 %, month 59; median volume about 120 / 136 / 145 M USD per day.
+  - With the ramp to 1.6 %: flat 11 % / 26 % / 31 % (month 47); decay 37 % / 65 % / 66 %.
+  - At 2x the price, flat is 5 % / 15 % / 22 % and "not reached" at 2.5 %; at 0.5x it is 16 % / 28 % / 34 %.
+
+How to read them (also in `valuation.json` notes and METHODOLOGY.md):
+- The historical and decay scenarios inherit a mean growth of +0.191 per month (std 0.442) that is set by the
+  launch phase; the mean from 2025-12 (11 months) is +0.006. The historical scenario's volumes after 36 months are
+  not credible, so its probabilities near 1 are a consequence of them and are not evidence. The flat scenario is
+  the only one that does not depend on the launch regime.
+- The sample is 16 monthly changes (14 overlapping blocks of 3) and 6 months of tau, which was rising.
+- The drawn tau is below the current one on average, so the flat median CR starts below the measured CR.
+- A variant of the historical scenario that starts after the launch phase was offered and not added (outside the
+  spec): it would be the natural next step if a less launch-driven upside case is wanted.
+
 ## Original open questions
 
 | # | Question | Status | Where answered |
@@ -380,3 +428,7 @@ Resulting scope:
 - Explorer back-pull completed after a PC shutdown interrupted it; snapshot v3 frozen at 2026-11-01; see "F4 Distribution Map and developer indicator".
 - Mistake made and fixed: I estimated the remaining pull time from an early page rate (17 pages per day) that had almost doubled by September, so the estimate was too low. Estimates of this kind are unreliable because the volume per day keeps changing.
 
+### 2026-11-03, F5
+- Valuation Lab implemented test-first; see "F5 Valuation Lab".
+- Mistake made and fixed: my first month-0 test asked for a 15 % match between the model and the measured CR_float and failed at 18 %. I checked before loosening it: the gap was the price (fell 5.34 to 4.05 in the window) and issuance matched to 0.02 %, so the test now compares at the window's mean price and the output states the gap.
+- Mistake made and fixed: a first run showed a historical-scenario median CR of about 9,500 at month 60. That is the launch-phase growth extrapolated, so the output now carries the implied median volume and the notes say what the probabilities rest on.

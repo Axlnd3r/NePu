@@ -18,6 +18,16 @@ DATASET = "bigquery-public-data.crypto_near_mainnet_us"
 # Fixed seed for every random draw (permutation tests, Monte Carlo).
 RANDOM_SEED = 20261114
 
+# Valuation Lab (F5), see docs/METHODOLOGY.md. The two inflation rates are scenarios, not forecasts.
+MC_PATHS = 10_000
+MC_MONTHS = 60
+MC_BLOCK_MONTHS = 3
+GROWTH_START = date(2025, 6, 1)  # first month of the volume growth sample
+DECAY_HALF_LIFE_MONTHS = 12
+INFLATION_CURRENT = 0.025
+INFLATION_PROPOSAL = 0.016
+INFLATION_RAMP_MONTHS = 24
+
 SETTING_KEYS = (
     "GOOGLE_CLOUD_PROJECT",
     "BQ_MAX_BYTES",

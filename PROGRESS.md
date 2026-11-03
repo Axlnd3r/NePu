@@ -15,12 +15,23 @@ Living log. Claude updates this at the end of every session. Newest entry on top
 | F2 Ingestion + snapshot | 3–5 Nov | done | Snapshot v1 frozen 2026-11-01; Explorer table not pulled (no JWT); price limited to 365 days |
 | F3 Coverage ratio + tests | 5–7 Nov | done | CR_float, CR_supply, V*, sensitivity, 10/10 months reconcile within 15% |
 | F4 Distribution Map | 7–9 Nov | done | Snapshot v3 (2026-11-01); distribution.json, developer.json; lead/lag verdict null |
-| F5 Valuation Lab | 8–10 Nov | todo | |
+| F5 Valuation Lab | 8–10 Nov | done | valuation.json: reverse table + Monte Carlo (3 scenarios x 2 inflation paths x 3 prices); historical/decay results rest on launch-phase growth |
 | F6 Dashboard | 9–12 Nov | todo | |
 | F7 THESIS, README, offline, CI, proof | 11–13 Nov | todo | |
 | F8 Demo + submission | 13–14 Nov | todo | |
 
 ## Session log
+### 2026-11-03 — F5
+- Done: models/valuation.py (reverse break-even, block bootstrap, scenarios historical / decay / flat, Monte Carlo with common random numbers), build.py writes site/public/data/valuation.json, config constants (10,000 paths, 60 months, 3-month blocks, seed `RANDOM_SEED`), docs/METHODOLOGY.md "Valuation Lab", DATA_AUDIT.md "F5 Valuation Lab". Tests written first: 27 new (hand-computed CR 0.8 and 0.425, equality with the F3 sensitivity grid, probabilities in [0, 1], same seed identical and another seed different, flat <= decay <= historical, price and inflation monotonic, month-0 check, no price target). `make verify`: 141 passed.
+- Numbers found (source: site/public/data/valuation.json, as of 2026-10-30; price held constant at 4.05 USD):
+  - Required annual growth of 30d volume (130.4 M USD/day) to reach CR_float = 1, buyback basis: inflation 2.5 %: +659 % (1 y), +96.5 % (3 y), +50.0 % (5 y), V* 989.9 M USD/day; inflation 1.6 %: +382 %, +68.9 %, +37.0 %, V* 628.3 M. All-revenue basis: +402 / +71.2 / +38.1 % at 2.5 %.
+  - P(CR >= 1) at months 12 / 36 / 60, constant price, inflation 2.5 %: flat 9 / 21 / 28 % (median first crossing month 59); decay 33 / 59 / 61 %; historical 45 / 96 / 99.7 %. Ramp to 1.6 %: flat 11 / 26 / 31 %. At 2x price flat is 5 / 15 / 22 % and the median is "not reached".
+  - Historical scenario median volume 1.2 B / 132 B / 13.8 T USD per day at months 12 / 36 / 60: not credible, so its probabilities near 1 are an artifact of launch-phase growth (mean +0.191 a month; +0.006 from 2025-12).
+  - Model month 0 CR 0.144 at the latest price against measured CR_float 0.122; 0.121 at the window's mean price. The NEAR price fell 5.34 to 4.05 inside the window.
+- Decisions: tau on the buyback basis (CR_float's), drawn once per path uniformly between the lowest and highest complete monthly value (0.0150 to 0.0362 %), the all-revenue basis only in the reverse table; supply held constant (as V*); decay keeps volatility and halves only the drift; month-0 test compared at the window's mean price, not loosened; no A2 scenario added (outside the spec); the 1.6 % inflation is labelled "supplied by the user, not verified".
+- Blockers: the 1.6 % proposal has no recorded source; the growth sample is 16 monthly changes and tau has 6 months, so no scenario can support a strong claim; THESIS.md must present the flat scenario as the one independent of the launch regime and state the price assumption.
+- Next: F6 Dashboard (site/): charts for coverage, Distribution Map, Valuation Lab and developer indicator, each with its query, one sentence and provenance. The fan chart should show the implied volume next to CR. Then F7 THESIS, README, offline build, CI, proof.
+
 ### 2026-11-03 — F4
 - Done: Distribution Map (models/distribution.py: channel and asset concentration, HHI, stablecoin and ZEC shares, attributable share of on-chain revenue, take rates, near.com proxy) and developer indicator (models/developer.py: new contracts that stay used, cohorts, train/test lead/lag). Explorer tables rebuilt at recipient level from the cached pages (daily, channels, recipients), token_assets from the 1Click token list, `contracts_daily.sql` corrected (deploy-only days kept) and re-pulled. Explorer pulled 2026-07-01..2026-11-01. Snapshot v3 frozen at 2026-11-01 (11 files). `make verify`: 114 passed, ruff clean. `make build` writes distribution.json and developer.json.
 - Numbers found (source: site/public/data/distribution.json, developer.json; Explorer is 1Click only):

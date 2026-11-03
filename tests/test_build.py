@@ -69,7 +69,13 @@ def test_every_payload_is_deterministic_and_has_lf_endings(tmp_path: Path) -> No
     written = build("snapshot", first)
     build("snapshot", second)
     names = sorted(p.name for p in written)
-    assert names == ["coverage.json", "developer.json", "distribution.json", "meta.json"]
+    assert names == [
+        "coverage.json",
+        "developer.json",
+        "distribution.json",
+        "meta.json",
+        "valuation.json",
+    ]
     for name in names:
         assert b"\r" not in (first / name).read_bytes()
         if name != "meta.json":  # meta.json carries the build time
