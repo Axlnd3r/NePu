@@ -1,0 +1,76 @@
+name: proof
+
+# Timestamps the snapshot manifest with OpenTimestamps (Bitcoin). The `ots` client does not run on
+# Windows, so this is where it runs. It needs no key and no balance. A fresh stamp is "pending"
+# for a few hours; running this again completes it with the Bitcoin attestation (`ots upgrade`).
+# It runs when data/proof.json changes (a new `make proof`), on demand, and weekly (see
+# weekly-rebuild.yml).
+on:
+  push:
+    paths:
+      - "data/proof.json"
+      - ".github/workflows/proof.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write # commits the .ots file and the updated proof.json
+
+concurrency:
+  group: proof-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  opentimestamps:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+
+      - name: Install the OpenTimestamps client
+        run: |
+          uv tool install opentimestamps-client==0.8.0
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Stamp (or upgrade) the manifest
+        run: |
+          set -o pipefail
+          run_id=$(python3 -c "import json; print(json.load(open('data/proof.json'))['run_id'])")
+          want=$(python3 -c "import json; print(json.load(open('data/proof.json'))['manifest_sha256'])")
+          have=$(sha256sum data/snapshot/manifest.json | cut -d' ' -f1)
+          if [ "$want" != "$have" ]; then
+            echo "::error::data/proof.json is for manifest $want but data/snapshot/manifest.json is $have; run make proof"
+            exit 1
+          fi
+          dir="data/proof/$run_id"
+          mkdir -p "$dir"
+          cp data/snapshot/manifest.json "$dir/manifest.json"
+          cd "$dir"
+          if [ -f manifest.json.ots ]; then
+            ots upgrade manifest.json.ots || true
+            rm -f manifest.json.ots.bak
+          else
+            ots stamp manifest.json
+          fi
+          ots info manifest.json.ots 2>&1 | tee "$RUNNER_TEMP/ots-info.txt"
+
+      - name: Show the ots output as an annotation
+        if: always()
+        run: |
+          [ -f "$RUNNER_TEMP/ots-info.txt" ] || exit 0
+          python3 - "$RUNNER_TEMP/ots-info.txt" <<'PY'
+          import sys
+          lines = open(sys.argv[1], errors="replace").read().splitlines()[-60:]
+          msg = "\n".join(lines).replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+          print(f"::notice title=ots info::{msg}")
+          PY
+
+      - name: Commit the proof files
+        run: |
+          git add data/proof
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "proof: OpenTimestamps stamp for the snapshot manifest"
+            git push
+          fi
