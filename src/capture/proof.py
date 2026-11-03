@@ -95,6 +95,8 @@ def get(client: httpx.Client, rpc_url: str, contract: str, run_id: str) -> str |
             "args_base64": args,
         },
     )
+    if "error" in result:  # HTTP 200 with the failure inside `result`, e.g. no contract deployed
+        raise ProofError(f"view call {contract}.get failed: {result['error']}")
     return json.loads(bytes(result["result"]).decode())
 
 

@@ -134,8 +134,12 @@ def proof_status(
     sha = proof_mod.manifest_sha256(data_dir)
     run_id = proof_mod.make_run_id(sha, proof_mod.snapshot_end(data_dir))
     rpc = proof_mod.NETWORKS[network]["rpc"]
-    with httpx.Client() as client:
-        on_chain = proof_mod.get(client, rpc, contract, run_id)
+    try:
+        with httpx.Client() as client:
+            on_chain = proof_mod.get(client, rpc, contract, run_id)
+    except proof_mod.ProofError as exc:
+        typer.echo(f"proof: {exc}", err=True)
+        raise typer.Exit(1) from exc
     typer.echo(f"network   {network}")
     typer.echo(f"contract  {contract}")
     typer.echo(f"run_id    {run_id}")

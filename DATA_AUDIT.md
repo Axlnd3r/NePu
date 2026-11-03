@@ -477,7 +477,10 @@ No mainnet transaction has been made yet.
   The mainnet RPC and explorer values are near-cli-rs defaults and their CORS is not checked (mainnet is unused).
 - **Storage price**: `EXPERIMENTAL_protocol_config` on testnet returns `storage_amount_per_byte` = 10000000000000000000
   (1e19 yoctoNEAR), the constant behind 105,951 bytes = 1.0595 NEAR.
-- **Testnet faucet amount** is not verified: `capture proof preflight` reads the real balance before any deploy.
+- **Testnet faucet amount (verified):** `nepu-ledger.testnet` was created with `sponsor-by-faucet-service` (tx `H2TqexvmEcTAQvkzvgYnGQ7dLkEtP3nTnakmPUaJBpKM`) and holds 10 NEAR, storage_usage 182 bytes, one FullAccess key (the one printed by the CLI); read from the RPC `view_account` and `view_access_key_list`. `capture proof preflight` against the CI wasm: needs 1.11 NEAR, has 10.00.
+- **Real RPC reply to a view call on an account without code** (found when `proof status` crashed): HTTP 200 and `result = {block_hash, block_height, error: "wasm execution failed with error: CompilationError(CodeDoesNotExist { account_id: ... })", logs: []}`, with no `result` list; `get()` now raises a ProofError for it (regression test from that reply).
+- **The CI wasm is deterministic here:** two CI runs (41589615160 and 41594902134) produced the same file, 105,951 bytes, sha256 `5d40946f...3f168`. It is committed under `contracts/proof-of-analysis/artifacts/` with a SHA256SUMS file.
+- **Parser confirmed:** the `Transaction ID:` line of the real CLI output matches the regex (box-drawing prefix included).
 - The Transaction ID line of the CLI output is parsed with a regex written from the CLI's usual message; it is
   confirmed (or corrected) on the first real commit, and the block height comes from the chain (`tx` then `block`).
 

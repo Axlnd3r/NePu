@@ -332,3 +332,21 @@ def test_commit_asks_for_the_tx_when_it_cannot_read_it(data_dir, tmp_path) -> No
 
 def HASH_FOR(data_dir) -> str:
     return proof.manifest_sha256(data_dir)
+
+
+def test_get_reports_an_account_without_a_contract_instead_of_crashing() -> None:
+    """Real testnet reply to a view call on an account with no code (HTTP 200, no result list)."""
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        return rpc_result(
+            {
+                "block_hash": "9jzQzyNkRdSmVTDmyjTMwsiFuvsNcXPDwFHLdy5jyax1",
+                "block_height": 276016635,
+                "error": "wasm execution failed with error: CompilationError(CodeDoesNotExist "
+                '{ account_id: "nepu-ledger.testnet" })',
+                "logs": [],
+            }
+        )
+
+    with pytest.raises(proof.ProofError, match="CodeDoesNotExist"):
+        proof.get(rpc_client(handler), "https://rpc.example", CONTRACT, "run-1")
