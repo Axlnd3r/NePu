@@ -229,11 +229,21 @@ def test_block_height_comes_from_the_chain_not_from_the_cli_output() -> None:
     assert height == 4321 and calls == ["tx", "block"]
 
 
-def test_tx_id_is_read_from_the_cli_output() -> None:
-    """The sample follows near-cli-rs's usual success message; it is checked against a real run."""
-    url = f"https://explorer.testnet.near.org/transactions/{TX}"
-    out = f"Transaction ID: {TX}\nTo see the transaction in the explorer, open:\n{url}\n"
-    assert proof.parse_tx_id(out) == TX
+REAL_CLI_OUTPUT = """
+├  Transaction Execution Info:
+│    Transaction ID: H2TqexvmEcTAQvkzvgYnGQ7dLkEtP3nTnakmPUaJBpKM
+│    To see the transaction in the transaction explorer, please open this url in your browser:
+│    https://explorer.testnet.near.org/transactions/H2TqexvmEcTAQvkzvgYnGQ7dLkEtP3nTnakmPUaJBpKM
+"""
+
+
+def test_tx_id_is_read_from_real_near_cli_output() -> None:
+    """Real near-cli-rs 0.30.1 output (account creation), box-drawing prefix included."""
+    assert proof.parse_tx_id(REAL_CLI_OUTPUT) == "H2TqexvmEcTAQvkzvgYnGQ7dLkEtP3nTnakmPUaJBpKM"
+
+
+def test_tx_id_is_read_from_a_plain_line() -> None:
+    assert proof.parse_tx_id(f"Transaction ID: {TX}\n") == TX
 
 
 def test_tx_id_is_none_when_the_output_has_none() -> None:
