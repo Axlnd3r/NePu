@@ -39,14 +39,34 @@ impl Contract {
 
     /// Store the pair and emit the event. Owner only; a `run_id` can be committed once.
     pub fn commit(&mut self, run_id: String, manifest_sha256: String) {
-        let _ = (run_id, manifest_sha256);
-        todo!("commit")
+        require!(
+            env::predecessor_account_id() == self.owner,
+            "only the owner can commit"
+        );
+        require!(
+            (1..=MAX_RUN_ID_BYTES).contains(&run_id.len()),
+            "run_id must be 1 to 128 bytes"
+        );
+        require!(
+            manifest_sha256.len() == SHA256_HEX_LEN
+                && manifest_sha256
+                    .bytes()
+                    .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)),
+            "manifest_sha256 must be 64 lowercase hex characters"
+        );
+        require!(!self.proofs.contains_key(&run_id), "run_id already committed");
+
+        Event::Commit {
+            run_id: run_id.clone(),
+            manifest_sha256: manifest_sha256.clone(),
+        }
+        .emit();
+        self.proofs.insert(run_id, manifest_sha256);
     }
 
     /// The hash committed under `run_id`, if any.
     pub fn get(&self, run_id: String) -> Option<String> {
-        let _ = run_id;
-        todo!("get")
+        self.proofs.get(&run_id).cloned()
     }
 }
 
