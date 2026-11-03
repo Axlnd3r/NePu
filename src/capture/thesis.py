@@ -308,3 +308,43 @@ def render(payloads: dict[str, dict]) -> tuple[str, list[Fact]]:
     out("Rebuild with `make build`; `make verify` checks that this file is what the build writes.")
     out("")
     return "\n".join(lines), f.used
+
+
+RESULTS_START = "<!-- results:start -->"
+RESULTS_END = "<!-- results:end -->"
+
+
+def render_results(payloads: dict[str, dict]) -> tuple[str, list[Fact]]:
+    """The generated block of README.md (between the results markers) and the facts it used."""
+    f = Facts(payloads)
+    s = "summary"
+    steps = f"{s}.levers.steps"
+    proof = "provenance.proof"
+    cents = round(float(f.val(f"{s}.hero.cr_float_usd_30")) * 100)  # type: ignore[arg-type]
+    f.used.append(Fact(f"{s}.hero.cr_float_usd_30", f.val(f"{s}.hero.cr_float_usd_30"), str(cents)))
+    stamp = f.val(f"{proof}.opentimestamps")
+    ots = (
+        f"OpenTimestamps (Bitcoin): {stamp['status']}." if stamp else "OpenTimestamps: not stamped."
+    )  # type: ignore[index]
+    lines = [
+        "**Latest build**, generated from `site/public/data/*.json` (the full argument, with the "
+        "evidence against it, is in [THESIS.md](THESIS.md)):",
+        "",
+        f"- For every dollar of new NEAR issued, **{cents} cents** came back as buybacks or gas "
+        f"burn in the {f.integer(f'{s}.ledger.days')} days to {f.date(f'{s}.hero.date')}.",
+        f"- **Not yet:** daily Intents volume would have to reach {f.usd(f'{steps}[0].v_star_usd_per_day')}, "
+        f"{f.times(f'{steps}[0].volume_multiple', 1)} its {f.usd(f'{s}.levers.volume_usd_per_day')} "
+        "average, for capture to cover issuance at today's rates.",
+        f"- Proof: the SHA-256 of the snapshot manifest is committed on NEAR "
+        f"**{f.word(f'{proof}.network')}** (contract `{f.word(f'{proof}.contract')}`, run id "
+        f"`{f.word(f'{proof}.run_id')}`, [transaction]({f.word(f'{proof}.explorer_url')}), block "
+        f"{f.integer(f'{proof}.block_height')}). {ots}",
+    ]
+    return "\n".join(lines), f.used
+
+
+def replace_results(readme: str, block: str) -> str:
+    """README text with the generated block put between its markers."""
+    start = readme.index(RESULTS_START) + len(RESULTS_START)
+    end = readme.index(RESULTS_END)
+    return f"{readme[:start]}\n{block}\n{readme[end:]}"

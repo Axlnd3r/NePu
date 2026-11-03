@@ -865,6 +865,15 @@ def build_payloads(source: str, data_dir: Path) -> dict[str, dict]:
     }
 
 
+def write_readme(path: Path, payloads: dict[str, dict]) -> Path:
+    """README.md with its generated results block refreshed (the rest is kept as written)."""
+    block, _ = thesis.render_results(payloads)
+    text = thesis.replace_results((ROOT / "README.md").read_text(encoding="utf-8"), block)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8", newline="\n")
+    return path
+
+
 def write_thesis(path: Path, payloads: dict[str, dict]) -> Path:
     text, _ = thesis.render(payloads)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -884,10 +893,8 @@ def build(source: str, out_dir: Path = SITE_DATA) -> list[Path]:
     written += [write_json(out_dir / f"{name}.json", p) for name, p in payloads.items()]
     written += [copy_bytes(data_dir / mf.MANIFEST_NAME, out_dir / "snapshot-manifest.json")]
     written += ots_files(out_dir)
-    if source == "snapshot":  # the committed thesis comes from the frozen snapshot only
-        written.append(
-            write_thesis(
-                ROOT / "THESIS.md" if out_dir == SITE_DATA else out_dir / "THESIS.md", payloads
-            )
-        )
+    if source == "snapshot":  # the committed thesis and README block come from the snapshot only
+        home = ROOT if out_dir == SITE_DATA else out_dir
+        written.append(write_thesis(home / "THESIS.md", payloads))
+        written.append(write_readme(home / "README.md", payloads))
     return written

@@ -16,7 +16,7 @@ Living log. Claude updates this at the end of every session. Newest entry on top
 | F3 Coverage ratio + tests | 5–7 Nov | done | CR_float, CR_supply, V*, sensitivity, 10/10 months reconcile within 15% |
 | F4 Distribution Map | 7–9 Nov | done | Snapshot v3 (2026-11-01); distribution.json, developer.json; lead/lag verdict null |
 | F5 Valuation Lab | 8–10 Nov | done | valuation.json: reverse table + Monte Carlo (3 scenarios x 2 inflation paths x 3 prices); historical/decay results rest on launch-phase growth |
-| F6 Dashboard | 9–12 Nov | done, live at https://axlnd3r.github.io/NePu---NEAR-Pulse-/ | 6 pages, ChartCard + evidence chips, Playwright QA, independent number audit; GitHub Pages workflow ready |
+| F6 Dashboard | 9–12 Nov | done, live at https://axlnd3r.github.io/NePu/ | 6 pages, ChartCard + evidence chips, Playwright QA, independent number audit; GitHub Pages workflow ready |
 | F7 THESIS, README, offline, CI, proof | 11–13 Nov | todo | |
 | F8 Demo + submission | 13–14 Nov | todo | |
 

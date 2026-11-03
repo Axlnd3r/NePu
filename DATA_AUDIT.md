@@ -486,6 +486,16 @@ No mainnet transaction has been made yet.
 - The Transaction ID line of the CLI output is parsed with a regex written from the CLI's usual message; it is
   confirmed (or corrected) on the first real commit, and the block height comes from the chain (`tx` then `block`).
 
+## Repository renamed (2026-11-03, user)
+
+The repository is now `https://github.com/Axlnd3r/NePu` (was `NePu---NEAR-Pulse-`). Checked on 2026-11-03: the GitHub API
+answers 301 for the old name and 200 for the new one; the Pages site moved to `https://axlnd3r.github.io/NePu/` and the
+old Pages URL answers 404 (Pages does not redirect). The local `origin` was pointed at the new URL. `pages.yml` builds with
+`SITE_BASE_PATH=/${{ github.event.repository.name }}`, so the base path follows the name. Left as they were on purpose:
+older log entries in this file and PROGRESS.md (they record what was true then; GitHub redirects the old repository
+and run URLs), and `repository` in `contracts/proof-of-analysis/Cargo.toml`, which is embedded in the deployed wasm
+(NEP-330 metadata): changing it would change the code hash that was verified against the chain.
+
 ## Original open questions
 
 | # | Question | Status | Where answered |

@@ -8,9 +8,9 @@ import { extname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(fileURLToPath(new URL("..", import.meta.url)));
-// Set QA_BASE_PATH (e.g. /NePu---NEAR-Pulse-) to test a build made with SITE_BASE_PATH.
+// Set QA_BASE_PATH (e.g. /NePu) to test a build made with SITE_BASE_PATH.
 const basePath = process.env.QA_BASE_PATH ?? "";
-// Set QA_URL (e.g. https://axlnd3r.github.io/NePu---NEAR-Pulse-) to check a deployed site instead.
+// Set QA_URL (e.g. https://axlnd3r.github.io/NePu) to check a deployed site instead.
 const liveUrl = process.env.QA_URL?.replace(/\/$/, "");
 const out = join(root, "site", "out");
 const shots = join(root, "qa", "screenshots");
