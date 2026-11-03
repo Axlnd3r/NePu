@@ -168,11 +168,24 @@ def site_status(record: dict | None, current_sha256: str | None = None) -> dict:
     older manifest, and a new `make proof` is due).
     """
     near = (record or {}).get("near")
+    ots = (record or {}).get("opentimestamps")
+    stamp = (
+        None
+        if not ots
+        else {
+            "status": ots["status"],
+            "bitcoin_blocks": ots["bitcoin_blocks"],
+            "pending_calendars": ots["pending_calendars"],
+            "checked_at_utc": ots["checked_at_utc"],
+            "file": "data/proof/manifest.json.ots",  # where the site serves it
+        }
+    )
     if not near:
         return {
             "status": "not committed",
             "tx": None,
             "current": None,
+            "opentimestamps": stamp,
             "note": "no NEAR commit yet: run `make proof` (see README, 'Verify the proof')",
         }
     return {
@@ -186,6 +199,7 @@ def site_status(record: dict | None, current_sha256: str | None = None) -> dict:
         "explorer_url": near["explorer_url"],
         "rpc_url": _network(near["network"])["rpc"],
         "current": None if current_sha256 is None else record["manifest_sha256"] == current_sha256,
+        "opentimestamps": stamp,
     }
 
 
@@ -294,6 +308,54 @@ def commit(
         "manifest_sha256": sha,
         "created_at_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "near": near_record(network, contract, signer, run_id, tx_hash, height),
+    }
+    write_proof(proof_path, record)
+    return record
+
+
+# ---------------------------------------------------------------- OpenTimestamps entry
+_OTS_FILE_HASH = re.compile(r"File sha256 hash:\s*([0-9a-f]{64})")
+_OTS_PENDING = re.compile(r"PendingAttestation\('([^']+)'\)")
+_OTS_BITCOIN = re.compile(r"BitcoinBlockHeaderAttestation\((\d+)\)")
+
+
+def parse_ots_info(text: str) -> dict:
+    """Status of a stamp from `ots info`: pending at calendars until a Bitcoin block attests it."""
+    file_hash = _OTS_FILE_HASH.search(text)
+    pending = _OTS_PENDING.findall(text)
+    blocks = [int(b) for b in _OTS_BITCOIN.findall(text)]
+    status = "confirmed" if blocks else "pending" if pending else "unknown"
+    return {
+        "status": status,
+        "file_sha256": file_hash.group(1) if file_hash else None,
+        "bitcoin_blocks": blocks,
+        "pending_calendars": pending,
+    }
+
+
+def ots_record(proof_path: Path, run: Callable[[list[str]], tuple[int, str]]) -> dict:
+    """Read the stamp with `ots info` and record its status in proof.json (keeps the NEAR entry)."""
+    record = read_proof(proof_path)
+    if not record:
+        raise ProofError(f"{proof_path.as_posix()} not found: run `make proof` first")
+    run_id = record["run_id"]
+    stamp = proof_path.parent / proof_path.stem / run_id / "manifest.json.ots"
+    if not stamp.exists():
+        raise ProofError(f"{stamp.as_posix()} not found: the proof workflow makes it")
+    code, output = run(["ots", "info", str(stamp)])
+    if code != 0:
+        raise ProofError(f"ots info failed (exit {code}):\n{output.strip()[-600:]}")
+    info = parse_ots_info(output)
+    if info["file_sha256"] != record["manifest_sha256"]:
+        raise ProofError("the stamp is for another file than the manifest in proof.json")
+    record = {
+        **record,
+        "opentimestamps": {
+            "proof_file": f"data/proof/{run_id}/manifest.json.ots",
+            "manifest_copy": f"data/proof/{run_id}/manifest.json",
+            **info,
+            "checked_at_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        },
     }
     write_proof(proof_path, record)
     return record

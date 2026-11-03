@@ -169,6 +169,26 @@ def proof_preflight(
         raise typer.Exit(1)
 
 
+@proof_app.command("ots-record")
+def proof_ots_record() -> None:
+    """Record the status of the OpenTimestamps stamp (`ots info`) in data/proof.json."""
+    ots_bin = shutil.which("ots")
+    if not ots_bin:
+        typer.echo("ots not found on PATH (it runs in CI: .github/workflows/proof.yml).", err=True)
+        raise typer.Exit(1)
+
+    def run(argv: list[str]) -> tuple[int, str]:
+        done = subprocess.run([ots_bin, *argv[1:]], capture_output=True, text=True, check=False)
+        return done.returncode, done.stdout + done.stderr
+
+    try:
+        record = proof_mod.ots_record(config.ROOT / "data" / "proof.json", run)
+    except proof_mod.ProofError as exc:
+        typer.echo(f"proof: {exc}", err=True)
+        raise typer.Exit(1) from exc
+    typer.echo(f"opentimestamps: {record['opentimestamps']['status']}")
+
+
 @proof_app.command("commit")
 def proof_commit(
     yes: Annotated[bool, typer.Option("--yes", help="Do not ask for confirmation.")] = False,

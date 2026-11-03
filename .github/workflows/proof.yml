@@ -65,9 +65,12 @@ jobs:
           print(f"::notice title=ots info::{msg}")
           PY
 
+      - name: Record the stamp status in data/proof.json
+        run: uv run capture proof ots-record
+
       - name: Commit the proof files
         run: |
-          git add data/proof
+          git add data/proof data/proof.json
           if ! git diff --cached --quiet; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

@@ -822,6 +822,15 @@ def markers_payload(data_dir: Path) -> dict:
     }
 
 
+def ots_files(out_dir: Path) -> list[Path]:
+    """The OpenTimestamps file of the recorded run, served as is (empty before a stamp exists)."""
+    record = proof_mod.read_proof(PROOF_FILE)
+    if not record:
+        return []
+    stamp = PROOF_FILE.parent / PROOF_FILE.stem / record["run_id"] / "manifest.json.ots"
+    return [copy_bytes(stamp, out_dir / "proof" / "manifest.json.ots")] if stamp.exists() else []
+
+
 def copy_bytes(src: Path, dest: Path) -> Path:
     """The file as it is: a visitor hashes it in the browser to check the proof."""
     dest.parent.mkdir(parents=True, exist_ok=True)
@@ -854,4 +863,5 @@ def build(source: str, out_dir: Path = SITE_DATA) -> list[Path]:
         write_json(out_dir / "provenance.json", provenance_payload(data_dir, source)),
         write_json(out_dir / "markers.json", markers_payload(data_dir)),
         copy_bytes(data_dir / mf.MANIFEST_NAME, out_dir / "snapshot-manifest.json"),
+        *ots_files(out_dir),
     ]

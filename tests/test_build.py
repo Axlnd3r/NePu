@@ -68,13 +68,14 @@ def test_every_payload_is_deterministic_and_has_lf_endings(tmp_path: Path) -> No
     first, second = tmp_path / "a", tmp_path / "b"
     written = build("snapshot", first)
     build("snapshot", second)
-    names = sorted(p.name for p in written)
+    names = sorted(p.relative_to(first).as_posix() for p in written)
     assert names == [
         "coverage.json",
         "developer.json",
         "distribution.json",
         "markers.json",
         "meta.json",
+        "proof/manifest.json.ots",
         "provenance.json",
         "queries.json",
         "snapshot-manifest.json",
@@ -82,6 +83,7 @@ def test_every_payload_is_deterministic_and_has_lf_endings(tmp_path: Path) -> No
         "valuation.json",
     ]
     for name in names:
-        assert b"\r" not in (first / name).read_bytes()
+        if not name.endswith(".ots"):  # a binary file may hold a 0x0d byte; text must not
+            assert b"\r" not in (first / name).read_bytes()
         if name != "meta.json":  # meta.json carries the build time
             assert (first / name).read_bytes() == (second / name).read_bytes(), name

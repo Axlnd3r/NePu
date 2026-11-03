@@ -18,6 +18,13 @@ type ProofShape = {
   explorer_url?: string;
   rpc_url?: string;
   current?: boolean | null;
+  opentimestamps?: {
+    status: string;
+    bitcoin_blocks: number[];
+    pending_calendars: string[];
+    checked_at_utc: string;
+    file: string;
+  } | null;
 };
 
 function sourceName(text: string): string {
@@ -162,13 +169,35 @@ export default function Methodology() {
             <span className="ml-2 text-xs text-muted">{proof.note}</span>
           </p>
         )}
-        <p className="mt-4 text-sm">
-          OpenTimestamps (Bitcoin): <Badge tone="neutral">not stamped yet</Badge>
-          <span className="ml-2 text-xs text-muted">
-            the stamp is made by the proof workflow in CI, because the <code>ots</code> client does not
-            run on Windows
-          </span>
-        </p>
+        <div className="mt-4 text-sm">
+          <p>
+            OpenTimestamps (Bitcoin):{" "}
+            <Badge tone={proof.opentimestamps?.status === "confirmed" ? "good" : "neutral"}>
+              {proof.opentimestamps?.status ?? "not stamped yet"}
+            </Badge>
+          </p>
+          {proof.opentimestamps ? (
+            <p className="mt-2 text-xs text-muted">
+              {proof.opentimestamps.status === "confirmed"
+                ? `Attested in Bitcoin block ${proof.opentimestamps.bitcoin_blocks.join(", ")} according to the proof file; check it with ots verify and a Bitcoin node.`
+                : `Submitted to ${proof.opentimestamps.pending_calendars.length} calendar servers; a Bitcoin block attests it a few hours later and the proof workflow then completes the file.`}{" "}
+              Checked {proof.opentimestamps.checked_at_utc}.{" "}
+              <a
+                className="underline"
+                href={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/${proof.opentimestamps.file}`}
+              >
+                manifest.json.ots
+              </a>{" "}
+              (to verify, save it next to <code>data/snapshot/manifest.json</code> and run{" "}
+              <code>ots verify manifest.json.ots</code>; the client needs a Bitcoin Core node).
+            </p>
+          ) : (
+            <p className="mt-2 text-xs text-muted">
+              The stamp is made by the proof workflow in CI, because the <code>ots</code> client does
+              not run on Windows.
+            </p>
+          )}
+        </div>
       </section>
 
       <section className="rounded-xl border border-[var(--ring)] bg-surface p-4 sm:p-6" aria-labelledby="events">
