@@ -276,6 +276,55 @@ inflow, tau falls to 0.0362% and V* rises to 986 M USD per day. The sensitivity 
 that: inflation 2.5%, price 1x, tau 1x gives 654 M USD per day. Break-even scales linearly with price
 because issuance is fixed in NEAR.
 
+## F4 Distribution Map and developer indicator (2026-11-03)
+
+Snapshot v3 frozen at 2026-11-01 (11 files, `data/snapshot/manifest.json`). Added: `contracts_daily`
+(corrected SQL), `explorer_channels_daily`, `explorer_recipients_daily`, `token_assets`; refreshed
+`explorer_1click_daily`. `make verify`: 114 passed. Outputs: `site/public/data/distribution.json`,
+`developer.json`.
+
+Facts relied on and how each was verified:
+- **Explorer pull 2026-07-01..2026-11-01.** Same endpoint and pagination as Check 8 (time window, dedupe, stall
+  guard, 1000 rows per page, 1 request per 5 s). Run to completion on the user's machine; the live table covers
+  to 2026-11-02, the freeze trimmed it to 2026-11-01 (433,167 rows instead of 435,846). Verified by
+  `capture verify-manifest data/live` and by the golden and integration tests that rebuild the three Explorer
+  tables from the same cached pages.
+- **Token list** `https://1click.chaindefuser.com/v0/tokens` (no key), stored as `token_assets` (210 assets,
+  snapshot at pull time, no date column). Verified by use: `unmapped_share` is 0.0 in every month in
+  `distribution.json`, so every origin asset in the window resolved to a symbol.
+- **Stablecoin and ZEC groups** are a judgment on that list (`stablecoin_symbols` in `distribution.json`),
+  not a source fact.
+- **`contracts_daily.sql` correction:** deploy-only days are now kept. Re-pulled for 2025-09-22..2026-11-01
+  (921,480 rows, 245 GB billed). The snapshot refreeze changed `query_sha256` to 70b53524...259c4.
+- **near.com is not measurable.** No field identifies it, and the front-end wallet is almost never an app-fee
+  recipient. `near_wallet_only_share` is a labelled proxy (volume of transactions whose fee recipients are only
+  NEAR revenue wallets), not a near.com share.
+
+Numbers (source: `distribution.json`, `developer.json`; Explorer covers 1Click only):
+
+| Month | Explorer volume (M USD) | Share of DefiLlama volume | Channel HHI | Top-1 channel | Declared fee to NEAR wallets | Attributable share of on-chain revenue |
+|---|---|---|---|---|---|---|
+| 2026-07 | 1,073.5 | 48.7 % | 0.198 | 34.1 % | 9.5 % | 68.8 % |
+| 2026-08 | 1,212.6 | 43.7 % | 0.201 | 35.8 % | 8.3 % | 47.1 % |
+| 2026-09 | 1,513.8 | 31.5 % | 0.192 | 36.1 % | 5.6 % | 21.5 % |
+| 2026-10 | 1,095.3 | 27.4 % | 0.214 | 40.1 % | 9.6 % | 21.9 % |
+
+- Stablecoin share of volume 61.8 / 62.0 / 61.5 / 53.3 % (Jul to Oct). Asset HHI 0.237 / 0.249 / 0.235 / 0.199.
+- `near_wallet_only_share` 7.7 / 6.5 / 17.1 / 22.3 %. The share of volume with no app fee fell from 34.8 % (Jul)
+  to 7.7 % (Oct). I did not investigate why; no causal claim is made.
+- Explorer coverage of DefiLlama volume keeps shrinking, so the Distribution Map describes a falling fraction
+  of Intents volume. This is stated in `distribution.json` notes and must be repeated in THESIS.md.
+- Developer indicator (window 2025-09-22..2026-11-01, 30-day burn-in): 3,791 deploying accounts, 494 dropped in
+  the burn-in, 137 already existing. Cohort 2026-08: 85 new contracts, 45.9 % still called in month +1. Cohort
+  2026-09: 467, 31.3 %, with parent `near` behind 17.6 % of it.
+- **Lead/lag verdict: null.** Lag 0 was best in training (r = -0.72); in the test months r = +0.90 on 5 pairs,
+  permutation p = 0.19, alpha 0.1. Lags 2 and 3 have fewer than 4 pairs and report no correlation. The signs flip
+  between train and test, so the result cannot be told apart from chance (CLAUDE.md rule 5: reported as is).
+
+Open limits: Explorer volumes are requested amounts and declared fees are split with 1Click under a partner
+key; recipient volumes do not add up because a transaction with several recipients counts in each.
+`gcloud-login.sh` in the repo root is an untracked local helper and is not part of F4.
+
 ## Original open questions
 
 | # | Question | Status | Where answered |
@@ -326,4 +375,8 @@ Resulting scope:
 ### 2026-11-02, F2 follow-up (Explorer)
 - JWT obtained and verified; 30-day pull completed after fixing a pagination loop (Check 8). Snapshot v2 frozen at 2026-11-01.
 - Mistake made and fixed: I trusted the API's cursor without a stall check, so a repeated page looped from cache for about 25 minutes before I noticed. The pagination, its guards and tests were replaced.
+
+### 2026-11-03, F4
+- Explorer back-pull completed after a PC shutdown interrupted it; snapshot v3 frozen at 2026-11-01; see "F4 Distribution Map and developer indicator".
+- Mistake made and fixed: I estimated the remaining pull time from an early page rate (17 pages per day) that had almost doubled by September, so the estimate was too low. Estimates of this kind are unreliable because the volume per day keeps changing.
 

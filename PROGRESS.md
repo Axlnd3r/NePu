@@ -14,13 +14,25 @@ Living log. Claude updates this at the end of every session. Newest entry on top
 | F1 Data verification | 2–3 Nov | done, awaiting Gate 1 confirmation | Recommendation GO-WITH-FALLBACK, see DATA_AUDIT.md |
 | F2 Ingestion + snapshot | 3–5 Nov | done | Snapshot v1 frozen 2026-11-01; Explorer table not pulled (no JWT); price limited to 365 days |
 | F3 Coverage ratio + tests | 5–7 Nov | done | CR_float, CR_supply, V*, sensitivity, 10/10 months reconcile within 15% |
-| F4 Distribution Map | 7–9 Nov | todo | |
+| F4 Distribution Map | 7–9 Nov | done | Snapshot v3 (2026-11-01); distribution.json, developer.json; lead/lag verdict null |
 | F5 Valuation Lab | 8–10 Nov | todo | |
 | F6 Dashboard | 9–12 Nov | todo | |
 | F7 THESIS, README, offline, CI, proof | 11–13 Nov | todo | |
 | F8 Demo + submission | 13–14 Nov | todo | |
 
 ## Session log
+### 2026-11-03 — F4
+- Done: Distribution Map (models/distribution.py: channel and asset concentration, HHI, stablecoin and ZEC shares, attributable share of on-chain revenue, take rates, near.com proxy) and developer indicator (models/developer.py: new contracts that stay used, cohorts, train/test lead/lag). Explorer tables rebuilt at recipient level from the cached pages (daily, channels, recipients), token_assets from the 1Click token list, `contracts_daily.sql` corrected (deploy-only days kept) and re-pulled. Explorer pulled 2026-07-01..2026-11-01. Snapshot v3 frozen at 2026-11-01 (11 files). `make verify`: 114 passed, ruff clean. `make build` writes distribution.json and developer.json.
+- Numbers found (source: site/public/data/distribution.json, developer.json; Explorer is 1Click only):
+  - Channel HHI 0.198 / 0.201 / 0.192 / 0.214 for Jul / Aug / Sep / Oct; top channel 34.1 % to 40.1 %; stablecoin share of volume 61.8 % to 53.3 %.
+  - Explorer volume as a share of DefiLlama volume: 48.7 / 43.7 / 31.5 / 27.4 % (Jul to Oct), so the map covers a shrinking fraction of Intents volume.
+  - Attributable share of on-chain revenue (declared fees to NEAR wallets) 68.8 / 47.1 / 21.5 / 21.9 %. near.com is not measurable; `near_wallet_only_share` 7.7 / 6.5 / 17.1 / 22.3 % is a labelled proxy.
+  - Developer cohorts: 2026-08 85 new contracts, 45.9 % still called in month +1; 2026-09 467, 31.3 % (parent `near` behind 17.6 % of it).
+  - Lead/lag verdict: **null** (lag 0 best in training, r = -0.72; test r = +0.90 on 5 pairs, permutation p = 0.19; lags 2 and 3 have fewer than 4 pairs). Reported as is, not as support for the thesis.
+- Decisions: page Explorer by end timestamp, never by cursor; recipient volumes are not additive (a transaction counts in each recipient); stablecoin and ZEC groups are a labelled judgment; rows are trimmed to the frozen day (live table reached 2026-11-02, snapshot ends 2026-11-01); gcloud-login.sh is a local helper and was left out of the commit.
+- Blockers: no field identifies near.com, so the near.com share the spec asks for is "unavailable" (reason in distribution.json) and THESIS.md must say so; Explorer coverage keeps falling, so every Distribution Map claim must carry its scope; developer lead/lag has too few monthly pairs for any positive claim.
+- Next: F5 Valuation Lab (reverse valuation + bootstrap Monte Carlo, fixed seed in config). Reminder: price_daily only reaches back to 2025-11-04, which limits the bootstrap sample.
+
 ### 2026-11-02 — F2 follow-up (Explorer)
 - Done: Explorer API verified with the JWT (fee unit = bps of amountIn, asset-id patterns, cursor unreliable); pagination rewritten (time window, dedupe, stall guard, page cap); 30-day pull complete: 89,210 rows, 488,989 transactions, 2026-10-03..2026-11-01; snapshot v2 frozen at 2026-11-01 (8 tables, the other 7 byte-identical).
 - Numbers found (source: data/snapshot/explorer_1click_daily.parquet): Explorer volume is 27 % of DefiLlama's for the same days; declared app fee 0.458 % of volume; chain parsing 0 % unknown; row count equals an independent recount from the cache.

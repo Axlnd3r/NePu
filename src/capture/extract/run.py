@@ -10,7 +10,7 @@ import httpx
 
 from capture import config
 from capture.config import BQ_TABLES, BqTable
-from capture.extract import coingecko, defillama, fee_wallets, intents_explorer
+from capture.extract import coingecko, defillama, fee_wallets, intents_explorer, tokens
 from capture.extract.bigquery import BigQueryRunner, wallets_param
 from capture.extract.common import (
     DateRange,
@@ -23,7 +23,7 @@ from capture.extract.common import (
     utc_now_iso,
 )
 
-EXPLORER_DEFAULT_DAYS = 30
+EXPLORER_CHUNK_DAYS = 7  # progress is stored after every chunk, so a long pull can resume
 RAW_WALLET_COLUMNS = ["date", "wallet", "token", "balance_end"]
 
 
@@ -157,6 +157,31 @@ def extract_price(
     return result
 
 
+EXPLORER_KEYS = {
+    "explorer_1click_daily": ["date", "affiliate", "asset_in", "asset_out", "chain"],
+    "explorer_channels_daily": ["date", "referral"],
+    "explorer_recipients_daily": ["date", "referral", "recipient"],
+}
+
+
+def _group_coverage(data_dir: Path) -> DateRange | None:
+    """Dates present in all three Explorer tables (they are always written together)."""
+    covs = [table_coverage(data_dir, name) for name in config.EXPLORER_TABLES]
+    if any(c is None for c in covs):
+        return None
+    start, end = max(c[0] for c in covs), min(c[1] for c in covs)
+    return (start, end) if start <= end else None
+
+
+def _chunks(lo: date, hi: date, days: int) -> list[DateRange]:
+    out, cur = [], lo
+    while cur <= hi:
+        stop = min(hi, cur + timedelta(days=days - 1))
+        out.append((cur, stop))
+        cur = stop + timedelta(days=1)
+    return out
+
+
 def extract_explorer(
     data_dir: Path,
     settings: dict[str, str],
@@ -165,37 +190,66 @@ def extract_explorer(
     end: date | None = None,
     today: date | None = None,
     client: intents_explorer.ExplorerClient | None = None,
+    chunk_days: int = EXPLORER_CHUNK_DAYS,
 ) -> TableResult:
+    """Pull the three Explorer tables from the same raw pages, a chunk of days at a time."""
     name = "explorer_1click_daily"
     jwt = settings.get("INTENTS_EXPLORER_JWT")
     if client is None and not jwt:
         return TableResult(name, "skipped", note="INTENTS_EXPLORER_JWT not set")
     client = client or intents_explorer.ExplorerClient(jwt or "", data_dir / "_cache" / "explorer")
     want_end = end or config.last_complete_day(today)
-    want_start = start or want_end - timedelta(days=EXPLORER_DEFAULT_DAYS - 1)
-    covered = table_coverage(data_dir, name)
+    want_start = start or config.EXPLORER_START
+    covered = _group_coverage(data_dir)
     result = TableResult(name, "up-to-date", _existing_rows(data_dir, name), covered=covered)
-    key = ["date", "affiliate", "asset_in", "asset_out", "chain"]
     for lo, hi in missing_ranges(covered, want_start, want_end):
-        days = [lo + timedelta(days=i) for i in range((hi - lo).days + 1)]
-        df = intents_explorer.fetch_days(client, days)
-        existing = read_table(data_dir, name)
-        out = merge_rows(existing, df, key) if not df.empty else existing
-        covered = extend_coverage(covered, (lo, hi))
-        if out is None or out.empty:
-            continue
-        store_table(
-            data_dir,
-            name,
-            out,
-            covered=covered,
-            source=intents_explorer.URL,
-            query_file=None,
-            pulled_at_utc=utc_now_iso(),
-        )
-        result.status, result.rows_added = "ok", result.rows_added + len(df)
-        result.rows_total, result.covered = len(out), covered
+        chunks = _chunks(lo, hi, chunk_days)
+        if covered is not None and hi < covered[0]:
+            chunks.reverse()  # backfill: grow coverage backwards without gaps
+        for a, b in chunks:
+            frames = intents_explorer.fetch_days(
+                client, [a + timedelta(days=i) for i in range((b - a).days + 1)]
+            )
+            covered = extend_coverage(covered, (a, b))
+            for table, new in (
+                ("explorer_1click_daily", frames.daily),
+                ("explorer_channels_daily", frames.channels),
+                ("explorer_recipients_daily", frames.recipients),
+            ):
+                existing = read_table(data_dir, table)
+                out = merge_rows(existing, new, EXPLORER_KEYS[table]) if not new.empty else existing
+                if out is None or out.empty:
+                    continue
+                store_table(
+                    data_dir,
+                    table,
+                    out,
+                    covered=covered,
+                    source=intents_explorer.URL,
+                    query_file=None,
+                    pulled_at_utc=utc_now_iso(),
+                )
+                if table == name:
+                    result.rows_added += len(frames.daily)
+                    result.rows_total = len(out)
+            result.status, result.covered = "ok", covered
     return result
+
+
+def extract_tokens(data_dir: Path, *, client: httpx.Client | None = None) -> TableResult:
+    """Public 1Click token list (asset id -> symbol, blockchain). Replaced on every run."""
+    name = "token_assets"
+    frame = tokens.fetch(client)
+    store_table(
+        data_dir,
+        name,
+        frame,
+        covered=None,
+        source=tokens.URL,
+        query_file=None,
+        pulled_at_utc=utc_now_iso(),
+    )
+    return TableResult(name, "ok", len(frame), len(frame), note="list as of pull time")
 
 
 def run_extract(
@@ -232,6 +286,8 @@ def run_extract(
         results.append(extract_defillama(data_dir))
     if "price_daily" in tables:
         results.append(extract_price(data_dir, settings, start=start, end=end))
-    if "explorer_1click_daily" in tables:
+    if any(t in tables for t in config.EXPLORER_TABLES):
         results.append(extract_explorer(data_dir, settings, start=start, end=end))
+    if "token_assets" in tables:
+        results.append(extract_tokens(data_dir))
     return results

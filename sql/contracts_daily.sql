@@ -1,5 +1,7 @@
--- contracts_daily: one row per (block_date, receiving account) with at least one FUNCTION_CALL.
--- Params: @start_date, @end_date (inclusive). unique_callers = distinct predecessor accounts.
+-- contracts_daily: one row per (block_date, receiving account) with a DEPLOY_CONTRACT or at least
+-- one FUNCTION_CALL. Params: @start_date, @end_date (inclusive). unique_callers = distinct
+-- predecessor accounts. Deploy-only rows (no call that day) are kept so that a contract deployed
+-- today and first called tomorrow is still seen as new (F4); function_calls_received is 0 there.
 SELECT
   block_date AS `date`,
   receipt_receiver_account_id AS contract_account,
@@ -11,5 +13,5 @@ FROM `bigquery-public-data.crypto_near_mainnet_us.receipt_actions`
 WHERE block_date BETWEEN @start_date AND @end_date
   AND action_kind IN ('DEPLOY_CONTRACT', 'FUNCTION_CALL')
 GROUP BY block_date, receipt_receiver_account_id
-HAVING function_calls_received >= 1
+HAVING deploys >= 1 OR function_calls_received >= 1
 ORDER BY 1, 2

@@ -15,6 +15,9 @@ DATA_SNAPSHOT = ROOT / "data" / "snapshot"
 SQL_DIR = ROOT / "sql"
 DATASET = "bigquery-public-data.crypto_near_mainnet_us"
 
+# Fixed seed for every random draw (permutation tests, Monte Carlo).
+RANDOM_SEED = 20261114
+
 SETTING_KEYS = (
     "GOOGLE_CLOUD_PROJECT",
     "BQ_MAX_BYTES",
@@ -35,6 +38,10 @@ ACTIVITY_START = date(
 )  # buybacks.multisignature.near first appears in ft_balances_daily
 SUPPLY_START = date(2025, 5, 10)  # start of DefiLlama fees/revenue history
 FEE_WALLET_START = date(2025, 11, 7)  # fefundsadmin.sputnik-dao.near first appears
+# First day with DefiLlama revenue above zero; the developer indicator is compared with it (F4).
+CONTRACTS_START = date(2025, 9, 22)
+# Explorer pull window start (F4: 4 months so that monthly views have more than one month).
+EXPLORER_START = date(2026, 7, 1)
 PRICE_START = SUPPLY_START
 # The public CoinGecko API only serves the past 365 days; stay a couple of days inside it.
 PRICE_PUBLIC_WINDOW_DAYS = 363
@@ -63,14 +70,15 @@ BQ_TABLES = {
     t.name: t
     for t in (
         BqTable("network_daily", ACTIVITY_START, ("date",)),
-        BqTable("contracts_daily", ACTIVITY_START, ("date", "contract_account")),
+        BqTable("contracts_daily", CONTRACTS_START, ("date", "contract_account")),
         BqTable("intents_onchain_daily", ACTIVITY_START, ("date",)),
         BqTable("supply_daily", SUPPLY_START, ("date",)),
         # ft_balances_daily is partitioned by epoch_date and lands later than block tables.
         BqTable("fee_wallet_inflows_daily", FEE_WALLET_START, ("date", "wallet"), lag_days=1),
     )
 }
-API_TABLES = ("defillama_intents_daily", "price_daily", "explorer_1click_daily")
+EXPLORER_TABLES = ("explorer_1click_daily", "explorer_channels_daily", "explorer_recipients_daily")
+API_TABLES = ("defillama_intents_daily", "price_daily", *EXPLORER_TABLES, "token_assets")
 ALL_TABLES = (*BQ_TABLES, *API_TABLES)
 
 

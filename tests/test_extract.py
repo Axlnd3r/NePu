@@ -1,5 +1,6 @@
 """Offline tests for the extraction layer: no network, no BigQuery."""
 
+import hashlib
 import json
 import re
 from datetime import UTC, date, datetime, timedelta
@@ -11,7 +12,7 @@ import pytest
 
 from capture import config, snapshot
 from capture import manifest as mf
-from capture.extract import coingecko, defillama, fee_wallets, intents_explorer
+from capture.extract import coingecko, defillama, fee_wallets, intents_explorer, tokens
 from capture.extract.bigquery import Chunk, QueryTooLarge, plan_chunks
 from capture.extract.common import (
     extend_coverage,
@@ -22,7 +23,7 @@ from capture.extract.common import (
     table_coverage,
     with_retries,
 )
-from capture.extract.run import extract_bq_table
+from capture.extract.run import extract_bq_table, extract_explorer
 
 D = date
 
@@ -480,3 +481,197 @@ def test_bytes_log_is_valid_jsonl_when_present() -> None:
     if log.exists():
         for line in log.read_text(encoding="utf-8").splitlines():
             assert {"table", "dry_run_bytes", "billed_bytes"} <= json.loads(line).keys()
+
+
+def _ref_tx(
+    i: int, referral: str | None, recipients: list[tuple[str, int]], usd: str = "100"
+) -> dict:
+    return {
+        **_tx(i),
+        "referral": referral,
+        "amountInUsd": usd,
+        "appFees": [{"recipient": r, "fee": bps} for r, bps in recipients],
+    }
+
+
+def test_channel_and_recipient_aggregation() -> None:
+    day = D(2026, 10, 30)
+    txs = [
+        _ref_tx(1, "swapkit", [("a.near", 50), ("b.near", 20)]),
+        _ref_tx(2, "swapkit", [("a.near", 50)]),
+        _ref_tx(3, None, []),
+        _ref_tx(4, None, [("near.wallet", 10)], usd="200"),
+    ]
+    channels = {r["referral"]: r for r in intents_explorer.aggregate_channels(day, txs)}
+    assert set(channels) == {"swapkit", "(none)"}
+    assert channels["swapkit"]["volume_usd"] == pytest.approx(200.0)
+    assert channels["swapkit"]["fee_usd"] == pytest.approx(100 * 70 / 1e4 + 100 * 50 / 1e4)
+    assert channels["(none)"]["tx_count"] == 2 and channels["(none)"][
+        "volume_usd"
+    ] == pytest.approx(300.0)
+    # channel volumes add up to the total of the day
+    assert sum(r["volume_usd"] for r in channels.values()) == pytest.approx(500.0)
+
+    rec = {
+        (r["referral"], r["recipient"]): r for r in intents_explorer.aggregate_recipients(day, txs)
+    }
+    assert rec[("swapkit", "a.near")]["volume_usd"] == pytest.approx(200.0)
+    assert rec[("swapkit", "b.near")]["fee_usd"] == pytest.approx(100 * 20 / 1e4)
+    assert (
+        rec[("(none)", "(none)")]["tx_count"] == 1 and rec[("(none)", "(none)")]["fee_usd"] == 0.0
+    )
+    # volume is not additive across recipients: tx 1 sits in both a.near and b.near
+    assert sum(r["volume_usd"] for r in rec.values()) > 500.0
+    # fee is additive: it equals the channel total
+    assert sum(r["fee_usd"] for r in rec.values()) == pytest.approx(
+        sum(r["fee_usd"] for r in channels.values())
+    )
+
+
+def test_cache_keeps_only_the_fields_the_model_uses(tmp_path: Path) -> None:
+    full = {
+        **_tx(1),
+        "senders": ["x"] * 50,
+        "nearTxHashes": ["h"] * 50,
+        "refundReason": None,
+        "status": "SUCCESS",
+    }
+    slim = intents_explorer._slim([full])[0]
+    assert set(slim) <= set(intents_explorer.SLIM_FIELDS) and "senders" not in slim
+    assert len(json.dumps(slim)) < len(json.dumps(full)) / 2
+
+
+class DayClient:
+    """Stands in for ExplorerClient: 10 deterministic transactions a day; records the days asked."""
+
+    def __init__(self) -> None:
+        self.days: list[date] = []
+
+    def fetch_day(self, day: date) -> list[dict]:
+        self.days.append(day)
+        return [
+            _ref_tx(
+                i,
+                "swapkit" if i % 2 else None,
+                [("a.near", 50)] if i % 2 else [],
+                usd=str(10 + day.day),
+            )
+            | {
+                "createdAt": f"{day.isoformat()}T00:00:{i:02d}.000Z",
+                "createdAtTimestamp": 1_000 + i,
+            }
+            for i in range(10)
+        ]
+
+
+def test_extract_explorer_group_is_incremental_resumable_and_backfills(tmp_path: Path) -> None:
+    client = DayClient()
+    today = D(2026, 10, 11)  # last complete day = 2026-10-10
+    first = extract_explorer(
+        tmp_path, {}, start=D(2026, 10, 5), today=today, client=client, chunk_days=3
+    )
+    assert first.status == "ok" and first.covered == (D(2026, 10, 5), D(2026, 10, 10))
+    assert len(client.days) == 6
+    for name in config.EXPLORER_TABLES:  # all three written together, with the same coverage
+        assert table_coverage(tmp_path, name) == (D(2026, 10, 5), D(2026, 10, 10))
+    daily = read_table(tmp_path, "explorer_1click_daily")
+    channels = read_table(tmp_path, "explorer_channels_daily")
+    assert daily["tx_count"].sum() == 60 and channels["tx_count"].sum() == 60
+    assert daily["volume_usd"].sum() == pytest.approx(channels["volume_usd"].sum())
+
+    again = extract_explorer(
+        tmp_path, {}, start=D(2026, 10, 5), today=today, client=client, chunk_days=3
+    )
+    assert again.status == "up-to-date" and len(client.days) == 6  # nothing fetched twice
+
+    back = extract_explorer(
+        tmp_path, {}, start=D(2026, 10, 1), today=today, client=client, chunk_days=3
+    )
+    assert back.covered == (D(2026, 10, 1), D(2026, 10, 10)) and len(client.days) == 10
+    # head range 10-01..10-04 = [10-01..10-03] + [10-04]; the newest chunk runs first
+    assert client.days[6:8] == [D(2026, 10, 4), D(2026, 10, 1)]
+    assert read_table(tmp_path, "explorer_1click_daily")["tx_count"].sum() == 100
+    assert mf.verify_manifest(tmp_path) == []
+
+
+def test_extract_explorer_without_jwt_is_skipped(tmp_path: Path) -> None:
+    assert extract_explorer(tmp_path, {}).status == "skipped"
+
+
+def test_tokens_table_keeps_only_identifiers() -> None:
+    payload = [
+        {
+            "assetId": "nep141:zec.omft.near",
+            "symbol": "ZEC",
+            "blockchain": "zec",
+            "decimals": 8,
+            "price": 1.0,
+        },
+        {
+            "assetId": "nep141:wrap.near",
+            "symbol": "wNEAR",
+            "blockchain": "near",
+            "decimals": 24,
+            "price": 4.0,
+        },
+        {
+            "assetId": "nep141:wrap.near",
+            "symbol": "wNEAR",
+            "blockchain": "near",
+            "decimals": 24,
+            "price": 4.1,
+        },
+    ]
+    frame = tokens.to_frame(payload)
+    assert list(frame.columns) == ["asset_id", "symbol", "blockchain", "decimals"]
+    assert frame["asset_id"].tolist() == [
+        "nep141:wrap.near",
+        "nep141:zec.omft.near",
+    ]  # sorted, deduplicated
+
+
+def test_snapshot_copies_tables_without_a_date_column(tmp_path: Path) -> None:
+    live, snap = tmp_path / "live", tmp_path / "snap"
+    _write_live(live, D(2026, 5, 6))
+    store_table(
+        live, "token_assets", pd.DataFrame({"asset_id": ["a", "b"], "symbol": ["X", "Y"]}),
+        covered=None, source="test", query_file=None, pulled_at_utc="2026-05-07T00:00:00Z",
+    )  # fmt: skip
+    entries = {e.path: e for e in snapshot.freeze(D(2026, 5, 4), live, snap, today=D(2026, 5, 7))}
+    assert (
+        entries["token_assets.parquet"].rows == 2
+        and entries["token_assets.parquet"].date_range is None
+    )
+    assert entries["t.parquet"].rows == 4
+    assert mf.verify_manifest(snap) == []
+
+
+def test_explorer_survives_a_cache_page_cut_short_by_a_stop(tmp_path: Path) -> None:
+    calls: list[dict] = []
+    client = _client(tmp_path, _fake_explorer(_day_txs(D(2026, 10, 30), 5), calls), FakeClock())
+    params = {"numberOfTransactions": 1000, "startTimestampUnix": 0, "endTimestampUnix": 2**31}
+    key = hashlib.sha256(json.dumps(params, sort_keys=True).encode()).hexdigest()
+    (tmp_path / f"{key}.json").write_text('[{"depositAddress": "tru', encoding="utf-8")  # cut short
+
+    page = client.get(params)
+    assert len(calls) == 1 and len(page) == 5  # the broken file was treated as a miss
+    assert json.loads((tmp_path / f"{key}.json").read_text(encoding="utf-8")) == page  # repaired
+    assert not list(tmp_path.glob("*.tmp"))  # no temporary file left behind
+    assert client.get(params) == page and len(calls) == 1  # now served from the cache
+
+
+def test_explorer_retries_after_a_timeout(tmp_path: Path) -> None:
+    txs = _day_txs(D(2026, 10, 30), 5)
+    calls: list[dict] = []
+    ok = _fake_explorer(txs, calls)
+    attempts = {"n": 0}
+
+    def flaky(request: httpx.Request) -> httpx.Response:
+        attempts["n"] += 1
+        if attempts["n"] == 1:
+            raise httpx.ReadTimeout("The read operation timed out", request=request)
+        return ok(request)
+
+    client = _client(tmp_path, flaky, FakeClock())
+    assert len(client.fetch_day(D(2026, 10, 30))) == 5
+    assert attempts["n"] == 2  # one timeout, then the retry succeeded

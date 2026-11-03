@@ -109,7 +109,7 @@ def store_table(
     name: str,
     df: pd.DataFrame,
     *,
-    covered: DateRange,
+    covered: DateRange | None,
     source: str,
     query_file: str | None,
     pulled_at_utc: str,
@@ -130,7 +130,7 @@ def store_table(
         source=source,
         pulled_at_utc=pulled_at_utc,
         query_file=query_file,
-        date_range=(covered[0].isoformat(), covered[1].isoformat()),
+        date_range=None if covered is None else (covered[0].isoformat(), covered[1].isoformat()),
         query_sha256=query_sha256,
     )
     mf.upsert_entries(data_dir, [entry])

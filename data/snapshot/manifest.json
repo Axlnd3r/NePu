@@ -2,16 +2,16 @@
   "files": [
     {
       "path": "contracts_daily.parquet",
-      "sha256": "60fbfe735047ec803db0de565541d5cf6d6051aecef7f61da032b2dbf57c913a",
-      "rows": 211845,
+      "sha256": "cac2f0a31a601615217d8d6a701cffa025ca94664dfde043ada6b8fc19baf3f0",
+      "rows": 921480,
       "source": "bigquery:bigquery-public-data.crypto_near_mainnet_us",
       "query_file": "sql/contracts_daily.sql",
       "date_range": [
-        "2026-04-26",
+        "2025-09-22",
         "2026-11-01"
       ],
-      "pulled_at_utc": "2026-11-02T03:39:13Z",
-      "query_sha256": "32d2da4b1e8286f5264daf1c55ff08d5bc65c3a6db53d0d4d2b69a67dcc69dd2"
+      "pulled_at_utc": "2026-11-02T08:05:43Z",
+      "query_sha256": "70b53524b29f8c6e1e59e06d14f76efe98e86cc180f856583ba74411141259c4"
     },
     {
       "path": "defillama_intents_daily.parquet",
@@ -28,15 +28,41 @@
     },
     {
       "path": "explorer_1click_daily.parquet",
-      "sha256": "4ab87fe7ad03e5bf40a8765cde167c1b71fccfecc6c4808dfa3f85c85d6a6cd0",
-      "rows": 89210,
+      "sha256": "1b17dccc39d82986fec2e9469bf9aaa9091450043263f9b662b81f858609106c",
+      "rows": 433167,
       "source": "https://explorer.near-intents.org/api/v0/transactions",
       "query_file": null,
       "date_range": [
-        "2026-10-03",
+        "2026-07-01",
         "2026-11-01"
       ],
-      "pulled_at_utc": "2026-11-02T07:37:07Z",
+      "pulled_at_utc": "2026-11-03T03:16:25Z",
+      "query_sha256": null
+    },
+    {
+      "path": "explorer_channels_daily.parquet",
+      "sha256": "9521d4458640c05e630dc6e515dbe66b9c5eaffba45c361a1f535f005c9837dd",
+      "rows": 11023,
+      "source": "https://explorer.near-intents.org/api/v0/transactions",
+      "query_file": null,
+      "date_range": [
+        "2026-07-01",
+        "2026-11-01"
+      ],
+      "pulled_at_utc": "2026-11-03T03:16:25Z",
+      "query_sha256": null
+    },
+    {
+      "path": "explorer_recipients_daily.parquet",
+      "sha256": "238b3049a4d5d421f0e4e912e8a4ebcfb26f8f4907edd46206ba0882806df2f3",
+      "rows": 25786,
+      "source": "https://explorer.near-intents.org/api/v0/transactions",
+      "query_file": null,
+      "date_range": [
+        "2026-07-01",
+        "2026-11-01"
+      ],
+      "pulled_at_utc": "2026-11-03T03:16:25Z",
       "query_sha256": null
     },
     {
@@ -103,6 +129,16 @@
       ],
       "pulled_at_utc": "2026-11-02T03:40:33Z",
       "query_sha256": "ad31ae0ba3bdf099e88e80ba38e310d2d4741d2ef7030c21577f42b954c64451"
+    },
+    {
+      "path": "token_assets.parquet",
+      "sha256": "3529a85686d062325a40a17b70ab9054e6e4454ff601888695399c8062867844",
+      "rows": 210,
+      "source": "https://1click.chaindefuser.com/v0/tokens",
+      "query_file": null,
+      "date_range": null,
+      "pulled_at_utc": "2026-11-02T07:57:54Z",
+      "query_sha256": null
     }
   ]
 }

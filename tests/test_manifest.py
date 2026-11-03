@@ -66,3 +66,22 @@ def test_committed_manifest_hashes(manifest: Path) -> None:
 
 def test_manifest_is_written_with_lf_line_endings(data_dir: Path) -> None:
     assert b"\r" not in (data_dir / "manifest.json").read_bytes()
+
+
+def test_concurrent_upserts_do_not_lose_entries(tmp_path: Path) -> None:
+    import threading
+
+    from capture.manifest import FileEntry, upsert_entries
+
+    def worker(n: int) -> None:
+        for i in range(15):
+            entry = FileEntry(
+                f"t{n}_{i}.parquet", "0" * 64, 1, "test", None, None, "2026-11-02T00:00:00Z"
+            )
+            upsert_entries(tmp_path, [entry])
+
+    threads = [threading.Thread(target=worker, args=(n,)) for n in range(6)]
+    [t.start() for t in threads]
+    [t.join() for t in threads]
+    assert len(read_manifest(tmp_path)) == 6 * 15
+    assert not (tmp_path / "manifest.json.lock").exists()

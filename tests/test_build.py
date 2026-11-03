@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from capture.build import coverage_payload, write_json
+from capture.build import build, coverage_payload, write_json
 from capture.config import DATA_SNAPSHOT, ROOT
 
 TEXT_SUFFIXES = {".py", ".md", ".json", ".sql", ".yml", ".yaml", ".toml", ".ts", ".tsx", ".css"}
@@ -62,3 +62,15 @@ def test_no_crlf_in_project_text_files() -> None:
             if path.is_file() and path.suffix in TEXT_SUFFIXES and b"\r\n" in path.read_bytes():
                 offenders.append(path.relative_to(ROOT).as_posix())
     assert not offenders, f"CRLF line endings (use LF, see .gitattributes): {offenders}"
+
+
+def test_every_payload_is_deterministic_and_has_lf_endings(tmp_path: Path) -> None:
+    first, second = tmp_path / "a", tmp_path / "b"
+    written = build("snapshot", first)
+    build("snapshot", second)
+    names = sorted(p.name for p in written)
+    assert names == ["coverage.json", "developer.json", "distribution.json", "meta.json"]
+    for name in names:
+        assert b"\r" not in (first / name).read_bytes()
+        if name != "meta.json":  # meta.json carries the build time
+            assert (first / name).read_bytes() == (second / name).read_bytes(), name

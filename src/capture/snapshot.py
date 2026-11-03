@@ -33,7 +33,8 @@ def freeze(
     entries: list[mf.FileEntry] = []
     for live in mf.read_manifest(live_dir):
         df = pd.read_parquet(live_dir / live.path)
-        df = df[df["date"] <= freeze_date].reset_index(drop=True)
+        if "date" in df.columns:
+            df = df[df["date"] <= freeze_date].reset_index(drop=True)
         if df.empty:
             continue
         out = snapshot_dir / live.path

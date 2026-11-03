@@ -8,12 +8,17 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
+import time
+from collections.abc import Iterator
+from contextlib import contextmanager
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
 import pyarrow.parquet as pq
 
 MANIFEST_NAME = "manifest.json"
+LOCK_STALE_SECONDS = 600
 
 
 @dataclass(frozen=True)
@@ -72,16 +77,47 @@ def make_entry(
 def write_manifest(data_dir: Path, entries: list[FileEntry]) -> Path:
     out = data_dir / MANIFEST_NAME
     payload = {"files": [asdict(e) for e in sorted(entries, key=lambda e: e.path)]}
-    out.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8", newline="\n")
+    tmp = out.with_suffix(".json.tmp")
+    tmp.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8", newline="\n")
+    os.replace(tmp, out)  # readers never see a half-written manifest
     return out
+
+
+@contextmanager
+def manifest_lock(data_dir: Path, timeout: float = 120.0) -> Iterator[None]:
+    """Exclusive lock so two extraction processes cannot overwrite each other's manifest update."""
+    lock = data_dir / f"{MANIFEST_NAME}.lock"
+    deadline = time.monotonic() + timeout
+    while True:
+        try:
+            fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            break
+        except FileExistsError:
+            try:
+                if time.time() - lock.stat().st_mtime > LOCK_STALE_SECONDS:
+                    lock.unlink(missing_ok=True)  # left behind by a killed process
+                    continue
+            except FileNotFoundError:
+                continue
+            if time.monotonic() > deadline:
+                raise TimeoutError(
+                    f"{lock} is held; delete it if no extraction is running"
+                ) from None
+            time.sleep(0.05)
+    try:
+        yield
+    finally:
+        os.close(fd)
+        lock.unlink(missing_ok=True)
 
 
 def upsert_entries(data_dir: Path, entries: list[FileEntry]) -> Path:
     """Add or replace entries (matched by path) and rewrite the manifest."""
-    exists = (data_dir / MANIFEST_NAME).exists()
-    by_path = {e.path: e for e in read_manifest(data_dir)} if exists else {}
-    by_path.update({e.path: e for e in entries})
-    return write_manifest(data_dir, list(by_path.values()))
+    with manifest_lock(data_dir):
+        exists = (data_dir / MANIFEST_NAME).exists()
+        by_path = {e.path: e for e in read_manifest(data_dir)} if exists else {}
+        by_path.update({e.path: e for e in entries})
+        return write_manifest(data_dir, list(by_path.values()))
 
 
 def read_manifest(data_dir: Path) -> list[FileEntry]:
