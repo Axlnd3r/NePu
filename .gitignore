@@ -16,3 +16,6 @@ node_modules/
 site/out/
 site/.next/
 site/public/data/
+
+# QA output (make qa)
+qa/screenshots/

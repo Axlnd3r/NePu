@@ -441,7 +441,8 @@ VALUATION_ASSUMPTIONS = {
         "DATA_AUDIT.md Check 6), and the HSP-029 proposal: 2.5 % held for a 90-day grace "
         "period, then lowered to 1.6 % over 24 months and held. The proposal steps down every "
         "epoch; a linear monthly ramp approximates it. HSP-029 went to a vote in October 2026 "
-        "and its result is not confirmed in our sources (data/reference/events.csv)."
+        "and its result is not confirmed in our sources (data/reference/parameters.csv, "
+        "events.csv)."
     ),
     "scenarios": {
         "historical": "bootstrapped growth as drawn (its drift is the history's)",

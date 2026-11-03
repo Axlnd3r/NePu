@@ -19,7 +19,12 @@ export default function Methodology() {
     <div className="space-y-8">
       <PageHeader
         title="Methodology & data"
-        lede="Every number on this site is computed by `make build` from the files below, offline and without credentials. Their hashes are checked by `make verify`."
+        lede={
+          <>
+            Every number on this site is computed by <code>make build</code> from the files below,
+            offline and without credentials. Their hashes are checked by <code>make verify</code>.
+          </>
+        }
       />
 
       <section className="rounded-xl border border-[var(--ring)] bg-surface p-4 sm:p-6" aria-labelledby="sources">

@@ -8,6 +8,8 @@ import { extname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(fileURLToPath(new URL("..", import.meta.url)));
+// Set QA_BASE_PATH (e.g. /NePu---NEAR-Pulse-) to test a build made with SITE_BASE_PATH.
+const basePath = process.env.QA_BASE_PATH ?? "";
 const out = join(root, "site", "out");
 const shots = join(root, "qa", "screenshots");
 const require = createRequire(join(root, "site", "package.json"));
@@ -38,7 +40,11 @@ const TYPES = {
 
 function serve() {
   const server = createServer((req, res) => {
-    const path = decodeURIComponent(new URL(req.url, "http://x").pathname);
+    let path = decodeURIComponent(new URL(req.url, "http://x").pathname);
+    if (basePath) {
+      if (!path.startsWith(basePath)) return res.writeHead(404).end("outside base path");
+      path = path.slice(basePath.length) || "/";
+    }
     let file = join(out, path);
     if (!file.startsWith(out)) return res.writeHead(403).end();
     if (existsSync(file) && statSync(file).isDirectory()) file = join(file, "index.html");
@@ -87,7 +93,7 @@ for (const [vpName, viewport] of Object.entries(VIEWPORTS)) {
       });
       page.on("response", (r) => r.status() >= 400 && fail(`${tag}: HTTP ${r.status()} ${r.url()}`));
 
-      await page.goto(base + path, { waitUntil: "networkidle" });
+      await page.goto(base + basePath + path, { waitUntil: "networkidle" });
       await page.waitForTimeout(300); // charts measure their container after hydration
 
       const overflow = await page.evaluate(

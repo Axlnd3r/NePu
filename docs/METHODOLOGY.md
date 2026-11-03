@@ -295,6 +295,31 @@ price held constant are thin. Real supply grows with issuance (not modelled, mil
 The growth sample is DefiLlama volume, a third-party definition. Nothing here is a statement about
 what volume, tau, inflation or price will be.
 
+## Independent audit of every published number (`tests/test_numbers_audit.py`)
+
+`make verify` recomputes what `capture build` publishes from the parquet files with separate
+code that never imports `capture.models`: every definition above is written again in plain
+pandas/numpy and compared with the payloads (relative tolerance 1e-9). It covers every day of
+every series in `coverage.json` (including which days are empty), the reconciliation months, the
+ledger, levers and conditions, the Valuation Lab start and reverse table, all 18 Monte Carlo runs
+(probabilities, first-crossing month, fan and implied volume), every month and week of the
+Distribution Map, every developer cohort (both thresholds) and every lead/lag row with its
+permutation p-value, the markers, and the file hashes against both manifests. Mutating one value
+in each of these areas makes the corresponding test fail. Shared inputs are limited to constants
+(seed, windows, policy parameters); the policy parameters (2.5 %, the HSP-029 target 1.6 %, 24
+months, 3-month grace) are checked against `data/reference/parameters.csv`, which lists their
+sources, and 2.5 % against the observed 30-day net supply growth.
+
+## Dashboard (`site/`)
+
+Six static pages read only `site/public/data/*.json`. Every chart shows one plain sentence built
+from the data, its SQL text or API request, the model function and a provenance line (file,
+range, pulled_at, hash prefix); headline numbers open an evidence panel with the formula and
+input hashes. `make qa` opens every page in Chrome on desktop (light and dark) and phone widths
+and fails on console errors, failed requests or horizontal overflow; it also checks that the
+in-browser break-even meter equals V* in the data. GitHub Pages builds the same site from
+`data/snapshot` with `.github/workflows/pages.yml` after `make verify` passes.
+
 ## Limitations of the coverage ratio
 
 - Wallet data is end-of-day balance (float64), so a day with an inflow and an outflow shows only

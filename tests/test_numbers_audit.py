@@ -1,0 +1,490 @@
+"""Independent audit: every published number is recomputed from the parquet files (rule 1).
+
+This module never imports capture.models. Each definition is re-implemented from
+docs/METHODOLOGY.md with plain pandas/numpy and compared with what `capture build` publishes, so a
+bug in a model function cannot pass by agreeing with itself. Hashes are checked against the
+manifests. Only constants (seed, windows, policy parameters) are shared, and the policy
+parameters are themselves checked against data/reference/parameters.csv.
+"""
+
+import csv
+import hashlib
+import itertools
+import json
+
+import numpy as np
+import pandas as pd
+import pytest
+
+from capture import build, config
+
+BUY = "buybacks.multisignature.near"
+D = pd.Timestamp
+REL = 1e-9
+
+
+def close(a, b, rel=REL) -> bool:
+    if a is None or b is None or (isinstance(b, float) and np.isnan(b)):
+        return a is None and (b is None or np.isnan(b))
+    return abs(a - b) <= rel * max(abs(b), 1e-12)
+
+
+def sha(path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+# ---------------------------------------------------------------- independent re-implementation
+class Ledger:
+    """Daily series rebuilt from the snapshot tables."""
+
+    def __init__(self, data_dir):
+        rd = lambda n: pd.read_parquet(data_dir / f"{n}.parquet")  # noqa: E731
+        dated = lambda df: df.assign(date=pd.to_datetime(df["date"]))  # noqa: E731
+        sup = dated(rd("supply_daily")).set_index("date").sort_index()
+        self.idx = pd.date_range(sup.index.min(), sup.index.max(), freq="D")
+        llama = dated(rd("defillama_intents_daily")).set_index("date")
+        self.llama_raw = llama
+        self.price = dated(rd("price_daily")).set_index("date")["near_usd"].reindex(self.idx)
+        self.supply = sup["total_supply_near"].reindex(self.idx)
+        self.burn = sup["burnt_near"].reindex(self.idx)
+        self.issuance = (sup["total_supply_near"].diff() + sup["burnt_near"]).reindex(self.idx)
+        self.vol, self.fees, self.rev = (
+            llama[c].reindex(self.idx) for c in ("volume_usd", "fees_usd", "revenue_usd")
+        )
+        fw = dated(rd("fee_wallet_inflows_daily"))
+        wallets = fw.pivot(index="date", columns="wallet", values="amount").reindex(self.idx)
+        self.bb = (wallets[BUY].clip(lower=0) - self._transfers(wallets)).clip(lower=0)
+        filled = wallets.copy()
+        for c in filled:
+            first, last = filled[c].first_valid_index(), filled[c].last_valid_index()
+            inner = (filled.index > first) & (filled.index < last)
+            filled.loc[inner & filled[c].isna(), c] = 0.0
+        self.filled = filled
+        rises = filled.clip(lower=0).sum(axis=1, min_count=1)
+        self.onchain = (
+            (rises - self._transfers(filled).fillna(0)).clip(lower=0).where(rises.notna())
+        )
+
+    @staticmethod
+    def _transfers(w):
+        others = w.drop(columns=[BUY])
+        falls = (-others).where(others <= -1.0, 0.0).clip(lower=0).fillna(0).sum(axis=1)
+        rise = w[BUY].clip(lower=0)
+        return pd.concat([falls, rise], axis=1).min(axis=1).where(rise.notna())
+
+    def transfers(self):
+        return self._transfers(self.filled)
+
+    @staticmethod
+    def roll(s, w=30):
+        return s.rolling(w, min_periods=w).sum()
+
+
+@pytest.fixture(scope="module")
+def ind(data_dir) -> Ledger:
+    return Ledger(data_dir)
+
+
+@pytest.fixture(scope="module")
+def pub(data_dir) -> dict:
+    """What `capture build` publishes, built from the same snapshot."""
+    src = "snapshot"
+    return {
+        "coverage": build.coverage_payload(data_dir, src),
+        "summary": build.summary_payload(data_dir, src),
+        "valuation": build.valuation_payload(data_dir, src),
+        "distribution": build.distribution_payload(data_dir, src),
+        "developer": build.developer_payload(data_dir, src),
+        "markers": build.markers_payload(data_dir),
+        "provenance": build.provenance_payload(data_dir, src),
+    }
+
+
+# ---------------------------------------------------------------- hashes
+def test_every_file_matches_its_manifest_and_every_payload_cites_that_hash(data_dir, pub) -> None:
+    hashes = {}
+    for d in (data_dir, build.REFERENCE):
+        for e in json.loads((d / "manifest.json").read_text(encoding="utf-8"))["files"]:
+            assert sha(d / e["path"]) == e["sha256"], e["path"]
+            hashes[e["path"]] = e["sha256"]
+    for name in ("coverage", "summary", "valuation", "distribution", "developer"):
+        for inp in pub[name]["inputs"]:
+            assert inp["sha256"] == hashes[inp["path"]], (name, inp["path"])
+    for s in pub["provenance"]["sources"] + pub["provenance"]["reference"]:
+        assert s["sha256_8"] == hashes[s["path"]][:8]
+
+
+# ---------------------------------------------------------------- coverage.json, every day
+SERIES = ["issuance_gross_near", "buyback_near", "burnt_near", "volume_usd", "fees_usd"]
+
+
+def _mine(ind: Ledger) -> dict:
+    r = ind.roll
+    out = {
+        "issuance_gross_near": ind.issuance,
+        "buyback_near": ind.bb,
+        "burnt_near": ind.burn,
+        "volume_usd": ind.vol,
+        "fees_usd": ind.fees,
+        "revenue_usd": ind.rev,
+    }
+    for k in (7, 30, 90):
+        out[f"cr_float_{k}"] = r(ind.bb + ind.burn, k) / r(ind.issuance, k)
+        out[f"cr_supply_{k}"] = r(ind.burn, k) / r(ind.issuance, k)
+        out[f"cr_float_usd_{k}"] = r((ind.bb + ind.burn) * ind.price, k) / r(
+            ind.issuance * ind.price, k
+        )
+        revenue = r(ind.rev, k)
+        out[f"tau_eff_{k}"] = revenue.where(revenue > 0) / r(ind.vol, k)
+    out["tau_eff_buyback_30"] = (r(ind.bb * ind.price) / r(ind.vol)).where(
+        (r(ind.vol) > 0) & (r(ind.bb * ind.price) > 0)
+    )
+    return out
+
+
+def test_every_daily_series_matches_on_every_day(ind, pub) -> None:
+    series = pd.DataFrame(pub["coverage"]["series"]).assign(date=lambda d: pd.to_datetime(d.date))
+    series = series.set_index("date")
+    for col, mine in _mine(ind).items():
+        theirs = series[col].astype(float)
+        mine = mine.reindex(theirs.index)
+        assert (theirs.isna() == mine.isna()).all(), f"{col}: empty days differ"
+        both = theirs.notna()
+        err = ((theirs[both] - mine[both]).abs() / mine[both].abs().clip(lower=1e-12)).max()
+        assert err < 1e-9, f"{col}: relative error {err}"
+
+
+def test_reconciliation_months(ind, pub) -> None:
+    m = pd.DataFrame({"on": ind.onchain * ind.price, "dl": ind.rev}).dropna()
+    g = m.groupby(m.index.to_period("M"))
+    months = g.sum().assign(n=g.size())
+    months = months[months["n"] == months.index.days_in_month]
+    dev = months["on"] / months["dl"] - 1
+    theirs = {r["month"]: r["deviation"] for r in pub["coverage"]["reconciliation"]["months"]}
+    assert set(theirs) == {str(p) for p in dev.index}
+    for p, v in dev.items():
+        assert close(theirs[str(p)], v), p
+
+
+# ---------------------------------------------------------------- summary.json and valuation start
+def _start(ind: Ledger, as_of: str) -> dict:
+    a, r = D(as_of), ind.roll
+    return {
+        "v0": ind.vol.rolling(30, min_periods=30).mean()[a],
+        "S": ind.supply[a],
+        "P": ind.price[a],
+        "B": ind.burn.rolling(30, min_periods=30).mean()[a],
+        "tau_bb": r(ind.bb * ind.price)[a] / r(ind.vol)[a],
+        "tau_rev": r(ind.rev)[a] / r(ind.vol)[a],
+    }
+
+
+def _vstar(st: dict, inflation: float, tau: float, price: float | None = None) -> float:
+    p = st["P"] if price is None else price
+    return max((inflation * st["S"] / 365 - st["B"]) * p, 0.0) / tau
+
+
+def test_summary_numbers(ind, pub) -> None:
+    s, r = pub["summary"], ind.roll
+    cr_usd = r((ind.bb + ind.burn) * ind.price) / r(ind.issuance * ind.price)
+    cr = r(ind.bb + ind.burn) / r(ind.issuance)
+    assert close(s["hero"]["cr_float_usd_30"], cr_usd[D(s["hero"]["date"])])
+    assert f"{round(cr_usd[D(s['hero']['date'])] * 100)} cents" in s["hero"]["sentence"]
+    assert close(s["this_week"]["value"], cr[D(s["this_week"]["date"])])
+    assert close(s["this_week"]["prev"], cr[D(s["this_week"]["prev_date"])])
+
+    end = D(s["ledger"]["end"])
+    w = slice(end - pd.Timedelta(days=29), end)
+    p = ind.price[w]
+    usd = {
+        "volume": ind.vol[w].sum(),
+        "fees": ind.fees[w].sum(),
+        "revenue": ind.rev[w].sum(),
+        "onchain_revenue": (ind.onchain[w] * p).sum(),
+        "buyback_wallet": (ind.bb[w] * p).sum(),
+        "burn": (ind.burn[w] * p).sum(),
+        "issuance": (ind.issuance[w] * p).sum(),
+    }
+    for k, v in usd.items():
+        assert close(s["ledger"]["usd"][k], v), k
+    kept = s["ledger"]["kept"]["buyback_of_onchain"]
+    assert close(kept, usd["buyback_wallet"] / usd["onchain_revenue"])
+
+    st = _start(ind, s["levers"]["as_of"])
+    stages = [(config.INFLATION_CURRENT, st["tau_bb"]), (config.INFLATION_PROPOSAL, st["tau_bb"]),
+              (config.INFLATION_PROPOSAL, st["tau_rev"])]  # fmt: skip
+    for step, (i, tau) in zip(s["levers"]["steps"], stages, strict=True):
+        assert close(step["volume_multiple"], _vstar(st, i, tau) / st["v0"]), step["step"]
+    cond = {c["id"]: c for c in s["conditions"]}
+    assert close(cond["volume"]["progress"], st["v0"] / _vstar(st, 0.025, st["tau_bb"]))
+    assert close(cond["routing"]["value"], kept)
+
+
+def test_valuation_start_and_reverse_table(ind, pub) -> None:
+    v = pub["valuation"]
+    st = _start(ind, v["start"]["as_of"])
+    mine = {"volume_usd_per_day": st["v0"], "total_supply_near": st["S"], "near_usd": st["P"],
+            "burnt_near_per_day": st["B"], "tau_buyback_30": st["tau_bb"],
+            "tau_revenue_30": st["tau_rev"]}  # fmt: skip
+    for k, x in mine.items():
+        assert close(v["start"][k], x), k
+    for row in v["reverse"]["rows"]:
+        tau = st["tau_bb"] if row["basis"] == "buyback" else st["tau_rev"]
+        expected = (_vstar(st, row["inflation"], tau) / st["v0"]) ** (1 / row["horizon_years"]) - 1
+        assert close(row["required_cagr"], expected), row
+
+
+# ---------------------------------------------------------------- Monte Carlo, all 18 runs
+def _growth(ind: Ledger) -> np.ndarray:
+    daily = ind.llama_raw["volume_usd"].dropna()
+    monthly = daily[daily.index >= pd.Timestamp(config.GROWTH_START)].resample("MS").mean()
+    return np.log(monthly.dropna()).diff().dropna().to_numpy()
+
+
+def test_every_monte_carlo_run_is_reproduced(ind, pub) -> None:
+    v = pub["valuation"]
+    st, g = _start(ind, v["start"]["as_of"]), _growth(ind)
+    assert v["growth"]["n_months"] == len(g)
+    assert close(v["growth"]["mean_all"], g.mean()) and close(v["growth"]["std_all"], g.std(ddof=1))
+    n, months, block = v["n_paths"], v["n_months"], v["block_months"]
+    rng = np.random.default_rng(v["seed"])
+    starts = rng.integers(0, len(g) - block + 1, size=(n, -(-months // block)))
+    boot = g[starts[:, :, None] + np.arange(block)].reshape(n, -1)[:, :months]
+    taus = rng.uniform(
+        v["start"]["tau_monthly_range"]["min"], v["start"]["tau_monthly_range"]["max"], n
+    )
+    mu, t = g.mean(), np.arange(1, months + 1)
+    growth = {
+        "historical": boot,
+        "flat": boot - mu,
+        "decay": boot - mu + mu * 0.5 ** ((t - 1) / config.DECAY_HALF_LIFE_MONTHS),
+    }
+    ramp = np.clip((t - config.INFLATION_GRACE_MONTHS) / config.INFLATION_RAMP_MONTHS, 0, 1)
+    paths = {
+        "constant_2.5": np.full(months, config.INFLATION_CURRENT),
+        "ramp_to_1.6": config.INFLATION_CURRENT
+        + (config.INFLATION_PROPOSAL - config.INFLATION_CURRENT) * ramp,
+    }
+    for run in v["scenarios"]:
+        price = st["P"] * run["price_multiplier"]
+        volume = st["v0"] * np.exp(np.cumsum(growth[run["scenario"]], axis=1))
+        issuance = paths[run["inflation_path"]] * st["S"] / 365 * price
+        cr = (taus[:, None] * volume + st["B"] * price) / issuance
+        key = (run["scenario"], run["inflation_path"], run["price_multiplier"])
+        for m, p in run["p_cr_ge_1"].items():
+            assert p == float((cr[:, int(m) - 1] >= 1).mean()), (key, m)
+        hit = cr >= 1
+        first = float(np.median(np.where(hit.any(1), hit.argmax(1) + 1.0, np.inf)))
+        assert run["median_first_month"] == (first if np.isfinite(first) else "not reached"), key
+        for label, q in (("p10", 10), ("p50", 50), ("p90", 90)):
+            assert np.allclose(run["fan"][label], np.percentile(cr, q, axis=0), rtol=1e-12), key
+        for m, x in run["volume_p50_usd_per_day"].items():
+            assert close(x, float(np.median(volume[:, int(m) - 1]))), key
+
+
+# ---------------------------------------------------------------- markers
+def test_markers(ind, pub) -> None:
+    mk = {m["id"]: m for m in pub["markers"]["markers"]}
+    iss = ind.issuance.dropna()
+    pos = iss.index.get_loc(D(mk["issuance_step"]["date"]))
+    before, after = iss.iloc[pos - 15 : pos - 1].mean(), iss.iloc[pos : pos + 14].mean()
+    assert iss.iloc[pos - 1] < iss.iloc[pos - 15 : pos - 1].min()  # transition day
+    assert f"{before:,.0f} to {after:,.0f}" in mk["issuance_step"]["label"]
+    tr = ind.transfers()
+    assert mk["internal_transfer"]["date"] == tr.idxmax().date().isoformat()
+    assert f"{tr.max():,.0f} NEAR" in mk["internal_transfer"]["label"]
+    assert (
+        mk["buyback_wallet_first_inflow"]["date"] == ind.bb.first_valid_index().date().isoformat()
+    )
+
+
+# ---------------------------------------------------------------- distribution.json, every period
+def _period(dates: pd.Series, freq: str) -> pd.Series:
+    if freq == "month":
+        return dates.dt.to_period("M").astype(str)
+    return (dates - pd.to_timedelta(dates.dt.day_of_week, unit="D")).dt.strftime("%Y-%m-%d")
+
+
+def test_every_distribution_period(data_dir, ind, pub) -> None:
+    dist = pub["distribution"]
+    rd = lambda n: pd.read_parquet(data_dir / f"{n}.parquet").assign(  # noqa: E731
+        date=lambda d: pd.to_datetime(d["date"])
+    )
+    ex, ch, rc = (
+        rd("explorer_1click_daily"),
+        rd("explorer_channels_daily"),
+        rd("explorer_recipients_daily"),
+    )
+    tokens = pd.read_parquet(data_dir / "token_assets.parquet").drop_duplicates("asset_id")
+    ex["symbol"] = ex["asset_in"].map(tokens.set_index("asset_id")["symbol"]).fillna("(unmapped)")
+    near = set(dist["near_revenue_wallets"])
+    stables = set(dist["stablecoin_symbols"])
+    ex["near_only"] = ex["affiliate"].map(
+        lambda a: bool([r for r in a.split(",") if r]) and all(r in near for r in a.split(",") if r)
+    )
+    onchain_usd = (ind.onchain * ind.price).reindex(pd.Index(rc["date"].unique())).dropna()
+    dl = ind.llama_raw["volume_usd"]
+
+    def hhi(s):
+        sh = s / s.sum()
+        return (
+            float((sh**2).sum()),
+            float(sh.sort_values(ascending=False).iloc[:5].sum()),
+            float(sh.max()),
+        )
+
+    for freq in ("month", "week"):
+        ex["p"], ch["p"], rc["p"] = (
+            _period(ex["date"], freq),
+            _period(ch["date"], freq),
+            _period(rc["date"], freq),
+        )
+        on_by = onchain_usd.groupby(
+            _period(pd.Series(onchain_usd.index, index=onchain_usd.index), freq)
+        ).sum()
+        exd = ex.groupby("date")["volume_usd"].sum()
+        both = pd.concat([exd, dl], axis=1, keys=["e", "d"], sort=True).dropna()
+        cov = both.groupby(_period(pd.Series(both.index, index=both.index), freq)).sum()
+        for row in dist["periods"][freq]:
+            p = row["period"]
+            c = ch[ch["p"] == p].groupby("referral")["volume_usd"].sum()
+            a = ex[ex["p"] == p].groupby("symbol")["volume_usd"].sum()
+            e = ex[ex["p"] == p]
+            total = e["volume_usd"].sum()
+            (hc, tc, mc), (ha, ta, ma) = hhi(c), hhi(a)
+            mine = {
+                "volume_usd": c.sum(),
+                "hhi_channel": hc, "top5_channel_share": tc, "max_channel_share": mc,
+                "hhi_asset": ha, "top5_asset_share": ta, "max_asset_share": ma,
+                "zec_share": a.get("ZEC", 0.0) / a.sum(),
+                "stablecoin_share": a[a.index.isin(stables)].sum() / a.sum(),
+                "near_wallet_only_share": e.loc[e["near_only"], "volume_usd"].sum() / total,
+                "no_app_fee_share": e.loc[e["affiliate"] == "", "volume_usd"].sum() / total,
+            }  # fmt: skip
+            r = rc[rc["p"] == p]
+            near_fee = r.loc[r["recipient"].isin(near), "fee_usd"].sum()
+            mine["declared_fee_share_to_near"] = near_fee / r["fee_usd"].sum()
+            if p in on_by.index and on_by[p] > 0:
+                mine["attributable_share"] = near_fee / on_by[p]
+            if p in cov.index:
+                mine["explorer_share_of_defillama_volume"] = cov.loc[p, "e"] / cov.loc[p, "d"]
+            for k, x in mine.items():
+                assert close(row[k], float(x)), (freq, p, k)
+
+    take = dist["take_rates"]["monthly"]
+    f = ind.llama_raw[["volume_usd", "fees_usd", "revenue_usd"]].dropna()
+    f = f[f["volume_usd"] > 0]
+    sums = f.groupby(f.index.to_period("M")).sum()
+    for row in take:
+        s = sums.loc[pd.Period(row["period"])]
+        assert close(row["fees_take_rate"], s["fees_usd"] / s["volume_usd"]), row["period"]
+        assert close(row["revenue_take_rate"], s["revenue_usd"] / s["volume_usd"]), row["period"]
+
+
+# ---------------------------------------------------------------- developer.json
+def test_every_cohort_and_the_lead_lag_table(data_dir, ind, pub) -> None:
+    dev = pub["developer"]
+    cd = pd.read_parquet(data_dir / "contracts_daily.parquet").assign(
+        date=lambda d: pd.to_datetime(d["date"])
+    )
+    start, last = cd["date"].min(), cd["date"].max()
+    first_row = cd.groupby("contract_account")["date"].min()
+    first_dep = cd[cd["deploys"] > 0].groupby("contract_account")["date"].min()
+    first_row = first_row.reindex(first_dep.index)
+    new = first_dep[(first_dep >= start + pd.Timedelta(days=30)) & (first_row >= first_dep)]
+    cohort = new.dt.to_period("M")
+    calls = (
+        cd.assign(m=cd["date"].dt.to_period("M"))
+        .groupby(["contract_account", "m"])["function_calls_received"]
+        .sum()
+    )
+    last_complete = (
+        last.to_period("M")
+        if last == last.to_period("M").end_time.normalize()
+        else last.to_period("M") - 1
+    )
+    for table, min_calls in (("cohorts", 1), ("cohorts_strict", 10)):
+        rows = dev[table] if table == "cohorts" else dev[table]["rows"]
+        active = calls[calls >= min_calls]
+        for row in rows:
+            members = set(cohort[cohort == pd.Period(row["cohort"])].index)
+            assert row["cohort_size"] == len(members), row["cohort"]
+            for k in (1, 2, 3):
+                target = pd.Period(row["cohort"]) + k
+                if target > last_complete:
+                    assert row[f"share_{k}"] is None
+                    continue
+                kept = (
+                    members & set(active.xs(target, level=1).index)
+                    if target in active.index.get_level_values(1)
+                    else set()
+                )
+                assert close(row[f"share_{k}"], len(kept) / len(members)), (table, row["cohort"], k)
+
+    # Lead/lag: x(t) = cohort t-1 still called in t (complete cohorts), y = monthly revenue.
+    valid = [c for c in dev["cohorts"] if c["complete"] and c["retained_1"] is not None]
+    x = pd.Series(
+        [float(c["retained_1"]) for c in valid],
+        index=pd.PeriodIndex([pd.Period(c["cohort"]) + 1 for c in valid]),
+    )
+    rev = ind.llama_raw["revenue_usd"].dropna()
+    g = rev.groupby(rev.index.to_period("M"))
+    y = g.sum()[g.size() == g.sum().index.days_in_month]
+    months = pd.period_range(
+        min(x.index.min(), y.index.min()), max(x.index.max(), y.index.max()), freq="M"
+    )
+    x, y = x.reindex(months), y.reindex(months)
+    split = pd.Period("2026-05", "M")
+
+    def r_of(a, b):
+        return None if np.std(a) == 0 or np.std(b) == 0 else float(np.corrcoef(a, b)[0, 1])
+
+    for row in dev["lead_lag"]["rows"]:
+        xs_, ys_ = (x.diff(), y.diff()) if row["transform"] == "diff" else (x, y)
+        pairs = []
+        for t, xv in xs_.dropna().items():
+            yv = ys_.get(t + row["lag"])
+            in_sample = t + row["lag"] < split if row["sample"] == "train" else t >= split
+            if yv is not None and not pd.isna(yv) and in_sample:
+                pairs.append((xv, yv))
+        assert row["n"] == len(pairs), row
+        if len(pairs) < 4:
+            assert row["pearson"] is None
+            continue
+        a, b = np.array(pairs).T
+        obs = r_of(a, b)
+        assert close(row["pearson"], obs), row
+        assert close(
+            row["spearman"], r_of(pd.Series(a).rank().to_numpy(), pd.Series(b).rank().to_numpy())
+        ), row
+        za, zb = (a - a.mean()) / a.std(), (b - b.mean()) / b.std()
+        if len(a) <= 8:
+            shuffled = zb[np.array(list(itertools.permutations(range(len(a)))))]
+        else:
+            rng = np.random.default_rng(config.RANDOM_SEED + row["lag"])
+            shuffled = rng.permuted(np.tile(zb, (10_000, 1)), axis=1)
+        p = float(np.mean(np.abs((shuffled * za).mean(axis=1)) >= abs(obs) - 1e-12))
+        assert close(row["p_value"], p), row
+
+
+# ---------------------------------------------------------------- reference parameters
+def test_policy_parameters_come_from_the_reference_file(ind) -> None:
+    with (build.REFERENCE / "parameters.csv").open(encoding="utf-8", newline="") as f:
+        params = {r["name"]: float(r["value"]) for r in csv.DictReader(f)}
+    assert params["inflation_current"] == config.INFLATION_CURRENT
+    assert params["hsp029_target"] == config.INFLATION_PROPOSAL
+    assert params["hsp029_ramp_months"] == config.INFLATION_RAMP_MONTHS
+    assert params["hsp029_grace_months"] == config.INFLATION_GRACE_MONTHS
+    # 2.5 % is the observed rate: 30-day annualised net supply growth at the last day of data.
+    s = ind.supply.dropna()
+    growth = (s.iloc[-1] / s.iloc[-31]) ** (365 / 30) - 1
+    assert abs(growth - params["inflation_current"]) < 0.001
+
+
+def test_methodology_claims(ind, pub) -> None:
+    g = _growth(ind)
+    assert len(g) == 16 and len(g) - config.MC_BLOCK_MONTHS + 1 == 14
+    st = _start(ind, pub["valuation"]["start"]["as_of"])
+    a = D(pub["valuation"]["start"]["as_of"])
+    window = ind.issuance[a - pd.Timedelta(days=29) : a].sum()
+    assert abs(config.INFLATION_CURRENT * st["S"] / 365 * 30 / window - 1) < 0.001

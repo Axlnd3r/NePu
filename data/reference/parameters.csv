@@ -1,0 +1,5 @@
+name,value,unit,sources,verified
+inflation_current,0.025,annual issuance as a share of supply,supply_daily.parquet,"30-day annualised net supply growth from supply_daily is about 2.5 % since 2025-11 (DATA_AUDIT.md Check 6); a test recomputes it"
+hsp029_target,0.016,annual issuance as a share of supply,https://thedefiant.io/news/blockchains/near-opens-vote-to-cut-token-issuance-to-1-6 https://cryptobriefing.com/near-protocol-token-issuance-cut-proposal/,"web fetch 2026-11-03: both reports give a 1.6 % target; vote result not found"
+hsp029_ramp_months,24,months,https://thedefiant.io/news/blockchains/near-opens-vote-to-cut-token-issuance-to-1-6 https://cryptobriefing.com/near-protocol-token-issuance-cut-proposal/,"web fetch 2026-11-03: both reports give 24 months; steps every epoch, approximated as linear by month"
+hsp029_grace_months,3,months,https://thedefiant.io/news/blockchains/near-opens-vote-to-cut-token-issuance-to-1-6 https://cryptobriefing.com/near-protocol-token-issuance-cut-proposal/,"web fetch 2026-11-03: both reports give a 90-day grace period before the ramp (3 months)"

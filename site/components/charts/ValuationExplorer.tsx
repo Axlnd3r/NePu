@@ -14,6 +14,12 @@ import {
 } from "recharts";
 import { formatValue } from "./fmt";
 
+/** A share of paths: one decimal near 0 and 1, so 99.7 % never reads as "all paths". */
+function share(p: number): string {
+  const digits = p > 0.99 || p < 0.01 ? 1 : 0;
+  return `${(p * 100).toFixed(digits)}%`;
+}
+
 type Run = {
   scenario: string;
   inflation_path: string;
@@ -133,7 +139,7 @@ function Panel({ run, volumeNow }: { run: Run; volumeNow: number }) {
         {["12", "36", "60"].map((m) => (
           <div key={m}>
             <dt className="text-muted">P(CR≥1), m{m}</dt>
-            <dd className="font-medium">{(run.p_cr_ge_1[m] * 100).toFixed(0)}%</dd>
+            <dd className="font-medium">{share(run.p_cr_ge_1[m])}</dd>
           </div>
         ))}
         {["12", "36", "60"].map((m) => (

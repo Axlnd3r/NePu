@@ -1,4 +1,4 @@
-.PHONY: setup extract build build-live verify site proof all
+.PHONY: setup extract build build-live verify site qa proof all
 
 setup:
 	uv sync
@@ -21,6 +21,10 @@ verify:
 
 site: build
 	npm run build --prefix site
+
+# Opens every page of site/out in Chrome (desktop light/dark, phone); needs `make site` first.
+qa:
+	node qa/check.mjs
 
 proof:
 	uv run capture proof

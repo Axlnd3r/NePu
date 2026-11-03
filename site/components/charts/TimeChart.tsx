@@ -20,7 +20,7 @@ type Props = {
   series: Series[];
   format: Fmt;
   xKey?: string;
-  markers?: { n: number; date: string }[];
+  markers?: { n: number; date: string; at?: string }[];
   refY?: { y: number; label: string };
   height?: number;
   log?: boolean;
@@ -51,7 +51,7 @@ export function TimeChart({
   return (
     <div role="img" aria-label={ariaLabel} className="w-full">
       <ResponsiveContainer width="100%" height={height} initialDimension={{ width: 640, height }}>
-        <ComposedChart data={data} margin={{ top: 18, right: 12, bottom: 0, left: 0 }}>
+        <ComposedChart data={data} margin={{ top: 18, right: 28, bottom: 0, left: 0 }}>
           <CartesianGrid stroke="var(--grid)" vertical={false} />
           <XAxis
             dataKey={xKey}
@@ -97,7 +97,7 @@ export function TimeChart({
           {markers.map((m) => (
             <ReferenceLine
               key={m.n}
-              x={m.date}
+              x={m.at ?? m.date}
               stroke="var(--axis)"
               strokeWidth={1}
               label={{ value: String(m.n), position: "top", fontSize: 11, fill: "var(--ink)" }}

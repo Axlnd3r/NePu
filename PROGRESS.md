@@ -16,11 +16,24 @@ Living log. Claude updates this at the end of every session. Newest entry on top
 | F3 Coverage ratio + tests | 5–7 Nov | done | CR_float, CR_supply, V*, sensitivity, 10/10 months reconcile within 15% |
 | F4 Distribution Map | 7–9 Nov | done | Snapshot v3 (2026-11-01); distribution.json, developer.json; lead/lag verdict null |
 | F5 Valuation Lab | 8–10 Nov | done | valuation.json: reverse table + Monte Carlo (3 scenarios x 2 inflation paths x 3 prices); historical/decay results rest on launch-phase growth |
-| F6 Dashboard | 9–12 Nov | todo | |
+| F6 Dashboard | 9–12 Nov | done (deploy pending push) | 6 pages, ChartCard + evidence chips, Playwright QA, independent number audit; GitHub Pages workflow ready |
 | F7 THESIS, README, offline, CI, proof | 11–13 Nov | todo | |
 | F8 Demo + submission | 13–14 Nov | todo | |
 
 ## Session log
+### 2026-11-03 — F6
+- Done: data layer (summary.json with the capture ledger, lever bridge and three independent conditions; queries.json, provenance.json, markers.json; data/reference/events.csv and parameters.csv with their own manifest); six dashboard pages (Overview, Token economics, Intents & channels, Valuation Lab, Developer, Methodology & data) where every chart shows one sentence, its SQL or API request, the model function and provenance, and headline numbers open their evidence; `make qa` (Playwright, Chrome, desktop light/dark and phone); tests/test_numbers_audit.py recomputes every published number independently; GitHub Pages workflow (.github/workflows/pages.yml). `make verify`: 176 passed; `make qa`: all pages clean, also under the Pages base path.
+- Numbers found (source: summary.json, 30 days to 2026-10-30 unless stated):
+  - Hero: 12 cents of buybacks and burn per USD of new NEAR (CR_float in USD 0.1196, 30 days to 2026-10-31); this week 0.120, prev 0.118.
+  - Per 10,000 USD of Intents volume: fees 16.01, revenue 5.48, 3.62 reaching the buyback wallet, against 33.91 of issuance; 65.5 % of on-chain revenue reaches the buyback wallet.
+  - Lever bridge: volume must grow 7.59x; the HSP-029 cut closes 1.575x (to 4.82x); all revenue to buybacks closes 1.513x (to 3.18x).
+  - Issuance step dated from the data: 2025-10-30 (2025-10-29 is a transition day), 14-day means about 176,237 to 88,823 NEAR/day.
+  - Number audit: 158 independent checks, 0 mismatches; now 11 permanent tests.
+- Decisions: hero in USD (CR_float in NEAR shown beside it); conditions are volume vs V*, revenue routing to the buyback wallet and the reconciliation guard (a take-rate condition was the volume condition restated); reported events and policy parameters live in data/reference with sources; HSP-029 ramp starts after its 90-day grace period; markers on weekly charts are drawn at the week and listed with the event's own date; GitHub Pages under /NePu---NEAR-Pulse-.
+- Bugs fixed: Windows race in the manifest lock (lost entries); Next.js 16.4.3 export nests prefetch files on Windows (404s); invalid popover markup broke hydration; stale summary.json after a model change (always rebuild with `make site`); bar lengths not proportional on phones; 99.7 % rounded to 100 %.
+- Blockers: the first push needs the user's GitHub credentials, and Pages must be set to "GitHub Actions" in the repository settings; `.env.example` held the Google Cloud project id in history (removed now, history not rewritten, not a credential); HSP-029 vote result not found.
+- Next: push and confirm the Pages URL, put it in README; then F7 (THESIS.md quoting summary.json, README results, proof-of-analysis, /screener).
+
 ### 2026-11-03 — F5
 - Done: models/valuation.py (reverse break-even, block bootstrap, scenarios historical / decay / flat, Monte Carlo with common random numbers), build.py writes site/public/data/valuation.json, config constants (10,000 paths, 60 months, 3-month blocks, seed `RANDOM_SEED`), docs/METHODOLOGY.md "Valuation Lab", DATA_AUDIT.md "F5 Valuation Lab". Tests written first: 27 new (hand-computed CR 0.8 and 0.425, equality with the F3 sensitivity grid, probabilities in [0, 1], same seed identical and another seed different, flat <= decay <= historical, price and inflation monotonic, month-0 check, no price target). `make verify`: 141 passed.
 - Numbers found (source: site/public/data/valuation.json, as of 2026-10-30; price held constant at 4.05 USD):

@@ -12,6 +12,16 @@
       ],
       "pulled_at_utc": "2026-11-03T05:00:00Z",
       "query_sha256": null
+    },
+    {
+      "path": "parameters.csv",
+      "sha256": "cc10f88344e45d22d83f45f072c95ed0b7d8a8e3e0339369fed55cd1d5a76b99",
+      "rows": 4,
+      "source": "manual: policy parameters with the sources listed in each row (sources column)",
+      "query_file": null,
+      "date_range": null,
+      "pulled_at_utc": "2026-11-03T08:00:00Z",
+      "query_sha256": null
     }
   ]
 }

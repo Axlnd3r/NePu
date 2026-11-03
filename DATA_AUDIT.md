@@ -409,6 +409,28 @@ Numbers (source: `summary.json`, 30 days 2026-10-01..2026-10-30):
 - Conditions: volume 13.2 % of V*; routing 65.5 % of 1.0; reconciliation worst 11.0 % against 15 % (not triggered).
 - Hero: 12 cents per USD of new NEAR (CR_float in USD 0.1196, 30 days to 2026-10-31); this week 0.120, prev 0.118.
 
+## F6 number audit and deploy preparation (2026-11-03)
+
+- **Number audit.** An independent recomputation (no `capture.models` import) of every number in the
+  published JSON found **0 mismatches in 158 checks**; two deliberate mutations were caught. It is now permanent
+  as `tests/test_numbers_audit.py` (11 tests, extended to all 18 Monte Carlo runs, every distribution period,
+  every cohort and every lead/lag row); one deliberate mutation in each of 9 areas fails its test.
+- **Policy parameters** now live in `data/reference/parameters.csv` (2.5 %; HSP-029 1.6 %, 24 months, 3-month
+  grace; sources per row) under the reference manifest; a test checks `config.py` against it and 2.5 % against
+  the observed 30-day net supply growth (difference below 0.1 point).
+- **`.env.example` contained a real Google Cloud project id** (`GOOGLE_CLOUD_PROJECT`), against rule 4 (names
+  only). The value was removed. It remains in git history, which is not rewritten after `pre-hackathon`. A
+  project id is an identifier, not a credential (access needs a login). No credential, JWT or key was found in
+  the history (scan of all commits for JWT, Google API key, GitHub token, private key and filled secret
+  variables; the `eyJ...` strings in `docs/audit/` are base64 NEAR transaction arguments).
+- **GitHub Pages.** `github.com/Axlnd3r/NePu---NEAR-Pulse-` exists, is public (API answers without
+  authentication) and had no branch on 2026-11-03. The site is exported under `/NePu---NEAR-Pulse-`;
+  `.nojekyll` keeps `_next/` and the `__next.*` prefetch files, which Jekyll would drop. QA passed with the base
+  path (every request stayed under it).
+- **Windows-only issues found, with fixes:** Next.js 16.4.3 export nests prefetch segment files on Windows
+  (`scripts/flatten-segments.mjs`); Git Bash rewrites environment values that look like POSIX paths, so local
+  base-path builds need `MSYS_NO_PATHCONV=1`.
+
 ## Original open questions
 
 | # | Question | Status | Where answered |

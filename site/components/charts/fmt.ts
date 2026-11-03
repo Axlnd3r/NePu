@@ -5,6 +5,8 @@ export function formatValue(v: number, fmt: Fmt, axis = false): string {
   const abs = Math.abs(v);
   switch (fmt) {
     case "ratio":
+      if (axis && abs >= 1000)
+        return new Intl.NumberFormat("en-US", { notation: "compact" }).format(v);
       return axis ? String(Number(v.toPrecision(2))) : v.toFixed(3);
     case "pct":
       return `${(v * 100).toFixed(axis ? 0 : 1)}%`;

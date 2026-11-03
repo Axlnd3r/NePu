@@ -22,7 +22,7 @@ function periodMarkers(periods: string[], days: number): Marker[] {
   return REPORTED.flatMap((m) => {
     const t = Date.parse(m.date);
     const p = periods.find((s) => t >= Date.parse(s) && t < Date.parse(s) + days * 864e5);
-    return p ? [{ n: 0, date: p, label: m.label, kind: m.kind, sources: m.sources }] : [];
+    return p ? [{ n: 0, date: m.date, at: p, label: m.label, kind: m.kind, sources: m.sources }] : [];
   }).map((m, i) => ({ ...m, n: i + 1 }));
 }
 

@@ -48,7 +48,15 @@ export function rolling(values: (number | null)[], window: number): (number | nu
   });
 }
 
-export type Marker = { n: number; date: string; label: string; kind: string; sources: string[] };
+/** date is the event's day; at (if set) is where it is drawn on a weekly or monthly axis. */
+export type Marker = {
+  n: number;
+  date: string;
+  at?: string;
+  label: string;
+  kind: string;
+  sources: string[];
+};
 
 /** Markers inside [first, last], numbered in date order for the chart labels and the list. */
 export function markersBetween(first: string, last: string, ids?: string[]): Marker[] {
