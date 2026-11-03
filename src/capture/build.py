@@ -21,6 +21,7 @@ import pandas as pd
 
 from capture import config
 from capture import manifest as mf
+from capture import proof as proof_mod
 from capture.models import breakeven, coverage, developer, distribution, ledger, valuation
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -728,15 +729,7 @@ def provenance_payload(data_dir: Path, source: str) -> dict:
     """provenance.json: every file with hash and range, reconciliation status, proof of analysis."""
     frame = coverage.build_inputs(load_tables(data_dir))
     reconciliation = coverage.monthly_reconciliation(frame)
-    proof = (
-        json.loads(PROOF_FILE.read_text(encoding="utf-8"))
-        if PROOF_FILE.exists()
-        else {
-            "status": "not committed",
-            "tx": None,
-            "note": "the manifest hash is committed to NEAR mainnet by `make proof` (F7)",
-        }
-    )
+    proof = proof_mod.site_status(proof_mod.read_proof(PROOF_FILE))
     return {
         "schema_version": 1,
         "source": f"data/{source}",

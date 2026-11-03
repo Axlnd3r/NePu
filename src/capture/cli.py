@@ -2,15 +2,19 @@
 
 from __future__ import annotations
 
+import shutil
+import subprocess
 from datetime import date
 from enum import StrEnum
 from pathlib import Path
 from typing import Annotated
 
+import httpx
 import typer
 
 from capture import build as build_mod
 from capture import config
+from capture import proof as proof_mod
 from capture import snapshot as snapshot_mod
 from capture.extract.run import run_extract
 from capture.manifest import verify_manifest as verify_manifest_dir
@@ -103,8 +107,101 @@ def verify_manifest(
     typer.echo(f"{data_dir.as_posix()}/manifest.json: OK")
 
 
-@app.command()
-def proof() -> None:
-    """Hash the manifest and commit it to NEAR mainnet (needs PROOF_ACCOUNT_ID)."""
-    typer.echo("proof: not implemented yet (phase F7).", err=True)
-    raise typer.Exit(1)
+proof_app = typer.Typer(
+    help="Proof of analysis: commit the snapshot manifest hash to a NEAR network.",
+    no_args_is_help=True,
+)
+app.add_typer(proof_app, name="proof")
+
+
+def _proof_setup() -> tuple[dict[str, str], str, str, str]:
+    """(settings, network, contract, signer) from .env / the environment; testnet by default."""
+    s = config.load_settings()
+    network = s.get("PROOF_NETWORK", "testnet")
+    signer = s.get("PROOF_ACCOUNT_ID")
+    if not signer:
+        typer.echo("PROOF_ACCOUNT_ID is not set (see .env.example and README).", err=True)
+        raise typer.Exit(1)
+    return s, network, s.get("PROOF_CONTRACT_ID", signer), signer
+
+
+@proof_app.command("status")
+def proof_status(
+    data_dir: Annotated[Path, typer.Argument()] = config.DATA_SNAPSHOT,
+) -> None:
+    """Compare the snapshot manifest hash with the hash the contract holds. Changes nothing."""
+    _, network, contract, _ = _proof_setup()
+    sha = proof_mod.manifest_sha256(data_dir)
+    run_id = proof_mod.make_run_id(sha, proof_mod.snapshot_end(data_dir))
+    rpc = proof_mod.NETWORKS[network]["rpc"]
+    with httpx.Client() as client:
+        on_chain = proof_mod.get(client, rpc, contract, run_id)
+    typer.echo(f"network   {network}")
+    typer.echo(f"contract  {contract}")
+    typer.echo(f"run_id    {run_id}")
+    typer.echo(f"manifest  {sha}")
+    typer.echo(f"on chain  {on_chain}")
+    if on_chain == sha:
+        typer.echo("MATCH: this snapshot's manifest hash is committed on chain.")
+    elif on_chain is None:
+        typer.echo("NOT COMMITTED: run `make proof`.")
+    else:
+        typer.echo("DIFFERENT hash on chain for this run_id.", err=True)
+        raise typer.Exit(1)
+
+
+@proof_app.command("preflight")
+def proof_preflight(
+    wasm: Annotated[Path, typer.Option(help="The contract .wasm that will be deployed.")],
+) -> None:
+    """Check that the proof account exists and can hold the contract code. Changes nothing."""
+    _, network, _, signer = _proof_setup()
+    size = wasm.stat().st_size
+    with httpx.Client() as client:
+        checks = proof_mod.preflight(client, proof_mod.NETWORKS[network]["rpc"], signer, size)
+    for c in checks:
+        typer.echo(f"{'ok  ' if c.ok else 'FAIL'} {c.name}: {c.detail}")
+    if not all(c.ok for c in checks):
+        raise typer.Exit(1)
+
+
+@proof_app.command("commit")
+def proof_commit(
+    yes: Annotated[bool, typer.Option("--yes", help="Do not ask for confirmation.")] = False,
+    tx: Annotated[str | None, typer.Option(help="Transaction id, if it cannot be read.")] = None,
+    data_dir: Annotated[Path, typer.Argument()] = config.DATA_SNAPSHOT,
+) -> None:
+    """Commit the manifest hash to the contract (a public, permanent transaction)."""
+    s, network, contract, signer = _proof_setup()
+    near_bin = shutil.which("near")
+    if not near_bin:
+        typer.echo("near-cli-rs not found on PATH (see README, 'Verify the proof').", err=True)
+        raise typer.Exit(1)
+    sha = proof_mod.manifest_sha256(data_dir)
+    run_id = proof_mod.make_run_id(sha, proof_mod.snapshot_end(data_dir))
+    typer.echo(f"commit {run_id}")
+    typer.echo(f"  hash     {sha}")
+    typer.echo(f"  network  {network}")
+    typer.echo(f"  contract {contract}")
+    typer.echo(f"  signer   {signer}")
+    typer.echo("  This transaction is public and permanent.")
+    if not yes and not typer.confirm("Send it?"):
+        raise typer.Exit(1)
+
+    def run(argv: list[str]) -> tuple[int, str]:
+        done = subprocess.run(argv, capture_output=True, text=True, check=False)
+        return done.returncode, done.stdout + done.stderr
+
+    try:
+        with httpx.Client() as client:
+            record = proof_mod.commit(
+                data_dir, config.ROOT / "data" / "proof.json",
+                network=network, contract=contract, signer=signer, client=client, run=run,
+                near_bin=near_bin, public_key=s.get("PROOF_PUBLIC_KEY"),
+                private_key=s.get("PROOF_PRIVATE_KEY"), tx_hash=tx,
+            )  # fmt: skip
+    except proof_mod.ProofError as exc:
+        typer.echo(f"proof: {exc}", err=True)
+        raise typer.Exit(1) from exc
+    near = record["near"]
+    typer.echo(f"committed at block {near['block_height']}: {near['explorer_url']}")

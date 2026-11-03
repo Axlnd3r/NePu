@@ -9,7 +9,7 @@ Headline metric: coverage ratio CR = (buyback value + burn value) / gross issuan
 Break-even daily Intents volume: V* = (i * S * P - Burn_usd) / tau_eff
   i = annual inflation / 365, S = total supply, P = NEAR price, tau_eff = protocol revenue / Intents volume.
 
-Modules: (1) Capture Ledger core, (2) Distribution Map (fees by channel, HHI, near.com share), (3) Valuation Lab (reverse valuation + bootstrap Monte Carlo), (4) Developer indicator (new contracts that stay used), (5) proof-of-analysis (manifest hash committed to NEAR mainnet).
+Modules: (1) Capture Ledger core, (2) Distribution Map (fees by channel, HHI, near.com share), (3) Valuation Lab (reverse valuation + bootstrap Monte Carlo), (4) Developer indicator (new contracts that stay used), (5) proof-of-analysis (manifest hash timestamped with OpenTimestamps and committed to a NEAR network: testnet by default, mainnet optional; the network is always named wherever the proof is shown).
 
 ## Hard rules (never break)
 1. Never invent numbers. Every number shown in README.md, THESIS.md or site/ must come from a file in data/ that is listed in a manifest. If a metric cannot be computed, write "unavailable" plus the reason in THESIS.md.
@@ -28,7 +28,7 @@ Modules: (1) Capture Ledger core, (2) Distribution Map (fees by channel, HHI, ne
 - `make build-live` same, from data/live/
 - `make verify`  pytest: reconciliation, invariants, manifest hashes
 - `make site`    build static dashboard (Next.js export) into site/out/
-- `make proof`   hash the manifest and commit it to NEAR mainnet (needs PROOF_ACCOUNT_ID)
+- `make proof`   hash the manifest and commit it to the NEAR network in PROOF_NETWORK (testnet by default; needs PROOF_ACCOUNT_ID and near-cli-rs). The OpenTimestamps stamp is made in CI (`ots` does not run on Windows).
 - `make all`     setup + build + verify + site (must work from a clean clone, offline)
 
 ## Layout
@@ -40,7 +40,8 @@ Modules: (1) Capture Ledger core, (2) Distribution Map (fees by channel, HHI, ne
 - data/snapshot/        committed daily aggregates (parquet) + manifest.json
 - data/live/            gitignored fresh pulls
 - site/                 Next.js + Recharts, static export, reads site/public/data/*.json
-- contracts/proof-of-analysis/  minimal Rust contract: commit(run_id, manifest_sha256)
+- contracts/proof-of-analysis/  minimal Rust contract: commit(run_id, manifest_sha256), get(run_id); built and tested in CI
+- src/capture/proof.py  run id, on-chain read, balance preflight, commit flow, data/proof.json
 - docs/METHODOLOGY.md   formulas, sources, limitations
 
 ## Conventions

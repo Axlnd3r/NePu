@@ -457,6 +457,31 @@ Design decisions: `commit` is owner-only and write-once per `run_id` (a proof th
 nothing); the hash must be 64 lowercase hex characters; `run_id` is 1 to 128 bytes; no token, no admin method.
 No mainnet transaction has been made yet.
 
+**Decision (2026-11-03, user): no funds, so OpenTimestamps plus NEAR testnet instead of mainnet.** Facts and checks:
+- **`ots` does not run on Windows.** `opentimestamps-client 0.8.0` (PyPI, Python >= 3.11) crashes on import with
+  `TypeError` in `bitcoin/core/key.py`: python-bitcoinlib loads OpenSSL through `ctypes.util.find_library`, which
+  returns None on Windows. Reproduced with `uv run --no-project --with opentimestamps-client==0.8.0 ots --version`.
+  The stamp is therefore made in CI (Linux). Per its README `ots stamp` needs no node or key, a Bitcoin attestation
+  appears after a few hours (`ots upgrade` completes it), and `ots verify` needs a local Bitcoin Core node.
+- **near-cli-rs 0.30.1** (Windows x86_64 tar.gz): published SHA-256 equals the downloaded file's
+  (`f5927854...b4cbc`). Command chains read from its `--help`: `account create-account sponsor-by-faucet-service
+  <id> autogenerate-new-keypair save-to-keychain network-config testnet create` (faucet sponsoring is testnet
+  only), `contract deploy <id> use-file <wasm> with-init-call|without-init-call ...`, `contract call-function
+  as-transaction <contract> <method> json-args <json> prepaid-gas <gas> attached-deposit <amount> sign-as <id>
+  network-config <net> sign-with-keychain|sign-with-plaintext-private-key send`, `account add-key <id>
+  grant-function-call-access`. Running it created the default `%APPDATA%
+ear-cli\config.toml` on the user's
+  machine (networks and `credentials_home_dir`; no key).
+- **Testnet RPC** `https://rpc.testnet.fastnear.com` answers `status` (chain_id testnet) and sends
+  `Access-Control-Allow-Origin: *` (checked with an `Origin: https://axlnd3r.github.io` header), so the dashboard can
+  read the contract from the browser. `https://rpc.testnet.near.org` and `https://test.rpc.fastnear.com` also answer.
+  The mainnet RPC and explorer values are near-cli-rs defaults and their CORS is not checked (mainnet is unused).
+- **Storage price**: `EXPERIMENTAL_protocol_config` on testnet returns `storage_amount_per_byte` = 10000000000000000000
+  (1e19 yoctoNEAR), the constant behind 105,951 bytes = 1.0595 NEAR.
+- **Testnet faucet amount** is not verified: `capture proof preflight` reads the real balance before any deploy.
+- The Transaction ID line of the CLI output is parsed with a regex written from the CLI's usual message; it is
+  confirmed (or corrected) on the first real commit, and the block height comes from the chain (`tx` then `block`).
+
 ## Original open questions
 
 | # | Question | Status | Where answered |

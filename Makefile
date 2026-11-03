@@ -27,6 +27,6 @@ qa:
 	node qa/check.mjs
 
 proof:
-	uv run capture proof
+	uv run capture proof commit
 
 all: setup build verify site

@@ -34,6 +34,11 @@ SETTING_KEYS = (
     "BQ_MAX_BYTES",
     "INTENTS_EXPLORER_JWT",
     "COINGECKO_API_KEY",
+    "PROOF_NETWORK",
+    "PROOF_ACCOUNT_ID",
+    "PROOF_CONTRACT_ID",
+    "PROOF_PUBLIC_KEY",
+    "PROOF_PRIVATE_KEY",
 )
 
 # Revenue wallets, see DATA_AUDIT.md check 4.
