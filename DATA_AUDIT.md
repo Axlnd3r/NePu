@@ -469,8 +469,7 @@ No mainnet transaction has been made yet.
   only), `contract deploy <id> use-file <wasm> with-init-call|without-init-call ...`, `contract call-function
   as-transaction <contract> <method> json-args <json> prepaid-gas <gas> attached-deposit <amount> sign-as <id>
   network-config <net> sign-with-keychain|sign-with-plaintext-private-key send`, `account add-key <id>
-  grant-function-call-access`. Running it created the default `%APPDATA%
-ear-cli\config.toml` on the user's
+  grant-function-call-access`. Running it created the default `%APPDATA%/near-cli/config.toml` on the user's
   machine (networks and `credentials_home_dir`; no key).
 - **Testnet RPC** `https://rpc.testnet.fastnear.com` answers `status` (chain_id testnet) and sends
   `Access-Control-Allow-Origin: *` (checked with an `Origin: https://axlnd3r.github.io` header), so the dashboard can
