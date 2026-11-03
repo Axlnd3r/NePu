@@ -39,17 +39,19 @@ This project measures it and reports how far the network is from that point:
 <!-- results:end -->
 
 ## Quickstart (offline)
-No credentials are needed. Requirements: [uv](https://docs.astral.sh/uv/), `Node 24`, GNU make, git.
+No credentials are needed. Requirements: [uv](https://docs.astral.sh/uv/) (it installs the pinned
+`Python 3.12` itself if that is missing), `Node 24`, GNU make, git.
 
 1. **Do** `git clone https://github.com/Axlnd3r/NePu.git` and `cd NePu`.
    **See** the repository with `data/snapshot/` (the frozen inputs) and `data/snapshot/manifest.json`.
 2. **Do** `make all`. **See** it install dependencies (the only step that needs a network), rebuild
    every metric into `site/public/data/`, run ruff, the manifest hash check and the tests, and
    export the dashboard to `site/out/`. It ends without errors.
-3. **Do** `python -m http.server 8000 --directory site/out` and open `http://localhost:8000`.
-   **See** the hero sentence quoted under Results, the ledger of where Intents volume goes, the
-   break-even meter and the other pages. (Opening `site/out/index.html` straight from the disk shows
-   a broken page: the export uses absolute asset paths, so it must be served.)
+3. **Do** `make serve` (it runs `uv run python -m http.server 8000 --directory site/out`) and open
+   `http://localhost:8000`. **See** the hero sentence quoted under Results, the ledger of where
+   Intents volume goes, the break-even meter and the other pages. (Opening `site/out/index.html`
+   straight from the disk shows a broken page, with no styles and no charts: the export uses
+   absolute asset paths, so it must be served.)
 4. **Do** `uv run capture verify-manifest data/snapshot`. **See** `data/snapshot/manifest.json: OK`:
    every input file still has the hash recorded when it was frozen.
 
@@ -59,6 +61,7 @@ No credentials are needed. Requirements: [uv](https://docs.astral.sh/uv/), `Node
 | `make build` | rebuild every metric from `data/snapshot/`, and `THESIS.md` and the results block |
 | `make verify` | lint, recompute manifest hashes, run the tests (including the independent number audit) |
 | `make site` | build the static dashboard into `site/out/` |
+| `make serve` | serve `site/out` at `http://localhost:8000` (the export must be served, not opened from disk) |
 | `make qa` | open every page in Chrome (desktop light and dark, phone) and fail on console errors, failed requests or overflow; screenshots go to `qa/screenshots/` |
 | `make proof` | commit the manifest hash to NEAR (see Verify the proof) |
 | `make all` | setup, build, verify and site; works from a clean clone, offline |
@@ -146,7 +149,12 @@ organisers' official requirement list was not available when this was written, s
 - [x] Limitations stated; no price predictions
 - [x] Sources listed and checked ([DATA_AUDIT.md](DATA_AUDIT.md))
 - [x] Proof of analysis committed to NEAR testnet and timestamped with OpenTimestamps
-- [ ] Clean-clone run of `make all` by an independent reviewer (pending)
+- [x] `make all` from a fresh clone with no credentials, run by a separate AI screener session (a
+  fresh agent that had not seen this project's history); it passed
+- [ ] The same run by a human reviewer (pending)
+- [x] BigQuery queries filter on `block_date`, except `sql/fee_wallet_inflows_daily.sql`, which filters
+  on `epoch_date` because the `ft_balances_daily` table has no `block_date` column (stated in that
+  file and in [DATA_AUDIT.md](DATA_AUDIT.md))
 - [ ] Demo video (not published yet)
 
 ## AI & libraries disclosure

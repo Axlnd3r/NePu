@@ -1,4 +1,4 @@
-.PHONY: setup extract build build-live verify site qa proof all
+.PHONY: setup extract build build-live verify site serve qa proof all
 
 setup:
 	uv sync
@@ -21,6 +21,10 @@ verify:
 
 site: build
 	npm run build --prefix site
+
+# Serves site/out at http://localhost:8000 (the export uses absolute paths, so file:// breaks it).
+serve:
+	uv run python -m http.server 8000 --directory site/out
 
 # Opens every page of site/out in Chrome (desktop light/dark, phone); needs `make site` first.
 qa:
