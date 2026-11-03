@@ -76,7 +76,7 @@ export function TimeChart({
             contentStyle={{
               background: "var(--surface)",
               border: "1px solid var(--ring)",
-              borderRadius: 8,
+              borderRadius: 4,
               fontSize: 12,
               color: "var(--ink)",
             }}
@@ -84,7 +84,11 @@ export function TimeChart({
             formatter={(v) => (typeof v === "number" ? formatValue(v, format) : String(v))}
           />
           {series.length > 1 && (
-            <Legend wrapperStyle={{ fontSize: 12, color: "var(--ink-2)" }} iconType="plainline" />
+            <Legend
+              wrapperStyle={{ fontSize: 12 }}
+              iconType="plainline"
+              formatter={(v) => <span style={{ color: "var(--ink-2)" }}>{v}</span>}
+            />
           )}
           {refY && (
             <ReferenceLine

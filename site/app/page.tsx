@@ -1,6 +1,7 @@
 import { BarRows, Badge, MarkerList, Meter } from "@/components/Bits";
 import { ChartCard } from "@/components/ChartCard";
 import { BreakEvenMeter } from "@/components/charts/BreakEvenMeter";
+import { NearMark } from "@/components/NearMark";
 import { TimeChart } from "@/components/charts/TimeChart";
 import { Evidence } from "@/components/Evidence";
 import { coverage, distribution, markersBetween, summary, valuation } from "@/lib/data";
@@ -31,9 +32,13 @@ export default function Overview() {
 
   return (
     <div className="space-y-10">
-      <section aria-labelledby="hero" className="rounded-2xl bg-surface p-6 sm:p-10">
-        <p className="text-sm font-medium text-accent">Can NEAR Intents value capture outgrow token issuance?</p>
-        <h1 id="hero" className="mt-3 text-3xl font-semibold leading-tight tracking-tight sm:text-5xl">
+      <section aria-labelledby="hero" className="pb-6 text-center sm:pb-10">
+        <NearMark id="hero-mark" className="mx-auto h-[min(36vh,18rem)] w-auto" />
+        <p className="eyebrow mt-10 sm:mt-14">Can NEAR Intents value capture outgrow token issuance?</p>
+        <h1
+          id="hero"
+          className="display mx-auto mt-4 max-w-3xl text-[2rem] font-medium sm:text-5xl lg:text-[3.5rem]"
+        >
           For every $1 of new NEAR issued,{" "}
           <Evidence
             id="hero"
@@ -46,15 +51,21 @@ export default function Overview() {
           </Evidence>{" "}
           come back as buybacks or gas burn.
         </h1>
-        <p className="mt-4 max-w-3xl text-ink-2">
+        <p className="mx-auto mt-6 max-w-2xl text-ink-2">
           30 days to {hero.date}. In NEAR units the same ratio is {ratio(hero.cr_float_30)}.{" "}
           {summary.this_week.sentence}. Break-even means 100 cents.
         </p>
+        <a
+          href="https://github.com/Axlnd3r/NePu/blob/main/THESIS.md"
+          className="mt-6 inline-block text-sm text-ink hover:text-accent"
+        >
+          Read the thesis <span aria-hidden>→</span>
+        </a>
 
-        <div className="mt-8 grid gap-4 sm:grid-cols-3">
-          <div className="rounded-xl border border-[var(--ring)] p-4">
+        <div className="mt-14 grid gap-4 text-left sm:grid-cols-3">
+          <div className="rounded-xl border border-[var(--ring)] p-5 sm:p-6">
             <p className="text-sm text-ink-2">Volume needed to break even</p>
-            <p className="tabular mt-1 text-2xl font-semibold">
+            <p className="display mt-3 text-3xl font-medium text-accent">
               <Evidence
                 id="multiple"
                 formula="V* / V0: break-even daily Intents volume (buyback take rate, 2.5% issuance, current price and burn) over the 30-day average volume."
@@ -68,9 +79,9 @@ export default function Overview() {
               {usd(steps[0].v_star_usd_per_day)} per day against {usd(levers.volume_usd_per_day)} today
             </p>
           </div>
-          <div className="rounded-xl border border-[var(--ring)] p-4">
+          <div className="rounded-xl border border-[var(--ring)] p-5 sm:p-6">
             <p className="text-sm text-ink-2">Protocol revenue that reaches the buyback wallet</p>
-            <p className="tabular mt-1 text-2xl font-semibold">
+            <p className="display mt-3 text-3xl font-medium text-accent">
               <Evidence
                 id="routing"
                 formula="Buyback wallet inflow / revenue reaching all NEAR revenue wallets (internal transfers netted), both valued at daily prices, 30 days."
@@ -82,9 +93,9 @@ export default function Overview() {
             </p>
             <p className="mt-1 text-xs text-muted">The rest is held in collection wallets that have not paid out</p>
           </div>
-          <div className="rounded-xl border border-[var(--ring)] p-4">
+          <div className="rounded-xl border border-[var(--ring)] p-5 sm:p-6">
             <p className="text-sm text-ink-2">Intents volume our channel data covers</p>
-            <p className="tabular mt-1 text-2xl font-semibold">
+            <p className="display mt-3 text-3xl font-medium text-accent">
               <Evidence
                 id="coverage"
                 formula="Volume in the Intents Explorer (1Click transactions only) / DefiLlama Intents volume, same days."
@@ -139,7 +150,7 @@ export default function Overview() {
           Kept at each step: fees {pct(ledger.kept.fees_of_volume, 2)} of volume, revenue{" "}
           {pct(ledger.kept.revenue_of_fees)} of fees, on-chain {pct(ledger.kept.onchain_of_revenue)} of
           DefiLlama revenue, buyback wallet {pct(ledger.kept.buyback_of_onchain)} of on-chain revenue.
-          Accent bars are what counts in CR; the grey bar is what they are measured against.
+          Gold bars are what counts in CR; the outlined bar is what they are measured against.
         </p>
       </ChartCard>
 
@@ -227,8 +238,8 @@ export default function Overview() {
         />
       </ChartCard>
 
-      <section aria-labelledby="mind" className="rounded-xl border border-[var(--ring)] bg-surface p-4 sm:p-6">
-        <h2 id="mind" className="text-base font-semibold">What would change our mind</h2>
+      <section aria-labelledby="mind" className="rounded-xl border border-[var(--ring)] bg-surface p-5 sm:p-8">
+        <h2 id="mind" className="text-lg font-medium tracking-tight">What would change our mind</h2>
         <p className="mt-1 text-sm text-ink-2">
           Three numeric conditions, re-evaluated on every build. The first two would support the
           thesis that capture can outgrow issuance; they move independently. The third would withdraw

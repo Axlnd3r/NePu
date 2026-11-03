@@ -22,16 +22,16 @@ export function ChartCard({ id, title, sentence, tables, model, table, children 
     <section
       id={id}
       aria-labelledby={`${id}-title`}
-      className="rounded-xl border border-[var(--ring)] bg-surface p-4 sm:p-6"
+      className="rounded-xl border border-[var(--ring)] bg-surface p-5 sm:p-8"
     >
-      <h3 id={`${id}-title`} className="text-base font-semibold">
+      <h3 id={`${id}-title`} className="text-lg font-medium tracking-tight">
         {title}
       </h3>
       <p className="mt-1 text-sm text-ink-2">{sentence}</p>
       <div className="mt-4">{children}</div>
 
       <details className="mt-4 text-sm">
-        <summary className="cursor-pointer text-ink-2">Query and model</summary>
+        <summary className="cursor-pointer text-ink-2 hover:text-accent">Query and model</summary>
         <p className="mt-2 text-muted">
           Computed by <code>{model}</code> from the tables below.
         </p>
@@ -42,7 +42,7 @@ export function ChartCard({ id, title, sentence, tables, model, table, children 
               <p className="font-mono text-xs text-ink-2">
                 {t} ({q.kind === "bigquery_sql" ? q.file : "HTTP API"})
               </p>
-              <pre className="mt-1 max-h-72 overflow-auto rounded-md bg-plane p-3 text-xs leading-relaxed">
+              <pre className="mt-1 max-h-72 overflow-auto rounded-md border border-[var(--ring)] bg-raised p-3 text-xs leading-relaxed text-ink-2">
                 {q.text}
               </pre>
             </div>
@@ -52,7 +52,7 @@ export function ChartCard({ id, title, sentence, tables, model, table, children 
 
       {table && (
         <details className="mt-2 text-sm">
-          <summary className="cursor-pointer text-ink-2">Data table</summary>
+          <summary className="cursor-pointer text-ink-2 hover:text-accent">Data table</summary>
           <div className="mt-2 max-h-80 overflow-auto">
             <table className="tabular w-full text-left text-xs">
               <thead>

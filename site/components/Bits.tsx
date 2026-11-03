@@ -48,11 +48,13 @@ export function BarRows({
         >
           <span className="col-span-2 text-sm text-ink-2 sm:col-span-1">{r.label}</span>
           <div className="h-5">
+            {/* The muted bar is the yardstick the others are measured against: an outline, not a fill. */}
             <div
               className="h-5 rounded-r-[4px]"
               style={{
                 width: `${Math.max((r.value / max) * 100, 0.5)}%`,
-                background: r.accent ? "var(--accent)" : r.muted ? "var(--grid)" : "var(--neutral-series)",
+                background: r.accent ? "var(--accent)" : r.muted ? "transparent" : "var(--neutral-series)",
+                border: r.muted ? "1px solid var(--muted)" : undefined,
               }}
             />
           </div>
@@ -99,17 +101,17 @@ export function Badge({ tone, children }: { tone: keyof typeof TONES; children: 
 
 export function PageHeader({ title, lede }: { title: string; lede: ReactNode }) {
   return (
-    <header className="mb-8">
-      <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{title}</h1>
-      <p className="mt-2 max-w-3xl text-ink-2">{lede}</p>
+    <header className="mb-12 border-b border-[var(--ring)] pb-10">
+      <h1 className="display text-3xl font-medium sm:text-[2.75rem]">{title}</h1>
+      <p className="mt-4 max-w-3xl text-ink-2">{lede}</p>
     </header>
   );
 }
 
 export function Callout({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <aside className="rounded-xl border-2 border-accent bg-surface p-4 text-sm sm:p-5">
-      <p className="font-semibold">{title}</p>
+    <aside className="rounded-xl border border-accent bg-surface p-5 text-sm sm:p-6">
+      <p className="font-medium text-accent">{title}</p>
       <div className="mt-1 text-ink-2">{children}</div>
     </aside>
   );

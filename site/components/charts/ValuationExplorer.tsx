@@ -59,7 +59,7 @@ export function ValuationExplorer({ runs, volumeNow }: { runs: Run[]; volumeNow:
               type="button"
               aria-pressed={path === k}
               onClick={() => setPath(k)}
-              className={`rounded-md border px-3 py-1 ${path === k ? "border-accent bg-accent text-white" : "border-[var(--ring)]"}`}
+              className={`rounded-md border px-3 py-1 ${path === k ? "border-accent bg-accent text-on-accent" : "border-[var(--ring)]"}`}
             >
               {label}
             </button>
@@ -73,7 +73,7 @@ export function ValuationExplorer({ runs, volumeNow }: { runs: Run[]; volumeNow:
               type="button"
               aria-pressed={mult === m}
               onClick={() => setMult(m)}
-              className={`rounded-md border px-3 py-1 ${mult === m ? "border-accent bg-accent text-white" : "border-[var(--ring)]"}`}
+              className={`rounded-md border px-3 py-1 ${mult === m ? "border-accent bg-accent text-on-accent" : "border-[var(--ring)]"}`}
             >
               price held at {m}x
             </button>
@@ -121,7 +121,7 @@ function Panel({ run, volumeNow }: { run: Run; volumeNow: number }) {
               tickFormatter={(v: number) => formatValue(v, "ratio", true)}
             />
             <Tooltip
-              contentStyle={{ background: "var(--surface)", border: "1px solid var(--ring)", fontSize: 12 }}
+              contentStyle={{ background: "var(--surface)", border: "1px solid var(--ring)", borderRadius: 4, fontSize: 12, color: "var(--ink)" }}
               labelFormatter={(m) => `Month ${m}`}
               formatter={(v) =>
                 Array.isArray(v)

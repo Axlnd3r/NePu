@@ -42,7 +42,7 @@ export function BreakEvenMeter(props: Props) {
                 aria-pressed={inflation === v}
                 onClick={() => setInflation(v)}
                 className={`rounded-md border px-3 py-1 text-sm ${
-                  inflation === v ? "border-accent bg-accent text-white" : "border-[var(--ring)]"
+                  inflation === v ? "border-accent bg-accent text-on-accent" : "border-[var(--ring)]"
                 }`}
               >
                 {v === 0.025 ? "2.5% (today)" : "1.6% (HSP-029)"}
@@ -60,7 +60,7 @@ export function BreakEvenMeter(props: Props) {
                 aria-pressed={basis === v}
                 onClick={() => setBasis(v)}
                 className={`rounded-md border px-3 py-1 text-sm ${
-                  basis === v ? "border-accent bg-accent text-white" : "border-[var(--ring)]"
+                  basis === v ? "border-accent bg-accent text-on-accent" : "border-[var(--ring)]"
                 }`}
               >
                 {v === "buyback" ? "Buyback wallet" : "All revenue"}
@@ -96,7 +96,7 @@ export function BreakEvenMeter(props: Props) {
         </label>
       </div>
 
-      <div className="rounded-lg bg-plane p-4">
+      <div className="rounded-lg border border-[var(--ring)] bg-raised p-5">
         <p className="text-sm text-ink-2">Break-even Intents volume V*</p>
         <p className="tabular text-3xl font-semibold" data-testid="vstar" data-value={vStar}>
           {formatValue(vStar, "usd")}

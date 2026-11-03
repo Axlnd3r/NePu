@@ -21,6 +21,13 @@ Living log. Claude updates this at the end of every session. Newest entry on top
 | F8 Demo + submission | 13–14 Nov | todo | |
 
 ## Session log
+### 2026-11-03 — F7 (site restyle)
+- Done: dashboard restyled to a dark "obsidian and champagne" theme (user's reference: a refero.design style page): black canvas, cream ink #fff7dd, champagne #c8ad86 as the only accent, 4px radius, 1px hairlines, no shadows. Hero now leads with a pixelated NEAR "N" (components/NearMark.tsx: 9 x 9 tile grid, SVG gradient + static noise texture, no image file), a centred headline and a "Read the thesis" link. Inter typeface self-hosted via @fontsource-variable/inter (OFL; Switzer from the reference was not used because its licence does not allow redistributing the files). Light mode removed.
+- Numbers found: none new; no data, model or text figure changed. make verify 260 passed, 1 skipped; qa/check.mjs clean on all pages, desktop and mobile.
+- Decisions: chart colours re-chosen for the black surface and checked with the dataviz validator (series-2 #b58a3a, series-3 #b374ad, neutral #66635f: all-pairs CVD worst 13.8, normal-vision worst 18.1; CR 7d/30d/90d as an ordinal gold ramp, light end 4.15:1). Status badges keep icon + label (good = champagne, critical = #c96f5a). The yardstick bar ("New NEAR issued") is drawn as an outline. README discloses the new font dependency.
+- Blockers: none.
+- Next: redeploy GitHub Pages so the live site shows the new theme; then the clean-clone /screener and F8.
+
 ### 2026-11-03 — F7 (7a, 7b, 7c up to the screener)
 - Done:
   - **7a proof of analysis.** Contract `contracts/proof-of-analysis` (owner-only, write-once `commit`, `get`, NEP-297 event), tests written first (13), built and tested in CI, wasm committed with its checksum. Deployed to NEAR **testnet** (`nepu-ledger.testnet`, a dedicated account made with the faucet), code hash read back from the chain equals the CI build. First proof committed and verified three ways (local hash, `proof.json`, `get` on chain; event log; idempotent second run). `capture proof status|preflight|commit|ots-record`, `data/proof.json`, the Methodology page verifies it in the browser (QA also checks that a tampered manifest is rejected). OpenTimestamps stamp made in CI (`ots` does not run on Windows), status pending.

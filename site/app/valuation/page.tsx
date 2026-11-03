@@ -114,7 +114,7 @@ export default function ValuationLab() {
       </ChartCard>
 
       <section className="rounded-xl border border-[var(--ring)] bg-surface p-4 text-sm sm:p-6" aria-labelledby="assumptions">
-        <h2 id="assumptions" className="text-base font-semibold">Assumptions and their sources</h2>
+        <h2 id="assumptions" className="text-lg font-medium tracking-tight">Assumptions and their sources</h2>
         <dl className="mt-3 space-y-3">
           {(["price", "volume", "tau", "inflation", "supply", "burn"] as const).map((k) => (
             <div key={k}>

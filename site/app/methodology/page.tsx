@@ -50,8 +50,8 @@ export default function Methodology() {
         }
       />
 
-      <section className="rounded-xl border border-[var(--ring)] bg-surface p-4 sm:p-6" aria-labelledby="sources">
-        <h2 id="sources" className="text-base font-semibold">Sources and freshness</h2>
+      <section className="rounded-xl border border-[var(--ring)] bg-surface p-5 sm:p-8" aria-labelledby="sources">
+        <h2 id="sources" className="text-lg font-medium tracking-tight">Sources and freshness</h2>
         <p className="mt-1 text-sm text-ink-2">
           One row per input file in <code>data/snapshot/manifest.json</code>. The last date is the
           freshest day in that file.
@@ -89,8 +89,8 @@ export default function Methodology() {
         </p>
       </section>
 
-      <section className="rounded-xl border border-[var(--ring)] bg-surface p-4 sm:p-6" aria-labelledby="recon">
-        <h2 id="recon" className="text-base font-semibold">Reconciliation: on-chain revenue against DefiLlama</h2>
+      <section className="rounded-xl border border-[var(--ring)] bg-surface p-5 sm:p-8" aria-labelledby="recon">
+        <h2 id="recon" className="text-lg font-medium tracking-tight">Reconciliation: on-chain revenue against DefiLlama</h2>
         <p className="mt-1 text-sm text-ink-2">
           Every complete month, revenue measured from the NEAR revenue wallets (internal transfers
           netted, daily prices) is compared with DefiLlama&apos;s. Tolerance{" "}
@@ -108,8 +108,8 @@ export default function Methodology() {
         </ul>
       </section>
 
-      <section className="rounded-xl border border-[var(--ring)] bg-surface p-4 sm:p-6" aria-labelledby="proof">
-        <h2 id="proof" className="text-base font-semibold">Proof of analysis</h2>
+      <section className="rounded-xl border border-[var(--ring)] bg-surface p-5 sm:p-8" aria-labelledby="proof">
+        <h2 id="proof" className="text-lg font-medium tracking-tight">Proof of analysis</h2>
         <p className="mt-1 text-sm text-ink-2">
           The SHA-256 of the snapshot manifest (which lists the hash of every data file) is committed
           to a NEAR contract, so anyone can check that these numbers came from these files, and that
@@ -147,7 +147,7 @@ export default function Methodology() {
                 </dd>
               </div>
             </dl>
-            <div className="mt-4 rounded-lg bg-plane p-4">
+            <div className="mt-4 rounded-lg border border-[var(--ring)] bg-raised p-4">
               <p className="text-sm font-medium">Verify it yourself</p>
               <ProofVerifier
                 network={proof.network}
@@ -200,8 +200,8 @@ export default function Methodology() {
         </div>
       </section>
 
-      <section className="rounded-xl border border-[var(--ring)] bg-surface p-4 sm:p-6" aria-labelledby="events">
-        <h2 id="events" className="text-base font-semibold">Events on the charts</h2>
+      <section className="rounded-xl border border-[var(--ring)] bg-surface p-5 sm:p-8" aria-labelledby="events">
+        <h2 id="events" className="text-lg font-medium tracking-tight">Events on the charts</h2>
         <ul className="mt-3 space-y-2 text-sm">
           {markers.markers.map((m) => (
             <li key={m.id}>
@@ -223,8 +223,8 @@ export default function Methodology() {
       </section>
 
       <section className="rounded-xl border border-[var(--ring)] bg-surface p-4 text-sm sm:p-6" aria-labelledby="repro">
-        <h2 id="repro" className="text-base font-semibold">Reproduce</h2>
-        <pre className="mt-3 overflow-x-auto rounded-md bg-plane p-3 text-xs">{`make setup    # Python (uv) and Node dependencies
+        <h2 id="repro" className="text-lg font-medium tracking-tight">Reproduce</h2>
+        <pre className="mt-3 overflow-x-auto rounded-md border border-[var(--ring)] bg-raised p-3 text-xs text-ink-2">{`make setup    # Python (uv) and Node dependencies
 make build    # every metric from data/snapshot -> site/public/data/*.json
 make verify   # tests, reconciliation, invariants, manifest hashes
 make site     # this dashboard, static, into site/out/`}</pre>

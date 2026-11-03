@@ -1,69 +1,107 @@
 @import "tailwindcss";
 
-/* Neutral chrome and one accent for CR. Values from the dataviz reference palette; the three
-   series hues are its first three categorical slots, validated all-pairs in both modes. */
+/* "Obsidian and champagne": one dark theme, cream ink on black, champagne gold as the only
+   accent, 1px hairlines instead of fills and shadows. Chart colours were checked with the
+   dataviz validator against the #000 surface: series-2, series-3 and neutral-series pass the
+   lightness band, CVD (worst 13.8) and normal-vision (worst 18.1) floors all-pairs, the grey
+   being deliberately low-chroma; accent-light, accent, accent-deep pass as an ordinal ramp
+   (one hue, monotone lightness, light end 4.15:1). */
 :root {
-  color-scheme: light;
-  --surface: #fcfcfb;
-  --plane: #f9f9f7;
-  --ink: #0b0b0b;
-  --ink-2: #52514e;
-  --muted: #6f6d68;
-  --grid: #e1e0d9;
-  --axis: #c3c2b7;
-  --ring: rgba(11, 11, 11, 0.1);
-  --accent: #2a78d6; /* CR */
-  --accent-soft: #cde2fb;
-  --accent-light: #86b6ef; /* ordinal steps of the accent for 7d and 90d windows */
-  --accent-deep: #104281;
-  --series-2: #eb6834;
-  --series-3: #1baf7a;
-  --neutral-series: #898781;
-  --good: #0ca30c;
-  --good-text: #006300;
-  --critical: #d03b3b;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-    --surface: #1a1a19;
-    --plane: #0d0d0d;
-    --ink: #f0efec;
-    --ink-2: #c3c2b7;
-    --muted: #a3a29b;
-    --grid: #2c2c2a;
-    --axis: #383835;
-    --ring: rgba(255, 255, 255, 0.1);
-    --accent: #3987e5;
-    --accent-soft: #184f95;
-    --accent-light: #1c5cab;
-    --accent-deep: #9ec5f4;
-    --series-2: #d95926;
-    --series-3: #199e70;
-    --neutral-series: #898781;
-    --good-text: #0ca30c;
-  }
+  color-scheme: dark;
+  --surface: #000000;
+  --plane: #000000;
+  --raised: #0d0c0a; /* code blocks and inset panels */
+  --ink: #fff7dd;
+  --ink-2: #cdc5ad;
+  --muted: #9a958c;
+  --grid: #1f1d19;
+  --axis: #3a3731;
+  --ring: rgba(255, 247, 221, 0.18);
+  --accent: #c8ad86; /* CR */
+  --on-accent: #000000;
+  --accent-soft: #2e271c;
+  --accent-light: #866a3f; /* ordinal steps of the accent: 7d (recedes) and 90d (brightest) */
+  --accent-deep: #f1e3c6;
+  --series-2: #b58a3a;
+  --series-3: #b374ad;
+  --neutral-series: #66635f;
+  --good: #c8ad86;
+  --good-text: #c8ad86;
+  --critical: #c96f5a;
 }
 
 @theme inline {
   --color-surface: var(--surface);
   --color-plane: var(--plane);
+  --color-raised: var(--raised);
   --color-ink: var(--ink);
   --color-ink-2: var(--ink-2);
   --color-muted: var(--muted);
   --color-grid: var(--grid);
   --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
   --color-accent-soft: var(--accent-soft);
   --color-good: var(--good);
   --color-good-text: var(--good-text);
   --color-critical: var(--critical);
+  --font-sans: "Inter Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Cards and buttons are 4px everywhere; only pills and meters stay fully round. */
+  --radius-md: 4px;
+  --radius-lg: 4px;
+  --radius-xl: 4px;
+  --radius-2xl: 4px;
 }
 
 body {
   background: var(--plane);
   color: var(--ink);
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family: var(--font-sans);
+  font-feature-settings: "cv11", "ss01";
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+a,
+summary,
+button {
+  transition: color 150ms ease;
+}
+
+:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* Display type: tight tracking, as in the reference. */
+.display {
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+}
+
+/* Wordmark: wide uppercase. */
+.wordmark {
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* Small uppercase label above a section or card. */
+.eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  a,
+  summary,
+  button {
+    transition: none;
+  }
 }
 
 .tabular {
@@ -75,12 +113,13 @@ body {
   margin: auto;
   max-width: min(36rem, calc(100vw - 2rem));
   border: 1px solid var(--ring);
-  border-radius: 0.5rem;
+  border-color: var(--accent);
+  border-radius: 4px;
   background: var(--surface);
   color: var(--ink);
-  padding: 1rem;
+  padding: 1.25rem;
 }
 
 [popover]::backdrop {
-  background: rgba(0, 0, 0, 0.25);
+  background: rgba(0, 0, 0, 0.7);
 }

@@ -164,8 +164,9 @@ organisers' official requirement list was not available when this was written, s
   money or public transactions, and ran those transactions.
 - Python: duckdb, pandas, pyarrow, google-cloud-bigquery, httpx, python-dotenv, numpy, scipy, typer;
   development: pytest, ruff (exact versions in `uv.lock`).
-- Site: next, react, react-dom, recharts, Tailwind CSS, TypeScript, and Playwright for the QA
-  (exact versions in `site/package-lock.json`).
+- Site: next, react, react-dom, recharts, Tailwind CSS, TypeScript, the Inter typeface
+  (@fontsource-variable/inter, SIL Open Font License, self-hosted so the build stays offline),
+  and Playwright for the QA (exact versions in `site/package-lock.json`).
 - Contract: near-sdk, built with cargo-near; deployed and called with near-cli-rs. The
   OpenTimestamps client (`opentimestamps-client`) runs in CI.
 - Data providers are listed under Data sources.
