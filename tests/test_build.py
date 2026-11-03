@@ -70,6 +70,7 @@ def test_every_payload_is_deterministic_and_has_lf_endings(tmp_path: Path) -> No
     build("snapshot", second)
     names = sorted(p.relative_to(first).as_posix() for p in written)
     assert names == [
+        "THESIS.md",  # upper case sorts before the rest
         "coverage.json",
         "developer.json",
         "distribution.json",

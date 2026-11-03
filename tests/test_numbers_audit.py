@@ -191,6 +191,8 @@ def test_summary_numbers(ind, pub) -> None:
     assert close(s["hero"]["cr_float_usd_30"], cr_usd[D(s["hero"]["date"])])
     assert f"{round(cr_usd[D(s['hero']['date'])] * 100)} cents" in s["hero"]["sentence"]
     assert close(s["this_week"]["value"], cr[D(s["this_week"]["date"])])
+    best = s["history"]["cr_float_30_max"]
+    assert close(best["value"], cr.max()) and best["date"] == cr.idxmax().date().isoformat()
     assert close(s["this_week"]["prev"], cr[D(s["this_week"]["prev_date"])])
 
     end = D(s["ledger"]["end"])

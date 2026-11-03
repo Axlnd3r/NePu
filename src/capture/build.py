@@ -20,7 +20,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from capture import config
+from capture import config, thesis
 from capture import manifest as mf
 from capture import proof as proof_mod
 from capture.models import breakeven, coverage, developer, distribution, ledger, valuation
@@ -665,6 +665,12 @@ def summary_payload(data_dir: Path, source: str) -> dict:
         "inputs": manifest_inputs(data_dir, REQUIRED_TABLES),
         "hero": hero,
         "this_week": ledger.this_week(table["cr_float_30"]),
+        "history": {
+            "cr_float_30_max": {
+                "date": table["cr_float_30"].idxmax().date().isoformat(),
+                "value": float(table["cr_float_30"].max()),
+            }
+        },
         "ledger": waterfall,
         "levers": {
             "as_of": start.as_of.date().isoformat(),
@@ -845,6 +851,27 @@ def write_json(path: Path, payload: dict) -> Path:
     return path
 
 
+def build_payloads(source: str, data_dir: Path) -> dict[str, dict]:
+    """Every JSON payload of the site, by file name (without .json)."""
+    return {
+        "coverage": coverage_payload(data_dir, source),
+        "distribution": distribution_payload(data_dir, source),
+        "developer": developer_payload(data_dir, source),
+        "valuation": valuation_payload(data_dir, source),
+        "summary": summary_payload(data_dir, source),
+        "queries": queries_payload(data_dir),
+        "provenance": provenance_payload(data_dir, source),
+        "markers": markers_payload(data_dir),
+    }
+
+
+def write_thesis(path: Path, payloads: dict[str, dict]) -> Path:
+    text, _ = thesis.render(payloads)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8", newline="\n")
+    return path
+
+
 def build(source: str, out_dir: Path = SITE_DATA) -> list[Path]:
     meta = {
         "built_at_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -852,16 +879,15 @@ def build(source: str, out_dir: Path = SITE_DATA) -> list[Path]:
         "source": f"data/{source}",
     }
     data_dir = ROOT / "data" / source
-    return [
-        write_json(out_dir / "meta.json", meta),
-        write_json(out_dir / "coverage.json", coverage_payload(data_dir, source)),
-        write_json(out_dir / "distribution.json", distribution_payload(data_dir, source)),
-        write_json(out_dir / "developer.json", developer_payload(data_dir, source)),
-        write_json(out_dir / "valuation.json", valuation_payload(data_dir, source)),
-        write_json(out_dir / "summary.json", summary_payload(data_dir, source)),
-        write_json(out_dir / "queries.json", queries_payload(data_dir)),
-        write_json(out_dir / "provenance.json", provenance_payload(data_dir, source)),
-        write_json(out_dir / "markers.json", markers_payload(data_dir)),
-        copy_bytes(data_dir / mf.MANIFEST_NAME, out_dir / "snapshot-manifest.json"),
-        *ots_files(out_dir),
-    ]
+    payloads = build_payloads(source, data_dir)
+    written = [write_json(out_dir / "meta.json", meta)]
+    written += [write_json(out_dir / f"{name}.json", p) for name, p in payloads.items()]
+    written += [copy_bytes(data_dir / mf.MANIFEST_NAME, out_dir / "snapshot-manifest.json")]
+    written += ots_files(out_dir)
+    if source == "snapshot":  # the committed thesis comes from the frozen snapshot only
+        written.append(
+            write_thesis(
+                ROOT / "THESIS.md" if out_dir == SITE_DATA else out_dir / "THESIS.md", payloads
+            )
+        )
+    return written

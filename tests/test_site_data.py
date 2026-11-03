@@ -155,3 +155,10 @@ def test_inflation_ramp_follows_hsp_029_with_its_grace_period(valuation: dict) -
 
 def test_summary_is_json_safe(summary: dict) -> None:
     json.dumps(summary, allow_nan=False)
+
+
+def test_history_names_the_highest_30_day_coverage_and_when(cov: dict, summary: dict) -> None:
+    best = summary["history"]["cr_float_30_max"]
+    series = [(r["date"], r["cr_float_30"]) for r in cov["series"] if r["cr_float_30"] is not None]
+    assert best["value"] == max(v for _, v in series)
+    assert best["date"] == next(d for d, v in series if v == best["value"])
