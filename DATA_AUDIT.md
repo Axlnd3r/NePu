@@ -431,6 +431,32 @@ Numbers (source: `summary.json`, 30 days 2026-10-01..2026-10-30):
   (`scripts/flatten-segments.mjs`); Git Bash rewrites environment values that look like POSIX paths, so local
   base-path builds need `MSYS_NO_PATHCONV=1`.
 
+## F7a proof-of-analysis contract (2026-11-03)
+
+External facts relied on and how each was verified:
+- **Versions** (crates.io API and GitHub releases API, 2026-11-03): near-sdk 5.30.0 (max stable, published
+  2026-10-27), cargo-near 0.22.0 (stable; 0.23.0-rc.2 exists and is not used), near-cli-rs 0.30.1 (2026-09-02,
+  has a Windows installer `near-cli-rs-installer.ps1`).
+- **Project template** (near/cargo-near `Cargo.template.toml`, read 2026-11-03): edition 2024, rust-version 1.93,
+  release profile `opt-level = "z"`, `lto`, `panic = "abort"`. Used as is. Its `reproducible_build` block (a Docker
+  image digest) was **not** copied: this contract is built with `cargo near build non-reproducible-wasm` and the
+  resulting hash is published instead.
+- **NEP-297 event syntax** (near-sdk docs): `#[near(event_json(standard = "..."))]` with `#[event_version("...")]`;
+  the test parses the log instead of comparing a string, so key order does not matter.
+- **CI run 41589615160** (commit after `b1c248f`): `cargo test` 13 passed, 0 failed; before the implementation the same
+  13 tests failed with "not yet implemented: commit/get" (run 41589287466), i.e. they failed for the right reason.
+- **Wasm**: `proof_of_analysis.wasm`, **105,951 bytes**, sha256
+  `5d40946fc6fbd04d2356db386c6d6fad3187b743566d4ed1b0de04bd9da3f168`, after `wasm-opt`. The storage balance locked
+  for the code is size x 1e19 yoctoNEAR = **1.0595 NEAR** (protocol storage price of 1e19 yoctoNEAR per byte, from the
+  NEAR docs; to be confirmed against `storage_amount_per_byte` in the RPC `EXPERIMENTAL_protocol_config` before the
+  deploy).
+- Unauthenticated GitHub API read of check-run annotations works for this public repository and is how CI output
+  is read without the web UI (job logs need a login).
+
+Design decisions: `commit` is owner-only and write-once per `run_id` (a proof that can be overwritten proves
+nothing); the hash must be 64 lowercase hex characters; `run_id` is 1 to 128 bytes; no token, no admin method.
+No mainnet transaction has been made yet.
+
 ## Original open questions
 
 | # | Question | Status | Where answered |
