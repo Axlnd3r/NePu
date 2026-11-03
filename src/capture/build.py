@@ -8,9 +8,11 @@ timestamp, so the same input data always gives the same other files.
 
 from __future__ import annotations
 
+import csv
 import json
 import math
 import subprocess
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -19,10 +21,12 @@ import pandas as pd
 
 from capture import config
 from capture import manifest as mf
-from capture.models import breakeven, coverage, developer, distribution, valuation
+from capture.models import breakeven, coverage, developer, distribution, ledger, valuation
 
 ROOT = Path(__file__).resolve().parents[2]
 SITE_DATA = ROOT / "site" / "public" / "data"
+REFERENCE = ROOT / "data" / "reference"
+PROOF_FILE = ROOT / "data" / "proof.json"  # written by `make proof` (F7)
 REQUIRED_TABLES = (
     "supply_daily",
     "price_daily",
@@ -165,6 +169,8 @@ def coverage_payload(data_dir: Path, source: str) -> dict:
     table["v_star_buyback_variant"] = breakeven.v_star(
         table["issuance_gross_near"], table["burnt_near"], table["near_usd"], tau_bb
     )
+    for column in ("volume_usd", "fees_usd", "revenue_usd"):
+        table[column] = inputs[column]
     table["volume_usd_30d_avg"] = (
         inputs["volume_usd"].rolling(TAU_WINDOW, min_periods=TAU_WINDOW).mean()
     )
@@ -432,8 +438,10 @@ VALUATION_ASSUMPTIONS = {
     ),
     "inflation": (
         "Two annual rates: 2.5 % constant (observed net supply growth is about 2.5 %, "
-        "DATA_AUDIT.md Check 6) and a path falling linearly from 2.5 % to 1.6 % over 24 months. "
-        "The 1.6 % figure is a scenario supplied by the user and is not verified against a source."
+        "DATA_AUDIT.md Check 6), and the HSP-029 proposal: 2.5 % held for a 90-day grace "
+        "period, then lowered to 1.6 % over 24 months and held. The proposal steps down every "
+        "epoch; a linear monthly ramp approximates it. HSP-029 went to a vote in October 2026 "
+        "and its result is not confirmed in our sources (data/reference/events.csv)."
     ),
     "scenarios": {
         "historical": "bootstrapped growth as drawn (its drift is the history's)",
@@ -470,13 +478,20 @@ VALUATION_NOTES = [
 ]
 
 
-def valuation_payload(
-    data_dir: Path,
-    source: str,
-    seed: int = config.RANDOM_SEED,
-    n_paths: int = config.MC_PATHS,
-) -> dict:
-    """valuation.json: reverse break-even table and Monte Carlo of CR_float (no price forecast)."""
+@dataclass(frozen=True)
+class StartState:
+    """The measured state every forward-looking view starts from (valuation, ledger, levers)."""
+
+    frame: pd.DataFrame
+    table: pd.DataFrame
+    as_of: pd.Timestamp
+    inputs: valuation.Inputs
+    taus: dict[str, float]
+    monthly_tau: pd.Series
+
+
+def start_state(data_dir: Path) -> StartState:
+    """Last day on which the 30-day volume, burn, both take rates, CR_float and price all exist."""
     frame = coverage.build_inputs(load_tables(data_dir))
     table = coverage.coverage_table(frame)
     volume, near_usd = frame["volume_usd"], table["near_usd"]
@@ -487,7 +502,6 @@ def valuation_payload(
         [tau_bb, burn_avg, volume_avg, table["tau_eff_30"], table["cr_float_30"], near_usd], axis=1
     ).dropna()
     as_of = ready.index[-1]
-
     monthly_tau = valuation.monthly_tau(table["buyback_near"] * near_usd, volume)
     inputs = valuation.Inputs(
         volume_usd_per_day=float(volume_avg[as_of]),
@@ -498,6 +512,20 @@ def valuation_payload(
         tau_max=float(monthly_tau.max()),
     )
     taus = {"buyback": float(tau_bb[as_of]), "revenue": float(table.loc[as_of, "tau_eff_30"])}
+    return StartState(frame, table, as_of, inputs, taus, monthly_tau)
+
+
+def valuation_payload(
+    data_dir: Path,
+    source: str,
+    seed: int = config.RANDOM_SEED,
+    n_paths: int = config.MC_PATHS,
+) -> dict:
+    """valuation.json: reverse break-even table and Monte Carlo of CR_float (no price forecast)."""
+    start = start_state(data_dir)
+    frame, table, as_of = start.frame, start.table, start.as_of
+    inputs, taus, monthly_tau = start.inputs, start.taus, start.monthly_tau
+    volume, near_usd = frame["volume_usd"], table["near_usd"]
     reverse = valuation.reverse_table(
         inputs, taus, (config.INFLATION_CURRENT, config.INFLATION_PROPOSAL)
     )
@@ -512,6 +540,7 @@ def valuation_payload(
             config.INFLATION_CURRENT,
             config.INFLATION_PROPOSAL,
             config.INFLATION_RAMP_MONTHS,
+            config.INFLATION_GRACE_MONTHS,
         ),
     }
     runs = valuation.run_scenarios(
@@ -585,6 +614,218 @@ def valuation_payload(
     }
 
 
+LEVERS_NOTE = (
+    "Price is not a lever here: buyback and issuance are both valued at the latest NEAR price, and "
+    "V* scales with it (see the Valuation Lab sensitivity). Each step keeps the previous ones."
+)
+
+
+def summary_payload(data_dir: Path, source: str) -> dict:
+    """summary.json: hero sentence, week-on-week CR, the capture ledger, levers and conditions."""
+    start = start_state(data_dir)
+    frame, table, inputs, taus = start.frame, start.table, start.inputs, start.taus
+
+    both = table[["cr_float_usd_30", "cr_float_30"]].dropna()
+    hero_date = both.index[-1]
+    cr_usd = float(both.loc[hero_date, "cr_float_usd_30"])
+    day = hero_date.date().isoformat()
+    hero = {
+        "date": day,
+        "cr_float_usd_30": cr_usd,
+        "cr_float_30": float(both.loc[hero_date, "cr_float_30"]),
+        "sentence": (
+            f"For every $1 of new NEAR issued, {round(cr_usd * 100)} cents come back as buybacks "
+            f"or gas burn (30 days to {day})."
+        ),
+    }
+
+    changes = frame[[c for c in frame.columns if c.startswith("chg_")]]
+    daily = pd.DataFrame(
+        {
+            "volume_usd": frame["volume_usd"],
+            "fees_usd": frame["fees_usd"],
+            "revenue_usd": frame["revenue_usd"],
+            "onchain_revenue_near": coverage.onchain_revenue_near(changes),
+            "buyback_near": table["buyback_near"],
+            "burnt_near": table["burnt_near"],
+            "issuance_gross_near": table["issuance_gross_near"],
+            "near_usd": table["near_usd"],
+        }
+    )
+    args = (inputs.total_supply_near, inputs.near_usd, inputs.burnt_near_per_day)
+    v0 = inputs.volume_usd_per_day
+    worst = coverage.monthly_reconciliation(frame)["deviation"].abs().max()
+    waterfall = ledger.waterfall(daily, start.as_of, TAU_WINDOW)
+    return {
+        "schema_version": 1,
+        "source": f"data/{source}",
+        "inputs": manifest_inputs(data_dir, REQUIRED_TABLES),
+        "hero": hero,
+        "this_week": ledger.this_week(table["cr_float_30"]),
+        "ledger": waterfall,
+        "levers": {
+            "as_of": start.as_of.date().isoformat(),
+            "volume_usd_per_day": v0,
+            "steps": ledger.lever_bridge(
+                v0,
+                *args,
+                tau_buyback=taus["buyback"],
+                tau_revenue=taus["revenue"],
+                inflation_now=config.INFLATION_CURRENT,
+                inflation_target=config.INFLATION_PROPOSAL,
+            ),
+            "note": LEVERS_NOTE,
+        },
+        "conditions": ledger.conditions(
+            volume=v0,
+            v_star=valuation.breakeven_volume(config.INFLATION_CURRENT, *args, taus["buyback"]),
+            routed_share=waterfall["kept"]["buyback_of_onchain"],
+            worst_deviation=float(worst),
+            tolerance=coverage.RECONCILIATION_TOLERANCE,
+        ),
+    }
+
+
+def queries_payload(data_dir: Path) -> dict:
+    """queries.json: the SQL text (BigQuery tables) or request (APIs) behind every input table."""
+    queries = []
+    for entry in mf.read_manifest(data_dir):
+        table = entry.path.removesuffix(".parquet")
+        if entry.query_file:
+            text = (ROOT / entry.query_file).read_text(encoding="utf-8")
+            queries.append(
+                {
+                    "id": table,
+                    "kind": "bigquery_sql",
+                    "file": entry.query_file,
+                    "sha256": entry.query_sha256,
+                    "text": text,
+                }
+            )
+        else:
+            queries.append({"id": table, "kind": "http_api", "file": None, "text": entry.source})
+    return {"schema_version": 1, "queries": queries}
+
+
+def _source_rows(directory: Path) -> list[dict]:
+    return [
+        {
+            "path": e.path,
+            "source": e.source,
+            "rows": e.rows,
+            "date_range": e.date_range,
+            "pulled_at_utc": e.pulled_at_utc,
+            "sha256": e.sha256,
+            "sha256_8": e.sha256[:8],
+            "query_file": e.query_file,
+        }
+        for e in mf.read_manifest(directory)
+    ]
+
+
+def provenance_payload(data_dir: Path, source: str) -> dict:
+    """provenance.json: every file with hash and range, reconciliation status, proof of analysis."""
+    frame = coverage.build_inputs(load_tables(data_dir))
+    reconciliation = coverage.monthly_reconciliation(frame)
+    proof = (
+        json.loads(PROOF_FILE.read_text(encoding="utf-8"))
+        if PROOF_FILE.exists()
+        else {
+            "status": "not committed",
+            "tx": None,
+            "note": "the manifest hash is committed to NEAR mainnet by `make proof` (F7)",
+        }
+    )
+    return {
+        "schema_version": 1,
+        "source": f"data/{source}",
+        "manifest_sha256": mf.sha256_file(data_dir / mf.MANIFEST_NAME),
+        "sources": _source_rows(data_dir),
+        "reference": _source_rows(REFERENCE),
+        "reconciliation": {
+            "tolerance": coverage.RECONCILIATION_TOLERANCE,
+            "months": records(reconciliation, "month"),
+        },
+        "proof": proof,
+    }
+
+
+def _read_events(path: Path = REFERENCE / "events.csv") -> list[dict]:
+    with path.open(encoding="utf-8", newline="") as f:
+        return list(csv.DictReader(f))
+
+
+def markers_payload(data_dir: Path) -> dict:
+    """markers.json: dated events for the charts, from the data itself or from cited reports."""
+    frame = coverage.build_inputs(load_tables(data_dir))
+    table = coverage.coverage_table(frame)
+    changes = coverage.fill_source_gaps(frame[[c for c in frame.columns if c.startswith("chg_")]])
+
+    step = ledger.step_down(table["issuance_gross_near"].dropna(), window=14)
+    transition = step["transition_date"]
+    transfers = coverage.internal_transfers_in(changes)
+    transfer_day = transfers.idxmax()
+    markers = [
+        {
+            "id": "issuance_step",
+            "date": step["date"].date().isoformat(),
+            "kind": "data",
+            "label": (
+                f"Daily gross issuance falls from about {step['before']:,.0f} to "
+                f"{step['after']:,.0f} NEAR (14-day means)"
+                + (f"; {transition.date().isoformat()} is a transition day" if transition else "")
+            ),
+            "evidence": (
+                "supply_daily.parquet: issuance_gross_near, largest 14-day step down, dated to "
+                "the first day closer to the new level"
+            ),
+            "sources": [],
+        },
+        {
+            "id": "buyback_wallet_first_inflow",
+            "date": table["buyback_near"].first_valid_index().date().isoformat(),
+            "kind": "data",
+            "label": f"First observed inflow to {coverage.BUYBACK_WALLET}",
+            "evidence": "fee_wallet_inflows_daily.parquet: first day of the buyback wallet",
+            "sources": [],
+        },
+        {
+            "id": "internal_transfer",
+            "date": transfer_day.date().isoformat(),
+            "kind": "data",
+            "label": (
+                f"{transfers[transfer_day]:,.0f} NEAR moved between revenue wallets "
+                "(netted out, not a buyback)"
+            ),
+            "evidence": "fee_wallet_inflows_daily.parquet: largest internal transfer",
+            "sources": [],
+        },
+    ]
+    not_drawn = []
+    for event in _read_events():
+        sources = event["sources"].split()
+        if event["kind"] == "reported":
+            markers.append(
+                {
+                    "id": f"reported_{event['date']}",
+                    "date": event["date"],
+                    "kind": "reported",
+                    "label": event["label"],
+                    "evidence": event["verified"],
+                    "sources": sources,
+                }
+            )
+        else:
+            not_drawn.append(
+                {"label": event["label"], "reason": event["verified"], "sources": sources}
+            )
+    return {
+        "schema_version": 1,
+        "markers": sorted(markers, key=lambda m: m["date"]),
+        "not_drawn": not_drawn,
+    }
+
+
 def write_json(path: Path, payload: dict) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     text = json.dumps(payload, allow_nan=False, indent=1) + "\n"
@@ -605,4 +846,8 @@ def build(source: str, out_dir: Path = SITE_DATA) -> list[Path]:
         write_json(out_dir / "distribution.json", distribution_payload(data_dir, source)),
         write_json(out_dir / "developer.json", developer_payload(data_dir, source)),
         write_json(out_dir / "valuation.json", valuation_payload(data_dir, source)),
+        write_json(out_dir / "summary.json", summary_payload(data_dir, source)),
+        write_json(out_dir / "queries.json", queries_payload(data_dir)),
+        write_json(out_dir / "provenance.json", provenance_payload(data_dir, source)),
+        write_json(out_dir / "markers.json", markers_payload(data_dir)),
     ]

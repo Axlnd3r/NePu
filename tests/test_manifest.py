@@ -85,3 +85,26 @@ def test_concurrent_upserts_do_not_lose_entries(tmp_path: Path) -> None:
     [t.join() for t in threads]
     assert len(read_manifest(tmp_path)) == 6 * 15
     assert not (tmp_path / "manifest.json.lock").exists()
+
+
+def test_lock_retries_while_windows_deletes_the_previous_lock(tmp_path: Path, monkeypatch) -> None:
+    """On Windows, creating a file that is still being deleted raises PermissionError, not
+    FileExistsError. The lock must wait and retry instead of failing the extraction."""
+    import os
+
+    from capture import manifest
+
+    real_open, calls = os.open, []
+
+    def flaky_open(path, flags, *args):
+        calls.append(path)
+        if len(calls) == 1:
+            raise PermissionError(13, "Permission denied", str(path))
+        return real_open(path, flags, *args)
+
+    monkeypatch.setattr(manifest.os, "open", flaky_open)
+    monkeypatch.setattr(manifest.time, "sleep", lambda _: None)
+    with manifest.manifest_lock(tmp_path):
+        pass
+    assert len(calls) == 2
+    assert not (tmp_path / "manifest.json.lock").exists()

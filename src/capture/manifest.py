@@ -92,14 +92,21 @@ def manifest_lock(data_dir: Path, timeout: float = 120.0) -> Iterator[None]:
         try:
             fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
             break
-        except FileExistsError:
+        except (FileExistsError, PermissionError) as exc:
+            # Windows raises PermissionError while the previous holder's lock is being deleted.
             try:
-                if time.time() - lock.stat().st_mtime > LOCK_STALE_SECONDS:
-                    lock.unlink(missing_ok=True)  # left behind by a killed process
-                    continue
+                stale = time.time() - lock.stat().st_mtime > LOCK_STALE_SECONDS
             except FileNotFoundError:
                 continue
+            except PermissionError:
+                stale = False  # still being deleted
+            if stale:
+                lock.unlink(missing_ok=True)  # left behind by a killed process
+                continue
             if time.monotonic() > deadline:
+                if isinstance(exc, PermissionError):
+                    raise
+
                 raise TimeoutError(
                     f"{lock} is held; delete it if no extraction is running"
                 ) from None

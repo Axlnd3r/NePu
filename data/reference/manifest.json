@@ -1,0 +1,17 @@
+{
+  "files": [
+    {
+      "path": "events.csv",
+      "sha256": "931da26c78faced4864c2fada754c44dc90a559b00ce2eeebf81ecc468036418",
+      "rows": 4,
+      "source": "manual: curated from the web sources listed in each row (sources column)",
+      "query_file": null,
+      "date_range": [
+        "2026-02-23",
+        "2026-10-01"
+      ],
+      "pulled_at_utc": "2026-11-03T05:00:00Z",
+      "query_sha256": null
+    }
+  ]
+}

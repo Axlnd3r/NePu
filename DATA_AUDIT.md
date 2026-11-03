@@ -373,6 +373,42 @@ How to read them (also in `valuation.json` notes and METHODOLOGY.md):
 - A variant of the historical scenario that starts after the launch phase was offered and not added (outside the
   spec): it would be the natural next step if a less launch-driven upside case is wanted.
 
+## F6 dashboard data layer (2026-11-03)
+
+New outputs from `make build`: `summary.json` (hero, week-on-week CR, ledger, levers, conditions),
+`queries.json` (SQL text or API request per input table), `provenance.json` (hashes, ranges,
+reconciliation, proof slot), `markers.json` (dated events). New reference data: `data/reference/events.csv`
+with its own `manifest.json` (checked by `make verify`).
+
+Facts relied on and how each was verified:
+- **Issuance step 2025-10-30 (data).** `issuance_gross_near` from `supply_daily`: 14-day mean about 176,237 NEAR/day
+  before and 88,823 after; 2025-10-28 159,697, **2025-10-29 140,649 (transition day)**, 2025-10-30 84,444. The
+  30-day annualised net supply growth is 5.00 % up to 2025-10-29 and about 2.45 % from 2025-11-29. Crypto Briefing
+  (2026-10-02) mentions an earlier governance change from 5 % to 2.5 %; its date is not stated there, so the
+  marker is dated from the data only.
+- **HSP-029 (resolves the F5 "1.6 % not verified" label).** The Defiant names HSP-029 and says it "would lower
+  issuance over 24 months after a 90-day grace period", target 1.6 %; Crypto Briefing (2026-10-02) gives 2.5 % to
+  1.6 %, 24 months, a 90-day grace period, steps "every epoch". Both read with web fetch on 2026-11-03. **The vote
+  result was not found**, so the ramp stays a scenario. The Valuation Lab ramp now waits 3 months before falling
+  (`INFLATION_GRACE_MONTHS`); with the grace period the ramp results change by at most about 1 point (decay at
+  month 12: 37 % to 36 %; flat 11 / 26 / 31 %, median month 47, unchanged).
+- **Fee switch 2026-02-23 (reported).** Several secondary reports agree on the date; no primary NEAR Foundation
+  post was found. URLs in `events.csv`.
+- **Intents exploit 2026-10-01 (reported).** Several outlets and a status-page "1Click API incident"; 1Click
+  services were halted. No technical post-mortem was read. URLs in `events.csv`. The label carries no amount.
+- **Not drawn:** nearcore 2.14 (only 2.14.0-rc.1 found, no mainnet activation date); HSP-029 outcome (vote result
+  not found).
+
+Numbers (source: `summary.json`, 30 days 2026-10-01..2026-10-30):
+- Per 10,000 USD of Intents volume: fees 16.01, revenue 5.48 (DefiLlama), 5.53 reaching NEAR wallets
+  (on-chain), **3.62 reaching the buyback wallet**, burn 0.49, against issuance worth 33.91.
+- Kept at each step: fees 0.160 % of volume; revenue 34.2 % of fees; on-chain 100.9 % of DefiLlama revenue;
+  **65.5 % of on-chain revenue reaches the buyback wallet**.
+- Lever bridge: volume must grow 7.59x today; inflation to 1.6 % closes 1.575x (to 4.82x); all revenue to buybacks
+  closes 1.513x (to 3.18x). V* 989.9, 628.3, 415.3 M USD/day.
+- Conditions: volume 13.2 % of V*; routing 65.5 % of 1.0; reconciliation worst 11.0 % against 15 % (not triggered).
+- Hero: 12 cents per USD of new NEAR (CR_float in USD 0.1196, 30 days to 2026-10-31); this week 0.120, prev 0.118.
+
 ## Original open questions
 
 | # | Question | Status | Where answered |
@@ -432,3 +468,10 @@ Resulting scope:
 - Valuation Lab implemented test-first; see "F5 Valuation Lab".
 - Mistake made and fixed: my first month-0 test asked for a 15 % match between the model and the measured CR_float and failed at 18 %. I checked before loosening it: the gap was the price (fell 5.34 to 4.05 in the window) and issuance matched to 0.02 %, so the test now compares at the window's mean price and the output states the gap.
 - Mistake made and fixed: a first run showed a historical-scenario median CR of about 9,500 at month 60. That is the launch-phase growth extrapolated, so the output now carries the implied median volume and the notes say what the probabilities rest on.
+
+### 2026-11-03, F6
+- Data layer for the dashboard; see "F6 dashboard data layer".
+- Mistake made and fixed: my first "what would change our mind" design had a volume condition and a take-rate condition. They are the same ratio (V0 / V* = tau / tau-needed), so the second was replaced by revenue routing, which moves independently. A test now guards against the duplicate.
+- Mistake made and fixed: I expected the issuance marker on 2025-10-30 (from the phase prompt). The detector first returned 2025-10-29, a transition day; the marker is now dated to the first day closer to the new level and names the transition day.
+- Bug found and fixed (existing since F4): on Windows the manifest lock failed with PermissionError when a previous lock file was still being deleted, losing manifest entries under concurrent upserts (the concurrency test failed 2 times in 5). The lock now retries on PermissionError; a deterministic test reproduces the case, and the concurrency test passed 12 times in 12.
+

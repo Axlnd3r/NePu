@@ -75,13 +75,18 @@ def reverse_table(
 
 
 def inflation_path(
-    months: int, start: float, end: float | None = None, ramp_months: int = 24
+    months: int,
+    start: float,
+    end: float | None = None,
+    ramp_months: int = 24,
+    delay_months: int = 0,
 ) -> np.ndarray:
-    """Annual inflation in months 1..months: constant, or linear from start to end, then held."""
+    """Annual inflation in months 1..months: constant, or held for delay_months, then linear from
+    start to end over ramp_months, then held at end."""
     if end is None:
         return np.full(months, start)
-    t = np.arange(1, months + 1)
-    return start + (end - start) * np.minimum(t / ramp_months, 1.0)
+    t = np.arange(1, months + 1) - delay_months
+    return start + (end - start) * np.clip(t / ramp_months, 0.0, 1.0)
 
 
 def monthly_log_growth(volume_usd: pd.Series, start: str | pd.Timestamp) -> pd.Series:

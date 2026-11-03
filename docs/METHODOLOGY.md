@@ -192,6 +192,39 @@ matches training, `null` otherwise, and `insufficient_data` if a lag cannot be e
   either direction, describes how two short series moved together. It does not show cause or
   effect.
 
+## Capture ledger, levers and conditions (`summary.json`)
+
+The ledger follows Intents volume to the buyback wallet over the 30 days that end on the
+Valuation Lab's start date, and puts every step next to the issuance of the same days:
+
+    volume -> fees (DefiLlama) -> revenue (DefiLlama) -> revenue reaching the NEAR wallets
+           (on-chain, transfers netted) -> revenue reaching the buyback wallet (on-chain)
+
+NEAR amounts are valued at each day's price; burn and gross issuance are shown beside the chain.
+Every day of the window must have every input (a gap raises an error). Two identities are
+tested: (buyback + burn) / issuance equals CR_float in USD for the same window, and on-chain
+revenue agrees with DefiLlama revenue within the reconciliation tolerance.
+
+**Levers.** The volume multiple needed for CR = 1 (V\* / V0), then how much each lever closes it,
+applied in a fixed order: inflation falls from 2.5 % to the HSP-029 target of 1.6 %, then all
+protocol revenue goes to the buyback wallet (tau on the all-revenue basis). The remaining multiple
+is what volume growth must supply. Price is not a lever: both sides are valued at the same price.
+
+**Conditions that would change the thesis.** Evaluated on current data at every build:
+1. *volume* (supports): the 30-day average volume reaches V\* (buyback basis, 2.5 %).
+2. *routing* (supports): all protocol revenue that reaches the NEAR wallets goes to the buyback
+   wallet (threshold 1.0). It moves independently of volume. A take-rate condition was rejected
+   because V0 / V\* equals tau / tau-needed: it would restate condition 1.
+3. *reconciliation* (withdraws the headline): a complete month in which on-chain and DefiLlama
+   revenue differ by more than the 15 % tolerance.
+
+**Markers.** Dated events drawn on the charts are either *data* (computed from the snapshot: the
+issuance step, the buyback wallet's first inflow, the largest internal transfer) or *reported*
+(listed with sources in `data/reference/events.csv`, which has its own manifest). Events that
+could not be confirmed are listed as "not drawn" with the reason. The issuance step is the largest
+fall between 14-day means, dated to the first day closer to the new level; a day between the two
+levels (a change during the day) is reported as a transition day.
+
 ## Valuation Lab (`valuation.json`)
 
 Two outputs, both conditional on stated assumptions and neither a forecast. No price is predicted
@@ -223,9 +256,11 @@ same draws (common random numbers), so runs differ only in the assumption being 
   For a positive sample mean this orders the three paths one by one: flat <= decay <= historical.
 - *tau:* one value per path, uniform between the lowest and highest observed monthly buyback take
   rate (months with at least 90 % of their days observed in both series).
-- *Inflation:* 2.5 % constant, or linear from 2.5 % to 1.6 % over 24 months and then held.
-  2.5 % is the observed net supply growth (DATA_AUDIT.md Check 6). **The 1.6 % figure is a
-  scenario supplied by the user; no source for it is recorded, and it is labelled as such.**
+- *Inflation:* 2.5 % constant, or the HSP-029 proposal: 2.5 % for a 90-day grace period (3
+  months), then linear to 1.6 % over 24 months, then held. 2.5 % is the observed net supply
+  growth (DATA_AUDIT.md Check 6). HSP-029 and its phasing are confirmed by two reports
+  (`data/reference/events.csv`); the proposal steps every epoch, which the monthly linear ramp
+  approximates. **Its vote result is not confirmed in our sources**, so the ramp is a scenario.
 - *Price:* **held constant in USD at its latest value in every run.** It is not simulated and not
   predicted. Runs at 0.5x and 2x of that value are sensitivities: the buyback is tau x V in USD,
   so a lower price buys more NEAR per issued NEAR and raises CR, while burn is in NEAR.
