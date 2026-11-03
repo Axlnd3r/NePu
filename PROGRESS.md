@@ -16,7 +16,7 @@ Living log. Claude updates this at the end of every session. Newest entry on top
 | F3 Coverage ratio + tests | 5–7 Nov | done | CR_float, CR_supply, V*, sensitivity, 10/10 months reconcile within 15% |
 | F4 Distribution Map | 7–9 Nov | done | Snapshot v3 (2026-11-01); distribution.json, developer.json; lead/lag verdict null |
 | F5 Valuation Lab | 8–10 Nov | done | valuation.json: reverse table + Monte Carlo (3 scenarios x 2 inflation paths x 3 prices); historical/decay results rest on launch-phase growth |
-| F6 Dashboard | 9–12 Nov | done (deploy pending push) | 6 pages, ChartCard + evidence chips, Playwright QA, independent number audit; GitHub Pages workflow ready |
+| F6 Dashboard | 9–12 Nov | done, live at https://axlnd3r.github.io/NePu---NEAR-Pulse-/ | 6 pages, ChartCard + evidence chips, Playwright QA, independent number audit; GitHub Pages workflow ready |
 | F7 THESIS, README, offline, CI, proof | 11–13 Nov | todo | |
 | F8 Demo + submission | 13–14 Nov | todo | |
 
@@ -32,7 +32,8 @@ Living log. Claude updates this at the end of every session. Newest entry on top
 - Decisions: hero in USD (CR_float in NEAR shown beside it); conditions are volume vs V*, revenue routing to the buyback wallet and the reconciliation guard (a take-rate condition was the volume condition restated); reported events and policy parameters live in data/reference with sources; HSP-029 ramp starts after its 90-day grace period; markers on weekly charts are drawn at the week and listed with the event's own date; GitHub Pages under /NePu---NEAR-Pulse-.
 - Bugs fixed: Windows race in the manifest lock (lost entries); Next.js 16.4.3 export nests prefetch files on Windows (404s); invalid popover markup broke hydration; stale summary.json after a model change (always rebuild with `make site`); bar lengths not proportional on phones; 99.7 % rounded to 100 %.
 - Blockers: the first push needs the user's GitHub credentials, and Pages must be set to "GitHub Actions" in the repository settings; `.env.example` held the Google Cloud project id in history (removed now, history not rewritten, not a credential); HSP-029 vote result not found.
-- Next: push and confirm the Pages URL, put it in README; then F7 (THESIS.md quoting summary.json, README results, proof-of-analysis, /screener).
+- Deployed: GitHub Pages enabled by the user (source: GitHub Actions); run re-deployed green; `QA_URL=https://axlnd3r.github.io/NePu---NEAR-Pulse- make qa` passed on all 18 page/viewport combinations; live footer shows commit 82f5597 and the same snapshot manifest hash.
+- Next: F7 (THESIS.md quoting summary.json, README results, proof-of-analysis, /screener).
 
 ### 2026-11-03 — F5
 - Done: models/valuation.py (reverse break-even, block bootstrap, scenarios historical / decay / flat, Monte Carlo with common random numbers), build.py writes site/public/data/valuation.json, config constants (10,000 paths, 60 months, 3-month blocks, seed `RANDOM_SEED`), docs/METHODOLOGY.md "Valuation Lab", DATA_AUDIT.md "F5 Valuation Lab". Tests written first: 27 new (hand-computed CR 0.8 and 0.425, equality with the F3 sensitivity grid, probabilities in [0, 1], same seed identical and another seed different, flat <= decay <= historical, price and inflation monotonic, month-0 check, no price target). `make verify`: 141 passed.

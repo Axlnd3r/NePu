@@ -1,5 +1,8 @@
 # NEAR Capture Ledger
 
+**Live dashboard:** https://axlnd3r.github.io/NePu---NEAR-Pulse-/ (built by `.github/workflows/pages.yml`
+from `data/snapshot/` after `make verify` passes; the footer shows the commit and manifest hash).
+
 ## What it is
 A reproducible investment-thesis tool for NEAR, built for NEAR HACKATHON 2026 (track: Investment Thesis).
 One command rebuilds every metric and chart from committed, hashed data. Every number traces back to a
@@ -34,6 +37,7 @@ make all
 | `make build` | rebuild every metric from `data/snapshot/` |
 | `make verify` | lint, recompute manifest hashes, run tests |
 | `make site` | build static dashboard into `site/out/` |
+| `make qa` | open every page in Chrome (desktop light/dark, phone); fail on console errors, failed requests or overflow; screenshots to `qa/screenshots/` |
 | `make all` | setup + build + verify + site |
 
 ## Live mode

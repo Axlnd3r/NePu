@@ -10,6 +10,8 @@ import { fileURLToPath } from "node:url";
 const root = resolve(fileURLToPath(new URL("..", import.meta.url)));
 // Set QA_BASE_PATH (e.g. /NePu---NEAR-Pulse-) to test a build made with SITE_BASE_PATH.
 const basePath = process.env.QA_BASE_PATH ?? "";
+// Set QA_URL (e.g. https://axlnd3r.github.io/NePu---NEAR-Pulse-) to check a deployed site instead.
+const liveUrl = process.env.QA_URL?.replace(/\/$/, "");
 const out = join(root, "site", "out");
 const shots = join(root, "qa", "screenshots");
 const require = createRequire(join(root, "site", "package.json"));
@@ -66,7 +68,7 @@ const fail = (msg) => {
   console.error(`FAIL ${msg}`);
 };
 
-if (!existsSync(join(out, "index.html"))) {
+if (!liveUrl && !existsSync(join(out, "index.html"))) {
   console.error("site/out is missing: run `make site` first");
   process.exit(1);
 }
@@ -74,8 +76,8 @@ mkdirSync(shots, { recursive: true });
 const summary = JSON.parse(readFileSync(join(root, "site", "public", "data", "summary.json"), "utf8"));
 const valuation = JSON.parse(readFileSync(join(root, "site", "public", "data", "valuation.json"), "utf8"));
 
-const server = await serve();
-const base = `http://127.0.0.1:${server.address().port}`;
+const server = liveUrl ? null : await serve();
+const base = liveUrl ?? `http://127.0.0.1:${server.address().port}${basePath}`;
 const browser = await launch();
 
 for (const [vpName, viewport] of Object.entries(VIEWPORTS)) {
@@ -93,7 +95,7 @@ for (const [vpName, viewport] of Object.entries(VIEWPORTS)) {
       });
       page.on("response", (r) => r.status() >= 400 && fail(`${tag}: HTTP ${r.status()} ${r.url()}`));
 
-      await page.goto(base + basePath + path, { waitUntil: "networkidle" });
+      await page.goto(base + path, { waitUntil: "networkidle" });
       await page.waitForTimeout(300); // charts measure their container after hydration
 
       const overflow = await page.evaluate(
@@ -129,7 +131,7 @@ for (const [vpName, viewport] of Object.entries(VIEWPORTS)) {
 }
 
 await browser.close();
-server.close();
+server?.close();
 if (failures.length) {
   console.error(`\n${failures.length} problem(s)`);
   process.exit(1);
