@@ -1,0 +1,14 @@
+{
+ "run_id": "capture-ledger-2026-11-01-48c59060cee3",
+ "manifest_sha256": "48c59060cee309e2aafb62614dfb24454828bf5ae8f534bd52154165b5b8c096",
+ "created_at_utc": "2026-11-03T07:28:28Z",
+ "near": {
+  "network": "testnet",
+  "contract": "nepu-ledger.testnet",
+  "signer": "nepu-ledger.testnet",
+  "run_id": "capture-ledger-2026-11-01-48c59060cee3",
+  "tx_hash": "2CsbDXKFmFPqUpBDvQxiamodirssdd9NT63E6dqeg76D",
+  "block_height": 276017917,
+  "explorer_url": "https://explorer.testnet.near.org/transactions/2CsbDXKFmFPqUpBDvQxiamodirssdd9NT63E6dqeg76D"
+ }
+}

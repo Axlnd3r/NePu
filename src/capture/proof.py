@@ -161,13 +161,18 @@ def read_proof(path: Path) -> dict | None:
     return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
 
 
-def site_status(record: dict | None) -> dict:
-    """What provenance.json (and so the Methodology page) shows about the proof."""
+def site_status(record: dict | None, current_sha256: str | None = None) -> dict:
+    """What provenance.json (and so the Methodology page) shows about the proof.
+
+    `current` says whether the proof is for the snapshot being published (False: made for an
+    older manifest, and a new `make proof` is due).
+    """
     near = (record or {}).get("near")
     if not near:
         return {
             "status": "not committed",
             "tx": None,
+            "current": None,
             "note": "no NEAR commit yet: run `make proof` (see README, 'Verify the proof')",
         }
     return {
@@ -180,6 +185,7 @@ def site_status(record: dict | None) -> dict:
         "block_height": near["block_height"],
         "explorer_url": near["explorer_url"],
         "rpc_url": _network(near["network"])["rpc"],
+        "current": None if current_sha256 is None else record["manifest_sha256"] == current_sha256,
     }
 
 

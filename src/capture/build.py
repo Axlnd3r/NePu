@@ -11,6 +11,7 @@ from __future__ import annotations
 import csv
 import json
 import math
+import shutil
 import subprocess
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -729,7 +730,8 @@ def provenance_payload(data_dir: Path, source: str) -> dict:
     """provenance.json: every file with hash and range, reconciliation status, proof of analysis."""
     frame = coverage.build_inputs(load_tables(data_dir))
     reconciliation = coverage.monthly_reconciliation(frame)
-    proof = proof_mod.site_status(proof_mod.read_proof(PROOF_FILE))
+    manifest_hash = mf.sha256_file(data_dir / mf.MANIFEST_NAME)
+    proof = proof_mod.site_status(proof_mod.read_proof(PROOF_FILE), manifest_hash)
     return {
         "schema_version": 1,
         "source": f"data/{source}",
@@ -820,6 +822,13 @@ def markers_payload(data_dir: Path) -> dict:
     }
 
 
+def copy_bytes(src: Path, dest: Path) -> Path:
+    """The file as it is: a visitor hashes it in the browser to check the proof."""
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(src, dest)
+    return dest
+
+
 def write_json(path: Path, payload: dict) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     text = json.dumps(payload, allow_nan=False, indent=1) + "\n"
@@ -844,4 +853,5 @@ def build(source: str, out_dir: Path = SITE_DATA) -> list[Path]:
         write_json(out_dir / "queries.json", queries_payload(data_dir)),
         write_json(out_dir / "provenance.json", provenance_payload(data_dir, source)),
         write_json(out_dir / "markers.json", markers_payload(data_dir)),
+        copy_bytes(data_dir / mf.MANIFEST_NAME, out_dir / "snapshot-manifest.json"),
     ]

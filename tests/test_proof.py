@@ -161,6 +161,16 @@ def test_site_proof_says_not_committed_without_a_file(tmp_path, monkeypatch) -> 
     assert proof.site_status(proof.read_proof(build.PROOF_FILE))["status"] == "not committed"
 
 
+def test_site_proof_flags_a_proof_made_for_an_older_snapshot(tmp_path) -> None:
+    path = tmp_path / "proof.json"
+    near = proof.near_record("testnet", CONTRACT, CONTRACT, "run-1", "Abc123", 99)
+    proof.write_proof(path, {"run_id": "run-1", "manifest_sha256": HASH, "near": near})
+    record = proof.read_proof(path)
+    assert proof.site_status(record, current_sha256=HASH)["current"] is True
+    assert proof.site_status(record, current_sha256="0" * 64)["current"] is False
+    assert proof.site_status(None, current_sha256=HASH).get("current") is None
+
+
 def test_site_proof_reports_what_was_committed_and_where(tmp_path) -> None:
     path = tmp_path / "proof.json"
     near = proof.near_record("testnet", CONTRACT, CONTRACT, "run-1", "Abc123", 99)

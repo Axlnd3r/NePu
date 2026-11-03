@@ -3,6 +3,7 @@
 These are what the dashboard reads; every number in them must trace back to data/ (rule 1).
 """
 
+import hashlib
 import json
 
 import pandas as pd
@@ -104,8 +105,24 @@ def test_provenance_lists_every_file_with_its_hash_prefix(data_dir) -> None:
     for entry in mf.read_manifest(data_dir):
         assert files[entry.path]["sha256_8"] == entry.sha256[:8]
     assert "events.csv" in {s["path"] for s in prov["reference"]}
-    assert prov["proof"]["status"] == "not committed"
     assert prov["manifest_sha256"] == mf.sha256_file(data_dir / "manifest.json")
+
+
+def test_the_committed_proof_is_for_this_snapshot_and_names_its_network(data_dir) -> None:
+    prov = build.provenance_payload(data_dir, SOURCE)
+    proof = prov["proof"]
+    assert proof["status"] == "committed"
+    assert proof["network"] == "testnet"  # never shown as mainnet
+    assert proof["manifest_sha256"] == prov["manifest_sha256"]
+    assert proof["current"] is True
+    assert proof["explorer_url"].startswith("https://explorer.testnet.near.org/transactions/")
+
+
+def test_the_snapshot_manifest_is_served_byte_for_byte(tmp_path, data_dir) -> None:
+    written = {p.name: p for p in build.build(SOURCE, tmp_path)}
+    served = written["snapshot-manifest.json"].read_bytes()
+    assert served == (data_dir / "manifest.json").read_bytes()
+    assert hashlib.sha256(served).hexdigest() == mf.sha256_file(data_dir / "manifest.json")
 
 
 def test_markers_are_dated_sourced_and_inside_the_data(data_dir, cov: dict) -> None:

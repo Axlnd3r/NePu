@@ -74,6 +74,9 @@ if (!liveUrl && !existsSync(join(out, "index.html"))) {
 }
 mkdirSync(shots, { recursive: true });
 const summary = JSON.parse(readFileSync(join(root, "site", "public", "data", "summary.json"), "utf8"));
+const provenance = JSON.parse(
+  readFileSync(join(root, "site", "public", "data", "provenance.json"), "utf8"),
+);
 const valuation = JSON.parse(readFileSync(join(root, "site", "public", "data", "valuation.json"), "utf8"));
 
 const server = liveUrl ? null : await serve();
@@ -119,6 +122,42 @@ for (const [vpName, viewport] of Object.entries(VIEWPORTS)) {
           fail(`meter revenue basis ${gotRevenue} != ${revenueRow.breakeven_volume_usd_per_day}`);
         await page.getByRole("button", { name: "Buyback wallet" }).click();
         console.log(`ok   meter matches the data (${got.toFixed(0)} and ${gotRevenue.toFixed(0)})`);
+      }
+
+      if (name === "methodology" && vpName === "desktop" && scheme === "light") {
+        // The verifier hashes the served manifest in the browser and reads the contract over RPC.
+        const verdict = page.getByTestId("proof-verdict");
+        await page.waitForFunction(
+          () => !document.querySelector('[data-testid="proof-verdict"]')?.textContent?.includes("Checking"),
+          null,
+          { timeout: 30000 },
+        );
+        const ok = (await verdict.textContent()) ?? "";
+        const local = await page.getByTestId("proof-local").textContent();
+        const onChain = await page.getByTestId("proof-onchain").textContent();
+        if (!ok.includes("Match")) fail(`proof verifier did not match: ${ok}`);
+        if (local !== provenance.manifest_sha256)
+          fail(`browser hash ${local} != provenance manifest_sha256 ${provenance.manifest_sha256}`);
+        if (onChain !== provenance.proof.manifest_sha256)
+          fail(`on-chain hash ${onChain} != proof ${provenance.proof.manifest_sha256}`);
+        console.log(`ok   proof verifier: ${ok.replace("✓ ", "").slice(0, 60)}...`);
+
+        // It must also be able to say "no": serve a manifest with one byte changed.
+        const tampered = await context.newPage();
+        await tampered.route("**/data/snapshot-manifest.json", async (route) => {
+          const body = await (await route.fetch()).text();
+          await route.fulfill({ contentType: "application/json", body: body.replace('"rows"', '"rowz"') });
+        });
+        await tampered.goto(base + path, { waitUntil: "networkidle" });
+        await tampered.waitForFunction(
+          () => !document.querySelector('[data-testid="proof-verdict"]')?.textContent?.includes("Checking"),
+          null,
+          { timeout: 30000 },
+        );
+        const bad = (await tampered.getByTestId("proof-verdict").textContent()) ?? "";
+        if (!bad.includes("Does not match")) fail(`tampered manifest was not detected: ${bad}`);
+        else console.log("ok   proof verifier rejects a tampered manifest");
+        await tampered.close();
       }
 
       const suffix = scheme === "dark" ? `${vpName}-dark` : vpName;

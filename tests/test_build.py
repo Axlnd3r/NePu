@@ -77,6 +77,7 @@ def test_every_payload_is_deterministic_and_has_lf_endings(tmp_path: Path) -> No
         "meta.json",
         "provenance.json",
         "queries.json",
+        "snapshot-manifest.json",
         "summary.json",
         "valuation.json",
     ]

@@ -1,9 +1,24 @@
 import type { Metadata } from "next";
 import { Badge, PageHeader } from "@/components/Bits";
+import { ProofVerifier } from "@/components/ProofVerifier";
 import { markers, meta, provenance, queries } from "@/lib/data";
 import { pct } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Methodology & data · NEAR Capture Ledger" };
+
+type ProofShape = {
+  status: string;
+  note?: string;
+  network?: string;
+  contract?: string;
+  run_id?: string;
+  manifest_sha256?: string;
+  tx?: string | null;
+  block_height?: number;
+  explorer_url?: string;
+  rpc_url?: string;
+  current?: boolean | null;
+};
 
 function sourceName(text: string): string {
   if (text.startsWith("bigquery:")) return `BigQuery ${text.slice("bigquery:".length)}`;
@@ -12,8 +27,9 @@ function sourceName(text: string): string {
 }
 
 export default function Methodology() {
-  const { sources, reference, reconciliation, proof } = provenance;
-  const proofTx = (proof as { tx?: string | null }).tx;
+  const { sources, reference, reconciliation } = provenance;
+  // The shape depends on whether data/proof.json exists, so every field is optional here.
+  const proof = provenance.proof as ProofShape;
 
   return (
     <div className="space-y-8">
@@ -88,21 +104,70 @@ export default function Methodology() {
       <section className="rounded-xl border border-[var(--ring)] bg-surface p-4 sm:p-6" aria-labelledby="proof">
         <h2 id="proof" className="text-base font-semibold">Proof of analysis</h2>
         <p className="mt-1 text-sm text-ink-2">
-          The snapshot manifest hash is committed to NEAR mainnet so anyone can check that these
-          numbers came from these files at that time.
+          The SHA-256 of the snapshot manifest (which lists the hash of every data file) is committed
+          to a NEAR contract, so anyone can check that these numbers came from these files, and that
+          the hash existed no later than the block of the transaction. It does not show that the data
+          is correct.
         </p>
-        <p className="mt-2 text-sm">
-          Status: <Badge tone={proofTx ? "good" : "neutral"}>{proof.status}</Badge>
-          {proofTx ? (
-            <>
-              {" "}
-              <a className="underline" href={`https://nearblocks.io/txns/${proofTx}`} rel="noreferrer" target="_blank">
-                transaction {proofTx.slice(0, 10)}…
-              </a>
-            </>
-          ) : (
+        {proof.status === "committed" && proof.network ? (
+          <>
+            <p className="mt-3 text-sm">
+              <Badge tone="neutral">NEAR {proof.network}</Badge>{" "}
+              {proof.current === false && <Badge tone="critical">made for an older snapshot</Badge>}
+            </p>
+            {proof.network === "testnet" && (
+              <p className="mt-2 text-xs text-muted">
+                This is a testnet commit, not mainnet: testnet carries no economic security and is not
+                guaranteed to keep its history. It was chosen because it costs nothing.
+              </p>
+            )}
+            <dl className="mt-3 space-y-1 text-xs">
+              <div>
+                <dt className="inline text-muted">Contract: </dt>
+                <dd className="inline font-mono">{proof.contract}</dd>
+              </div>
+              <div>
+                <dt className="inline text-muted">Run id: </dt>
+                <dd className="inline font-mono break-all">{proof.run_id}</dd>
+              </div>
+              <div>
+                <dt className="inline text-muted">Transaction: </dt>
+                <dd className="inline">
+                  <a className="font-mono underline break-all" href={proof.explorer_url} rel="noreferrer" target="_blank">
+                    {proof.tx}
+                  </a>{" "}
+                  (block {proof.block_height})
+                </dd>
+              </div>
+            </dl>
+            <div className="mt-4 rounded-lg bg-plane p-4">
+              <p className="text-sm font-medium">Verify it yourself</p>
+              <ProofVerifier
+                network={proof.network}
+                contract={proof.contract as string}
+                runId={proof.run_id as string}
+                rpcUrl={proof.rpc_url as string}
+                recordedHash={proof.manifest_sha256 as string}
+              />
+              <p className="mt-3 text-xs text-muted">
+                Without this page: hash <code>data/snapshot/manifest.json</code> (for example with{" "}
+                <code>sha256sum</code>) and compare it with the value of <code>get</code> for the run id above
+                (<code>near contract call-function as-read-only</code>, or <code>capture proof status</code>).
+              </p>
+            </div>
+          </>
+        ) : (
+          <p className="mt-2 text-sm">
+            Status: <Badge tone="neutral">{proof.status}</Badge>
             <span className="ml-2 text-xs text-muted">{proof.note}</span>
-          )}
+          </p>
+        )}
+        <p className="mt-4 text-sm">
+          OpenTimestamps (Bitcoin): <Badge tone="neutral">not stamped yet</Badge>
+          <span className="ml-2 text-xs text-muted">
+            the stamp is made by the proof workflow in CI, because the <code>ots</code> client does not
+            run on Windows
+          </span>
         </p>
       </section>
 
