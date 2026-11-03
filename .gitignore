@@ -19,3 +19,6 @@ site/public/data/
 
 # QA output (make qa)
 qa/screenshots/
+
+# Rust build output
+contracts/**/target/

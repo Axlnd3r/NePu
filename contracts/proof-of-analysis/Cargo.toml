@@ -1,0 +1,33 @@
+[package]
+name = "proof-of-analysis"
+description = "Stores the SHA-256 of an analysis manifest under a run id; owner-only, write-once."
+version = "0.1.0"
+edition = "2024"
+resolver = "3"
+rust-version = "1.93"
+# NEP-330: cargo-near embeds this link in the contract's `contract_source_metadata` view.
+repository = "https://github.com/Axlnd3r/NePu---NEAR-Pulse-"
+license = "MIT"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+near-sdk = "5.30"
+
+[dev-dependencies]
+near-sdk = { version = "5.30", features = ["unit-testing"] }
+
+# The code is stored on chain and its storage balance is locked, so size is cost: optimise for it.
+[profile.release]
+codegen-units = 1
+opt-level = "z"
+lto = true
+debug = false
+panic = "abort"
+overflow-checks = true
+
+# `cfg(near)` was introduced in `near-sdk` v5.27.0, and is expected cfg now
+[lints.rust.unexpected_cfgs]
+level = "warn"
+check-cfg = ['cfg(near)']
