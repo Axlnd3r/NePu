@@ -310,6 +310,38 @@ in each of these areas makes the corresponding test fail. Shared inputs are limi
 months, 3-month grace) are checked against `data/reference/parameters.csv`, which lists their
 sources, and 2.5 % against the observed 30-day net supply growth.
 
+## Generated documents (`THESIS.md`, the README results block)
+
+`capture build` renders `THESIS.md` and the results block of `README.md` from the same payloads that
+become `site/public/data/*.json`. No figure is typed in the generator: a number enters the text through
+a registry (`src/capture/thesis.py`) that records the JSON path it came from, and strings taken from the
+payloads (labels, reasons, the lead/lag verdict) are inserted as they are. Tests check that every number
+in the rendered text is a registered fact, that every fact resolves in the JSON files the build writes,
+that the committed files are what the build produces, that the README states no number outside its
+generated block, and that every JSON path the documents cite is recomputed by the independent audit
+(`AUDITED` in `tests/test_numbers_audit.py`); citing a new path without a recomputation fails the build.
+
+## Proof of analysis (`capture proof`, `contracts/proof-of-analysis`)
+
+- **What is committed:** the SHA-256 of `data/snapshot/manifest.json`, which lists the hash of every
+  input file, under a run id built from the snapshot's last day and the first characters of that hash.
+  The contract (`commit`, owner only; `get`) refuses a run id that already exists, so a committed hash
+  cannot be replaced, and it emits a NEP-297 event. It holds and moves no tokens.
+- **Flow:** `capture proof commit` reads the contract first and sends nothing if the hash is already
+  there; otherwise it calls `commit` through near-cli-rs (keychain locally, a function-call key limited
+  to `commit` in CI) and counts the commit as done only when the chain returns the hash afterwards. The
+  block height is read from the chain, not from the CLI output. `data/proof.json` records the run, the
+  transaction and the block; it is kept outside the manifest, so there is no circularity.
+- **Verification:** the Methodology page hashes the served manifest in the visitor's browser and compares
+  it with the contract's `get(run_id)`; `capture proof status` and a plain `curl` do the same.
+- **A second, independent timestamp:** the manifest is stamped with OpenTimestamps (Bitcoin) in CI. A
+  stamp is pending until a Bitcoin block attests it; its status is read with `ots info`. A stamp belongs
+  to one manifest and is dropped when a newer manifest is committed.
+- **What it does not show:** only that the hash existed no later than the transaction's block. It says
+  nothing about whether the data is correct. The network is testnet (chosen because it costs nothing),
+  which carries no economic security and does not promise to keep its history; every place that shows
+  the proof names the network.
+
 ## Dashboard (`site/`)
 
 Six static pages read only `site/public/data/*.json`. Every chart shows one plain sentence built

@@ -302,8 +302,14 @@ def commit(
         )
 
     height = tx_block_height(client, rpc, tx_hash, signer)
+    # A stamp belongs to one manifest: keep it only for the run it was made for.
+    kept = {
+        k: v
+        for k, v in existing.items()
+        if k != "opentimestamps" or existing.get("run_id") == run_id
+    }
     record = {
-        **existing,
+        **kept,
         "run_id": run_id,
         "manifest_sha256": sha,
         "created_at_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),

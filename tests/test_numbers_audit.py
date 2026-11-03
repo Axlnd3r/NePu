@@ -11,6 +11,7 @@ import csv
 import hashlib
 import itertools
 import json
+import os
 
 import numpy as np
 import pandas as pd
@@ -490,3 +491,224 @@ def test_methodology_claims(ind, pub) -> None:
     a = D(pub["valuation"]["start"]["as_of"])
     window = ind.issuance[a - pd.Timedelta(days=29) : a].sum()
     assert abs(config.INFLATION_CURRENT * st["S"] / 365 * 30 / window - 1) < 0.001
+
+
+# ---------------------------------------------------------------- what THESIS and the README cite
+# Every JSON path that THESIS.md or the README results block uses (with list positions and selectors
+# written as [*]) must be named here, and each one is recomputed by a test below. test_thesis.py
+# fails when the thesis starts citing a path that is not listed.
+AUDITED = {
+    "coverage.availability.buyback_near.first_date",
+    "coverage.latest.cr_supply_30.date",
+    "coverage.latest.cr_supply_30.value",
+    "developer.lead_lag.verdict.text",
+    "distribution.periods.month[*].attributable_share",
+    "distribution.periods.month[*].hhi_channel",
+    "distribution.periods.month[*].max_channel_share",
+    "distribution.periods.month[*].period",
+    "distribution.scope.explorer_share_of_defillama_volume_by_month[*].explorer_share_of_defillama_volume",
+    "distribution.scope.explorer_share_of_defillama_volume_by_month[*].period",
+    "markers.not_drawn[*].label",
+    "markers.not_drawn[*].reason",
+    "provenance.proof.block_height",
+    "provenance.proof.explorer_url",
+    "provenance.proof.run_id",
+    "provenance.reconciliation.months#len",
+    "provenance.reconciliation.tolerance",
+    "provenance.sources[*].date_range[*]",
+    "summary.conditions[*].progress",
+    "summary.conditions[*].text",
+    "summary.conditions[*].threshold",
+    "summary.conditions[*].value",
+    "summary.hero.cr_float_30",
+    "summary.hero.cr_float_usd_30",
+    "summary.hero.date",
+    "summary.history.cr_float_30_max.date",
+    "summary.history.cr_float_30_max.value",
+    "summary.ledger.days",
+    "summary.ledger.kept.buyback_of_onchain",
+    "summary.ledger.per_10k_volume.buyback_wallet",
+    "summary.ledger.per_10k_volume.fees",
+    "summary.ledger.per_10k_volume.issuance",
+    "summary.ledger.per_10k_volume.revenue",
+    "summary.ledger.per_10k_volume.volume",
+    "summary.levers.as_of",
+    "summary.levers.steps[*].closes_by",
+    "summary.levers.steps[*].inflation",
+    "summary.levers.steps[*].v_star_usd_per_day",
+    "summary.levers.steps[*].volume_multiple",
+    "summary.levers.volume_usd_per_day",
+    "valuation.growth.mean_after_launch",
+    "valuation.growth.mean_all",
+    "valuation.growth.n_months",
+    "valuation.n_months",
+    "valuation.n_paths",
+    "valuation.reverse.rows[*].horizon_years",
+    "valuation.reverse.rows[*].inflation",
+    "valuation.reverse.rows[*].required_cagr",
+    "valuation.scenarios[*].p_cr_ge_1.60",
+    "valuation.scenarios[*].volume_p50_usd_per_day.60",
+    "valuation.start.tau_monthly_range.max",
+    "valuation.start.tau_monthly_range.min",
+}
+# Text written in the code (definitions and assumptions), reviewed in docs/METHODOLOGY.md rather
+# than recomputed: a number inside them is a method constant, not a measurement.
+DESCRIPTIVE = {
+    "distribution.scope.covers",
+    "valuation.assumptions.price",
+    "valuation.notes[*]",
+}
+
+
+def test_the_monthly_buyback_take_rate_range(ind, pub) -> None:
+    usd = ind.bb * ind.price
+    both = usd.notna() & ind.vol.notna()
+    frame = pd.DataFrame({"b": usd[both], "v": ind.vol[both]})
+    grouped = frame.groupby(frame.index.to_period("M"))
+    sums, days = grouped.sum(), grouped.size()
+    keep = (days / sums.index.days_in_month >= 0.9) & (sums["v"] > 0)
+    tau = (sums["b"] / sums["v"])[keep]
+    rng = pub["valuation"]["start"]["tau_monthly_range"]
+    assert close(rng["min"], float(tau.min())) and close(rng["max"], float(tau.max()))
+    shown = {m["month"]: m["tau_buyback"] for m in rng["months"]}
+    assert set(shown) == {f"{p}-01" for p in tau.index.astype(str)}
+    for p, v in tau.items():
+        assert close(shown[f"{p}-01"], float(v)), p
+
+
+def test_the_three_conditions_and_the_lever_steps(ind, pub) -> None:
+    s = pub["summary"]
+    as_of = s["levers"]["as_of"]
+    st = _start(ind, as_of)
+    assert as_of == pub["valuation"]["start"]["as_of"]
+    assert close(s["levers"]["volume_usd_per_day"], st["v0"])
+
+    end = D(as_of)
+    window = slice(end - pd.Timedelta(days=29), end)
+    assert s["ledger"]["days"] == 30 == len(ind.vol[window])
+    price = ind.price[window]
+    kept = (ind.bb[window] * price).sum() / (ind.onchain[window] * price).sum()
+
+    m = pd.DataFrame({"on": ind.onchain * ind.price, "dl": ind.rev}).dropna()
+    g = m.groupby(m.index.to_period("M"))
+    months = g.sum().assign(n=g.size())
+    months = months[months["n"] == months.index.days_in_month]
+    worst = float((months["on"] / months["dl"] - 1).abs().max())
+
+    vstar = _vstar(st, config.INFLATION_CURRENT, st["tau_bb"])
+    c = {x["id"]: x for x in s["conditions"]}
+    assert close(c["volume"]["value"], st["v0"]) and close(c["volume"]["threshold"], vstar)
+    assert close(c["volume"]["progress"], st["v0"] / vstar)
+    assert close(c["routing"]["value"], kept) and c["routing"]["threshold"] == 1.0
+    assert close(c["routing"]["progress"], kept)
+    assert close(c["reconciliation"]["value"], worst)
+    assert c["reconciliation"]["threshold"] == 0.15  # the tolerance documented in METHODOLOGY.md
+    assert close(c["reconciliation"]["progress"], worst / 0.15)
+    met = [bool(c[k]["met"]) for k in ("volume", "routing", "reconciliation")]
+    assert met == [st["v0"] >= vstar, kept >= 1.0, worst > 0.15]
+
+    stages = [
+        (config.INFLATION_CURRENT, st["tau_bb"]),
+        (config.INFLATION_PROPOSAL, st["tau_bb"]),
+        (config.INFLATION_PROPOSAL, st["tau_rev"]),
+    ]
+    previous = None
+    for step, (i, tau) in zip(s["levers"]["steps"], stages, strict=True):
+        v_star = _vstar(st, i, tau)
+        multiple = v_star / st["v0"]
+        assert step["inflation"] == i and close(step["v_star_usd_per_day"], v_star)
+        assert close(step["volume_multiple"], multiple)
+        if previous is None:
+            assert step["closes_by"] is None
+        else:
+            assert close(step["closes_by"], previous / multiple)
+        previous = multiple
+
+
+def test_growth_after_the_launch_phase(ind, pub) -> None:
+    daily = ind.llama_raw["volume_usd"].dropna()
+    monthly = daily[daily.index >= pd.Timestamp(config.GROWTH_START)].resample("MS").mean().dropna()
+    growth = np.log(monthly).diff().dropna()
+    after = growth[growth.index >= pd.Timestamp(f"{build.LAUNCH_END}-01")]
+    g = pub["valuation"]["growth"]
+    assert close(g["mean_after_launch"], float(after.mean()))
+    assert g["n_months_after_launch"] == len(after)
+    assert pub["valuation"]["n_paths"] == config.MC_PATHS
+    assert pub["valuation"]["n_months"] == config.MC_MONTHS
+
+
+def test_explorer_coverage_by_month_in_the_scope(data_dir, ind, pub) -> None:
+    ex = pd.read_parquet(data_dir / "explorer_1click_daily.parquet")
+    ex["date"] = pd.to_datetime(ex["date"])
+    explorer = ex.groupby("date")["volume_usd"].sum()
+    for row in pub["distribution"]["scope"]["explorer_share_of_defillama_volume_by_month"]:
+        month = pd.Period(row["period"])
+        days = [d for d in explorer.index if d.to_period("M") == month and pd.notna(ind.vol.get(d))]
+        share = explorer[days].sum() / ind.vol[days].sum()
+        assert close(row["explorer_share_of_defillama_volume"], float(share)), row["period"]
+
+
+def test_the_not_drawn_events_are_the_reference_rows(pub) -> None:
+    with (build.REFERENCE / "events.csv").open(encoding="utf-8", newline="") as f:
+        rows = [r for r in csv.DictReader(f) if r["kind"] == "not_drawn"]
+    shown = [(n["label"], n["reason"]) for n in pub["markers"]["not_drawn"]]
+    assert shown == [(r["label"], r["verified"]) for r in rows]
+
+
+def test_every_source_range_is_the_range_of_its_file(data_dir, pub) -> None:
+    for source in pub["provenance"]["sources"]:
+        if not source["date_range"]:
+            continue
+        dates = pd.to_datetime(pd.read_parquet(data_dir / source["path"], columns=["date"])["date"])
+        shown = [dates.min().date().isoformat(), dates.max().date().isoformat()]
+        assert shown == list(source["date_range"]), source["path"]
+
+
+def test_the_latest_supply_coverage_and_the_documented_tolerance(ind, pub) -> None:
+    cr = ind.roll(ind.burn) / ind.roll(ind.issuance)
+    last = cr.dropna().index[-1]
+    latest = pub["coverage"]["latest"]["cr_supply_30"]
+    assert latest["date"] == last.date().isoformat() and close(latest["value"], float(cr[last]))
+    assert pub["provenance"]["reconciliation"]["tolerance"] == 0.15
+    assert "15%" in (build.ROOT / "docs" / "METHODOLOGY.md").read_text(encoding="utf-8")
+    first_buyback = ind.bb.first_valid_index().date().isoformat()
+    assert pub["coverage"]["availability"]["buyback_near"]["first_date"] == first_buyback
+
+
+def test_the_lead_lag_verdict_quotes_the_audited_rows(pub) -> None:
+    """The verdict sentence is built from the table; its numbers must be the table's."""
+    dev = pub["developer"]["lead_lag"]
+    rows = [r for r in dev["rows"] if r["transform"] == "levels" and r["pearson"] is not None]
+    train = [r for r in rows if r["sample"] == "train"]
+    chosen = max(train, key=lambda r: abs(r["pearson"]))
+    test = next(r for r in rows if r["sample"] == "test" and r["lag"] == chosen["lag"])
+    text = dev["verdict"]["text"]
+    assert f"r={chosen['pearson']:.2f}" in text
+    assert f"r={test['pearson']:.2f} on {test['n']} pairs" in text
+    assert f"p={test['p_value']:.2f}" in text
+    assert dev["verdict"]["lag_chosen_in_train"] == chosen["lag"]
+
+
+@pytest.mark.skipif(os.environ.get("CAPTURE_ONLINE") != "1", reason="reads the NEAR chain")
+def test_the_recorded_transaction_is_on_chain_at_that_block(data_dir) -> None:
+    """Online (CAPTURE_ONLINE=1): proof.json's block height is the block of its transaction, and
+    the manifest in this repository still has the recorded hash."""
+    import httpx
+
+    record = json.loads((build.ROOT / "data" / "proof.json").read_text(encoding="utf-8"))
+    near = record["near"]
+    assert near["network"] == "testnet", "only testnet is wired for this check"
+    rpc = "https://rpc.testnet.fastnear.com"
+
+    def call(method: str, params: dict) -> dict:
+        body = {"jsonrpc": "2.0", "id": 1, "method": method, "params": params}
+        return httpx.post(rpc, json=body, timeout=30).json()["result"]
+
+    tx = call(
+        "tx",
+        {"tx_hash": near["tx_hash"], "sender_account_id": near["signer"], "wait_until": "FINAL"},
+    )
+    block = call("block", {"block_id": tx["transaction_outcome"]["block_hash"]})
+    assert block["header"]["height"] == near["block_height"]
+    digest = hashlib.sha256((data_dir / "manifest.json").read_bytes()).hexdigest()
+    assert digest == record["manifest_sha256"]

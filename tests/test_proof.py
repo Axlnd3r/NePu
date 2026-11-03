@@ -305,11 +305,21 @@ def test_commit_is_idempotent_when_the_proof_is_already_on_chain(data_dir, tmp_p
     assert len(chain.cli_calls) == 1 and second == first
 
 
-def test_commit_keeps_an_existing_opentimestamps_entry(data_dir, tmp_path) -> None:
+def test_commit_keeps_the_opentimestamps_entry_of_the_same_run(data_dir, tmp_path) -> None:
+    run_id = proof.make_run_id(proof.manifest_sha256(data_dir), proof.snapshot_end(data_dir))
     path = tmp_path / "proof.json"
-    proof.write_proof(path, {"opentimestamps": {"status": "pending"}})
+    proof.write_proof(path, {"run_id": run_id, "opentimestamps": {"status": "pending"}})
     rec = commit_flow(FakeChain(), data_dir, path)
     assert rec["opentimestamps"] == {"status": "pending"}
+
+
+def test_commit_drops_the_stamp_of_an_older_manifest(data_dir, tmp_path) -> None:
+    """A stamp belongs to one manifest; keeping it beside a newer commit would mislabel it."""
+    path = tmp_path / "proof.json"
+    old = "capture-ledger-2026-10-25-aaaaaaaaaaaa"
+    proof.write_proof(path, {"run_id": old, "opentimestamps": {"status": "confirmed"}})
+    rec = commit_flow(FakeChain(), data_dir, path)
+    assert "opentimestamps" not in rec and rec["run_id"] != old
 
 
 def test_commit_fails_when_the_chain_does_not_show_the_hash_afterwards(data_dir, tmp_path) -> None:

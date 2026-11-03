@@ -562,3 +562,11 @@ Resulting scope:
 - Mistake made and fixed: I expected the issuance marker on 2025-10-30 (from the phase prompt). The detector first returned 2025-10-29, a transition day; the marker is now dated to the first day closer to the new level and names the transition day.
 - Bug found and fixed (existing since F4): on Windows the manifest lock failed with PermissionError when a previous lock file was still being deleted, losing manifest entries under concurrent upserts (the concurrency test failed 2 times in 5). The lock now retries on PermissionError; a deterministic test reproduces the case, and the concurrency test passed 12 times in 12.
 
+### 2026-11-03, F7
+- Proof of analysis on NEAR testnet plus an OpenTimestamps stamp; see "F7a proof-of-analysis contract". Repository renamed; see "Repository renamed".
+- Mistake made and fixed: after a mutation test I restored a file with `git checkout`, which reverted my uncommitted additions to it (the new audit tests). A backup copied just before the mutation restored them; I now stage a file before mutating it.
+- Mistake made and fixed: three times a multi-line string inside a shell heredoc lost its `
+` escapes and broke a source file; I now insert multi-line text with the editor tools or from a file.
+- Defects found while writing the weekly workflow and fixed: `make verify` would fail on the first weekly run (the recorded proof was for the previous manifest, so the proof is now committed before verify), and `commit()` kept the OpenTimestamps entry of an older manifest beside a newer commit (now dropped, with a test).
+- Audit result: every JSON path cited by THESIS.md or the README results block is recomputed independently (55 paths; 3 descriptive texts are reviewed in METHODOLOGY.md); the transaction's block height was also checked against the chain (`CAPTURE_ONLINE=1`).
+

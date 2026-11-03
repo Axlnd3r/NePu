@@ -1,0 +1,126 @@
+name: weekly-rebuild
+
+# Weekly: pull fresh data, freeze a new snapshot, rebuild and verify, commit it, commit the new
+# manifest hash to NEAR with a function-call key, then redeploy the site and stamp the manifest.
+#
+# It does nothing (and does not fail) until the repository is configured:
+#   secrets:   GCP_SA_KEY (service account JSON with BigQuery Job User), INTENTS_EXPLORER_JWT,
+#              COINGECKO_API_KEY, PROOF_PUBLIC_KEY and PROOF_PRIVATE_KEY (a function-call key limited to
+#              the contract's `commit` method; never a full-access key)
+#   variables: GOOGLE_CLOUD_PROJECT, BQ_MAX_BYTES (optional), PROOF_NETWORK (testnet by default),
+#              PROOF_ACCOUNT_ID
+# This workflow has not run against real secrets yet; the first run is a test of it.
+on:
+  schedule:
+    - cron: "17 3 * * 1" # Mondays 03:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write # commits the new snapshot and proof record
+  actions: write # starts the pages and proof workflows (a push by GITHUB_TOKEN does not)
+
+concurrency:
+  group: weekly-rebuild
+  cancel-in-progress: false
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      GOOGLE_CLOUD_PROJECT: ${{ vars.GOOGLE_CLOUD_PROJECT }}
+      BQ_MAX_BYTES: ${{ vars.BQ_MAX_BYTES }}
+      INTENTS_EXPLORER_JWT: ${{ secrets.INTENTS_EXPLORER_JWT }}
+      COINGECKO_API_KEY: ${{ secrets.COINGECKO_API_KEY }}
+      PROOF_NETWORK: ${{ vars.PROOF_NETWORK }}
+      PROOF_ACCOUNT_ID: ${{ vars.PROOF_ACCOUNT_ID }}
+      PROOF_PUBLIC_KEY: ${{ secrets.PROOF_PUBLIC_KEY }}
+      PROOF_PRIVATE_KEY: ${{ secrets.PROOF_PRIVATE_KEY }}
+    steps:
+      - name: Is the repository configured?
+        id: cfg
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+        run: |
+          if [ -n "$GCP_SA_KEY" ] && [ -n "$GOOGLE_CLOUD_PROJECT" ]; then
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::GCP_SA_KEY or GOOGLE_CLOUD_PROJECT is not set: nothing to do"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.cfg.outputs.ok == 'true'
+
+      - uses: astral-sh/setup-uv@v6
+        if: steps.cfg.outputs.ok == 'true'
+
+      - uses: actions/setup-node@v4
+        if: steps.cfg.outputs.ok == 'true'
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - uses: google-github-actions/auth@v2
+        if: steps.cfg.outputs.ok == 'true'
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Install near-cli-rs 0.30.1
+        if: steps.cfg.outputs.ok == 'true'
+        run: |
+          curl --proto '=https' --tlsv1.2 -LsSf \
+            https://github.com/near/near-cli-rs/releases/download/v0.30.1/near-cli-rs-installer.sh | sh
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+
+      - name: Set up
+        if: steps.cfg.outputs.ok == 'true'
+        run: make setup
+
+      - name: Extract fresh data (incremental)
+        if: steps.cfg.outputs.ok == 'true'
+        run: make extract
+
+      - name: Rebuild from the live data as a check
+        if: steps.cfg.outputs.ok == 'true'
+        run: make build-live
+
+      - name: Freeze a new snapshot
+        if: steps.cfg.outputs.ok == 'true'
+        # DefiLlama's last days are not final, so freeze a few days back; the command refuses a day
+        # that any table does not fully cover.
+        run: uv run capture snapshot --freeze "$(date -u -d '4 days ago' +%F)"
+
+      # The proof comes before verify: `make verify` checks that the recorded proof is for the
+      # manifest of the snapshot being published.
+      - name: Commit the new manifest hash to NEAR
+        if: steps.cfg.outputs.ok == 'true'
+        run: uv run capture proof commit --yes
+
+      - name: Rebuild from the snapshot, verify, build the site
+        if: steps.cfg.outputs.ok == 'true'
+        run: |
+          make build
+          make verify
+          make site
+
+      - name: Commit the new snapshot and proof record
+        if: steps.cfg.outputs.ok == 'true'
+        run: |
+          git add data/snapshot data/proof.json THESIS.md README.md
+          if git diff --cached --quiet; then
+            echo "nothing changed"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "snapshot: weekly rebuild $(date -u +%F)"
+            git push
+          fi
+
+      - name: Redeploy the site and stamp the manifest
+        if: steps.cfg.outputs.ok == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow run pages.yml --ref "${{ github.ref_name }}"
+          gh workflow run proof.yml --ref "${{ github.ref_name }}"

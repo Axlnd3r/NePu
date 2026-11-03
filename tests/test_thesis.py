@@ -123,3 +123,20 @@ def test_resolve_follows_keys_indices_and_selectors() -> None:
     assert thesis.resolve(data, "a.b[k=x].v") == 1
     with pytest.raises(KeyError):
         thesis.resolve(data, "a.b[k=z].v")
+
+
+def _normalised(facts) -> set[str]:
+    return {re.sub(r"\[[^\]]*\]", "[*]", f.path) for f in facts}
+
+
+def test_every_path_the_thesis_and_the_readme_cite_is_independently_audited(payloads) -> None:
+    """Citing a new JSON path without a recomputation in test_numbers_audit.py fails here."""
+    import test_numbers_audit as audit
+
+    _, thesis_facts = thesis.render(payloads)
+    _, readme_facts = thesis.render_results(payloads)
+    cited = _normalised(thesis_facts) | _normalised(readme_facts)
+    missing = cited - audit.AUDITED - audit.DESCRIPTIVE
+    assert not missing, f"cited but not audited: {sorted(missing)}"
+    stale = (audit.AUDITED | audit.DESCRIPTIVE) - cited
+    assert not stale, f"listed as audited but not cited: {sorted(stale)}"
