@@ -1,0 +1,144 @@
+{
+  "files": [
+    {
+      "path": "contracts_daily.parquet",
+      "sha256": "cac2f0a31a601615217d8d6a701cffa025ca94664dfde043ada6b8fc19baf3f0",
+      "rows": 921480,
+      "source": "bigquery:bigquery-public-data.crypto_near_mainnet_us",
+      "query_file": "sql/contracts_daily.sql",
+      "date_range": [
+        "2025-09-22",
+        "2026-11-01"
+      ],
+      "pulled_at_utc": "2026-11-02T08:05:43Z",
+      "query_sha256": "70b53524b29f8c6e1e59e06d14f76efe98e86cc180f856583ba74411141259c4"
+    },
+    {
+      "path": "defillama_intents_daily.parquet",
+      "sha256": "ae50ca9acf391c84b4492db0cf3aea4747b932d2ae1f6362158be8f88a404bc2",
+      "rows": 690,
+      "source": "https://api.llama.fi/summary/dexs/near-intents; https://api.llama.fi/summary/fees/near-intents; https://api.llama.fi/summary/fees/near-intents?dataType=dailyRevenue; https://api.llama.fi/summary/fees/near-intents?dataType=dailyHoldersRevenue",
+      "query_file": null,
+      "date_range": [
+        "2024-12-10",
+        "2026-10-30"
+      ],
+      "pulled_at_utc": "2026-11-02T03:43:25Z",
+      "query_sha256": null
+    },
+    {
+      "path": "explorer_1click_daily.parquet",
+      "sha256": "1b17dccc39d82986fec2e9469bf9aaa9091450043263f9b662b81f858609106c",
+      "rows": 433167,
+      "source": "https://explorer.near-intents.org/api/v0/transactions",
+      "query_file": null,
+      "date_range": [
+        "2026-07-01",
+        "2026-11-01"
+      ],
+      "pulled_at_utc": "2026-11-03T03:16:25Z",
+      "query_sha256": null
+    },
+    {
+      "path": "explorer_channels_daily.parquet",
+      "sha256": "9521d4458640c05e630dc6e515dbe66b9c5eaffba45c361a1f535f005c9837dd",
+      "rows": 11023,
+      "source": "https://explorer.near-intents.org/api/v0/transactions",
+      "query_file": null,
+      "date_range": [
+        "2026-07-01",
+        "2026-11-01"
+      ],
+      "pulled_at_utc": "2026-11-03T03:16:25Z",
+      "query_sha256": null
+    },
+    {
+      "path": "explorer_recipients_daily.parquet",
+      "sha256": "238b3049a4d5d421f0e4e912e8a4ebcfb26f8f4907edd46206ba0882806df2f3",
+      "rows": 25786,
+      "source": "https://explorer.near-intents.org/api/v0/transactions",
+      "query_file": null,
+      "date_range": [
+        "2026-07-01",
+        "2026-11-01"
+      ],
+      "pulled_at_utc": "2026-11-03T03:16:25Z",
+      "query_sha256": null
+    },
+    {
+      "path": "fee_wallet_inflows_daily.parquet",
+      "sha256": "b32041f11877be8982692961c963facc466746595aa13fc99f3ed7089e901b42",
+      "rows": 811,
+      "source": "bigquery:bigquery-public-data.crypto_near_mainnet_us",
+      "query_file": "sql/fee_wallet_inflows_daily.sql",
+      "date_range": [
+        "2025-11-07",
+        "2026-10-31"
+      ],
+      "pulled_at_utc": "2026-11-02T03:40:35Z",
+      "query_sha256": "d51dd8f7076274b62fb869dc64427129fe762fe994a11ef4e2c9a9e99dc65c4e"
+    },
+    {
+      "path": "intents_onchain_daily.parquet",
+      "sha256": "c63a43d0dd5fe73388a4011c9880a096ca0461df61e0511792399e9f69d81663",
+      "rows": 190,
+      "source": "bigquery:bigquery-public-data.crypto_near_mainnet_us",
+      "query_file": "sql/intents_onchain_daily.sql",
+      "date_range": [
+        "2026-04-26",
+        "2026-11-01"
+      ],
+      "pulled_at_utc": "2026-11-02T03:39:28Z",
+      "query_sha256": "9004db37bc05bd65b2c7acb776162c2a7957b97b445a895f6138ed510de3fe2c"
+    },
+    {
+      "path": "network_daily.parquet",
+      "sha256": "ea5d1085810fa53373dd78a37325a0817f408272bc4c8f938de1f48abc589529",
+      "rows": 190,
+      "source": "bigquery:bigquery-public-data.crypto_near_mainnet_us",
+      "query_file": "sql/network_daily.sql",
+      "date_range": [
+        "2026-04-26",
+        "2026-11-01"
+      ],
+      "pulled_at_utc": "2026-11-02T03:38:29Z",
+      "query_sha256": "f8d03f0a50fb63d742034004d3077468951d99f5bd950db004274c02efbe05d5"
+    },
+    {
+      "path": "price_daily.parquet",
+      "sha256": "48afd3b452a5fc2adfe9fc34f2713e10acbbc092df6c9ee06d73556d553ff7f2",
+      "rows": 363,
+      "source": "https://api.coingecko.com/api/v3/coins/near/market_chart/range",
+      "query_file": null,
+      "date_range": [
+        "2025-11-04",
+        "2026-11-01"
+      ],
+      "pulled_at_utc": "2026-11-02T03:43:33Z",
+      "query_sha256": null
+    },
+    {
+      "path": "supply_daily.parquet",
+      "sha256": "382b732bc00551dc4dcbc07f9825aab277ee804206c2edc512793d6af729941b",
+      "rows": 541,
+      "source": "bigquery:bigquery-public-data.crypto_near_mainnet_us",
+      "query_file": "sql/supply_daily.sql",
+      "date_range": [
+        "2025-05-10",
+        "2026-11-01"
+      ],
+      "pulled_at_utc": "2026-11-02T03:40:33Z",
+      "query_sha256": "ad31ae0ba3bdf099e88e80ba38e310d2d4741d2ef7030c21577f42b954c64451"
+    },
+    {
+      "path": "token_assets.parquet",
+      "sha256": "3529a85686d062325a40a17b70ab9054e6e4454ff601888695399c8062867844",
+      "rows": 210,
+      "source": "https://1click.chaindefuser.com/v0/tokens",
+      "query_file": null,
+      "date_range": null,
+      "pulled_at_utc": "2026-11-02T07:57:54Z",
+      "query_sha256": null
+    }
+  ]
+}
