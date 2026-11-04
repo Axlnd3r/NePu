@@ -130,8 +130,8 @@ function Panel({ run, volumeNow }: { run: Run; volumeNow: number }) {
               }
             />
             <ReferenceLine y={1} stroke="var(--ink-2)" label={{ value: "CR = 1", position: "insideTopLeft", fontSize: 11, fill: "var(--ink-2)" }} />
-            <Area dataKey="band" name="p10 to p90" stroke="none" fill="var(--accent)" fillOpacity={0.12} isAnimationActive={false} />
-            <Line dataKey="p50" name="median" stroke="var(--accent)" strokeWidth={2} dot={false} isAnimationActive={false} />
+            <Area dataKey="band" name="p10 to p90" stroke="none" fill="var(--cat-1)" fillOpacity={0.14} isAnimationActive={false} />
+            <Line dataKey="p50" name="median" stroke="var(--cat-1)" strokeWidth={2} dot={false} isAnimationActive={false} />
           </ComposedChart>
         </ResponsiveContainer>
       </div>

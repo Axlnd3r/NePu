@@ -207,9 +207,9 @@ export default function Overview() {
           format="ratio"
           markers={markers}
           series={[
-            { key: "cr_float_7", label: "7 days", color: "var(--accent-light)", width: 1.5 },
-            { key: "cr_float_30", label: "30 days", color: "var(--accent)" },
-            { key: "cr_float_90", label: "90 days", color: "var(--accent-deep)" },
+            { key: "cr_float_7", label: "7 days", color: "var(--cat-2)", width: 1.5 },
+            { key: "cr_float_30", label: "30 days", color: "var(--cat-1)" },
+            { key: "cr_float_90", label: "90 days", color: "var(--cat-3)" },
           ]}
         />
         <MarkerList markers={markers} />

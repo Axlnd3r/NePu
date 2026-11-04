@@ -75,8 +75,8 @@ export default function TokenEconomics() {
           markers={markers}
           series={[
             { key: "issuance", label: "Gross issuance", color: "var(--neutral-series)" },
-            { key: "buyback", label: "Buyback wallet inflow", color: "var(--series-2)" },
-            { key: "burn", label: "Gas burn", color: "var(--series-3)" },
+            { key: "buyback", label: "Buyback wallet inflow", color: "var(--cat-1)" },
+            { key: "burn", label: "Gas burn", color: "var(--cat-2)" },
           ]}
         />
         <MarkerList markers={markers} />
@@ -114,7 +114,7 @@ export default function TokenEconomics() {
           format="ratio"
           markers={viewMarkers}
           series={[
-            { key: "cr_float_30", label: "CR_float (buyback + burn)", color: "var(--accent)" },
+            { key: "cr_float_30", label: "CR_float (buyback + burn)", color: "var(--cat-1)" },
             { key: "cr_supply_30", label: "CR_supply (burn only)", color: "var(--neutral-series)" },
           ]}
         />

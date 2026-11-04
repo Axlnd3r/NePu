@@ -99,7 +99,7 @@ export default function Intents() {
           rows: volume.slice(-30).map((r) => [r.date, r.volume === null ? null : usd(r.volume)]),
         }}
       >
-        <TimeChart ariaLabel="Intents volume, 7-day mean" data={volume} format="usd" markers={volMarkers} series={[{ key: "volume", label: "Volume", color: "var(--neutral-series)" }]} />
+        <TimeChart ariaLabel="Intents volume, 7-day mean" data={volume} format="usd" markers={volMarkers} series={[{ key: "volume", label: "Volume", color: "var(--cat-1)" }]} />
         <MarkerList markers={volMarkers} />
       </ChartCard>
 
@@ -122,7 +122,7 @@ export default function Intents() {
           format="bps"
           series={[
             { key: "all", label: "All protocol revenue", color: "var(--neutral-series)" },
-            { key: "buyback", label: "Reached buyback wallet", color: "var(--accent)" },
+            { key: "buyback", label: "Reached buyback wallet", color: "var(--cat-1)" },
           ]}
         />
       </ChartCard>
@@ -174,8 +174,8 @@ export default function Intents() {
           format="ratio"
           markers={weekMarkers}
           series={[
-            { key: "hhi_channel", label: "Channels", color: "var(--series-2)" },
-            { key: "hhi_asset", label: "Origin assets", color: "var(--series-3)" },
+            { key: "hhi_channel", label: "Channels", color: "var(--cat-1)" },
+            { key: "hhi_asset", label: "Origin assets", color: "var(--cat-2)" },
           ]}
         />
         <MarkerList markers={weekMarkers} />
@@ -199,8 +199,8 @@ export default function Intents() {
           format="pct"
           markers={weekMarkers}
           series={[
-            { key: "zec", label: "ZEC", color: "var(--series-2)" },
-            { key: "stable", label: "Stablecoins", color: "var(--series-3)" },
+            { key: "zec", label: "ZEC", color: "var(--cat-1)" },
+            { key: "stable", label: "Stablecoins", color: "var(--cat-2)" },
           ]}
         />
         <MarkerList markers={weekMarkers} />

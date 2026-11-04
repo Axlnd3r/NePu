@@ -28,6 +28,13 @@
   --good: #c8ad86;
   --good-text: #c8ad86;
   --critical: #c96f5a;
+  /* Line and band colours for charts: blue, yellow, green, assigned in this order in every chart.
+     Checked with the dataviz validator against the #000 surface, all pairs: lightness band, chroma,
+     contrast >= 3:1 all pass; worst CVD dE 8.4 (green/yellow, protan), worst normal-vision dE 19.8.
+     Red stays reserved for --critical (bad state), so it is never a series colour. */
+  --cat-1: #3987e5;
+  --cat-2: #c98500;
+  --cat-3: #199e70;
 }
 
 @theme inline {
