@@ -1,0 +1,2858 @@
+[
+ {
+  "key": "cr[0].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/450/cr_float_30",
+  "value": 0.07212798695046774
+ },
+ {
+  "key": "cr[0].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/450/cr_float_90",
+  "value": 0.08511135512234932
+ },
+ {
+  "key": "cr[1].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/451/cr_float_30",
+  "value": 0.07286341594270289
+ },
+ {
+  "key": "cr[1].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/451/cr_float_90",
+  "value": 0.08421946331900189
+ },
+ {
+  "key": "cr[2].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/452/cr_float_30",
+  "value": 0.07332684731803192
+ },
+ {
+  "key": "cr[2].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/452/cr_float_90",
+  "value": 0.08456253552019635
+ },
+ {
+  "key": "cr[3].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/453/cr_float_30",
+  "value": 0.07238801077997241
+ },
+ {
+  "key": "cr[3].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/453/cr_float_90",
+  "value": 0.08435188020870442
+ },
+ {
+  "key": "cr[4].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/454/cr_float_30",
+  "value": 0.07274878686233359
+ },
+ {
+  "key": "cr[4].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/454/cr_float_90",
+  "value": 0.08498592314977357
+ },
+ {
+  "key": "cr[5].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/455/cr_float_30",
+  "value": 0.07314596215618505
+ },
+ {
+  "key": "cr[5].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/455/cr_float_90",
+  "value": 0.08554694303434923
+ },
+ {
+  "key": "cr[6].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/456/cr_float_30",
+  "value": 0.07465940292599378
+ },
+ {
+  "key": "cr[6].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/456/cr_float_90",
+  "value": 0.08517092909956249
+ },
+ {
+  "key": "cr[7].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/457/cr_float_30",
+  "value": 0.07609314403828778
+ },
+ {
+  "key": "cr[7].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/457/cr_float_90",
+  "value": 0.08527097565070385
+ },
+ {
+  "key": "cr[8].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/458/cr_float_30",
+  "value": 0.07740646266003376
+ },
+ {
+  "key": "cr[8].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/458/cr_float_90",
+  "value": 0.08568098925797354
+ },
+ {
+  "key": "cr[9].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/459/cr_float_30",
+  "value": 0.0783654020804783
+ },
+ {
+  "key": "cr[9].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/459/cr_float_90",
+  "value": 0.08602666517176565
+ },
+ {
+  "key": "cr[10].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/460/cr_float_30",
+  "value": 0.07700172725966094
+ },
+ {
+  "key": "cr[10].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/460/cr_float_90",
+  "value": 0.08533251718074603
+ },
+ {
+  "key": "cr[11].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/461/cr_float_30",
+  "value": 0.07669607063860169
+ },
+ {
+  "key": "cr[11].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/461/cr_float_90",
+  "value": 0.08513728859180623
+ },
+ {
+  "key": "cr[12].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/462/cr_float_30",
+  "value": 0.07489248433818833
+ },
+ {
+  "key": "cr[12].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/462/cr_float_90",
+  "value": 0.0852265088926918
+ },
+ {
+  "key": "cr[13].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/463/cr_float_30",
+  "value": 0.07460282122184109
+ },
+ {
+  "key": "cr[13].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/463/cr_float_90",
+  "value": 0.08472767080700745
+ },
+ {
+  "key": "cr[14].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/464/cr_float_30",
+  "value": 0.07556480692642077
+ },
+ {
+  "key": "cr[14].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/464/cr_float_90",
+  "value": 0.08488563011779603
+ },
+ {
+  "key": "cr[15].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/465/cr_float_30",
+  "value": 0.07642684038544963
+ },
+ {
+  "key": "cr[15].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/465/cr_float_90",
+  "value": 0.08488389332254939
+ },
+ {
+  "key": "cr[16].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/466/cr_float_30",
+  "value": 0.0831346955644971
+ },
+ {
+  "key": "cr[16].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/466/cr_float_90",
+  "value": 0.08722405948145377
+ },
+ {
+  "key": "cr[17].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/467/cr_float_30",
+  "value": 0.08597417365315896
+ },
+ {
+  "key": "cr[17].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/467/cr_float_90",
+  "value": 0.08791721822079647
+ },
+ {
+  "key": "cr[18].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/468/cr_float_30",
+  "value": 0.09033768439842475
+ },
+ {
+  "key": "cr[18].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/468/cr_float_90",
+  "value": 0.08908096254292508
+ },
+ {
+  "key": "cr[19].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/469/cr_float_30",
+  "value": 0.09370374841183722
+ },
+ {
+  "key": "cr[19].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/469/cr_float_90",
+  "value": 0.09041531157411369
+ },
+ {
+  "key": "cr[20].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/470/cr_float_30",
+  "value": 0.09647547113107621
+ },
+ {
+  "key": "cr[20].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/470/cr_float_90",
+  "value": 0.0905593743546228
+ },
+ {
+  "key": "cr[21].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/471/cr_float_30",
+  "value": 0.10104705083662062
+ },
+ {
+  "key": "cr[21].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/471/cr_float_90",
+  "value": 0.09021921325390743
+ },
+ {
+  "key": "cr[22].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/472/cr_float_30",
+  "value": 0.1032397053951262
+ },
+ {
+  "key": "cr[22].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/472/cr_float_90",
+  "value": 0.09035903554327952
+ },
+ {
+  "key": "cr[23].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/473/cr_float_30",
+  "value": 0.10585845339955272
+ },
+ {
+  "key": "cr[23].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/473/cr_float_90",
+  "value": 0.09162020910228885
+ },
+ {
+  "key": "cr[24].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/474/cr_float_30",
+  "value": 0.10775502965655887
+ },
+ {
+  "key": "cr[24].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/474/cr_float_90",
+  "value": 0.09243283084562913
+ },
+ {
+  "key": "cr[25].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/475/cr_float_30",
+  "value": 0.10946370552767752
+ },
+ {
+  "key": "cr[25].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/475/cr_float_90",
+  "value": 0.09236281245136078
+ },
+ {
+  "key": "cr[26].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/476/cr_float_30",
+  "value": 0.10900790505499287
+ },
+ {
+  "key": "cr[26].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/476/cr_float_90",
+  "value": 0.09227074022618793
+ },
+ {
+  "key": "cr[27].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/477/cr_float_30",
+  "value": 0.11051396877285617
+ },
+ {
+  "key": "cr[27].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/477/cr_float_90",
+  "value": 0.09225306062249504
+ },
+ {
+  "key": "cr[28].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/478/cr_float_30",
+  "value": 0.11117464254514405
+ },
+ {
+  "key": "cr[28].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/478/cr_float_90",
+  "value": 0.09205350992389115
+ },
+ {
+  "key": "cr[29].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/479/cr_float_30",
+  "value": 0.11352872325160888
+ },
+ {
+  "key": "cr[29].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/479/cr_float_90",
+  "value": 0.09229899942302158
+ },
+ {
+  "key": "cr[30].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/480/cr_float_30",
+  "value": 0.11610390528931032
+ },
+ {
+  "key": "cr[30].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/480/cr_float_90",
+  "value": 0.09068945068880942
+ },
+ {
+  "key": "cr[31].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/481/cr_float_30",
+  "value": 0.12363229773589683
+ },
+ {
+  "key": "cr[31].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/481/cr_float_90",
+  "value": 0.08775535030099298
+ },
+ {
+  "key": "cr[32].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/482/cr_float_30",
+  "value": 0.13516314339424718
+ },
+ {
+  "key": "cr[32].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/482/cr_float_90",
+  "value": 0.09131410993408134
+ },
+ {
+  "key": "cr[33].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/483/cr_float_30",
+  "value": 0.13700848079489972
+ },
+ {
+  "key": "cr[33].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/483/cr_float_90",
+  "value": 0.09178649653616762
+ },
+ {
+  "key": "cr[34].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/484/cr_float_30",
+  "value": 0.13998331261911998
+ },
+ {
+  "key": "cr[34].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/484/cr_float_90",
+  "value": 0.09316563635418718
+ },
+ {
+  "key": "cr[35].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/485/cr_float_30",
+  "value": 0.1408088156263055
+ },
+ {
+  "key": "cr[35].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/485/cr_float_90",
+  "value": 0.09328559340111038
+ },
+ {
+  "key": "cr[36].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/486/cr_float_30",
+  "value": 0.1429576637982078
+ },
+ {
+  "key": "cr[36].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/486/cr_float_90",
+  "value": 0.09342995797898143
+ },
+ {
+  "key": "cr[37].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/487/cr_float_30",
+  "value": 0.14472047246989064
+ },
+ {
+  "key": "cr[37].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/487/cr_float_90",
+  "value": 0.09423908933270989
+ },
+ {
+  "key": "cr[38].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/488/cr_float_30",
+  "value": 0.14578619232776205
+ },
+ {
+  "key": "cr[38].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/488/cr_float_90",
+  "value": 0.0948291630092564
+ },
+ {
+  "key": "cr[39].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/489/cr_float_30",
+  "value": 0.14610160359303448
+ },
+ {
+  "key": "cr[39].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/489/cr_float_90",
+  "value": 0.09575865798615663
+ },
+ {
+  "key": "cr[40].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/490/cr_float_30",
+  "value": 0.14929029247409176
+ },
+ {
+  "key": "cr[40].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/490/cr_float_90",
+  "value": 0.0963572701111431
+ },
+ {
+  "key": "cr[41].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/491/cr_float_30",
+  "value": 0.15055452037591305
+ },
+ {
+  "key": "cr[41].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/491/cr_float_90",
+  "value": 0.09639307741132337
+ },
+ {
+  "key": "cr[42].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/492/cr_float_30",
+  "value": 0.1531474724392328
+ },
+ {
+  "key": "cr[42].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/492/cr_float_90",
+  "value": 0.09713538843800093
+ },
+ {
+  "key": "cr[43].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/493/cr_float_30",
+  "value": 0.15451509849182893
+ },
+ {
+  "key": "cr[43].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/493/cr_float_90",
+  "value": 0.0976449460008224
+ },
+ {
+  "key": "cr[44].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/494/cr_float_30",
+  "value": 0.15700761259498994
+ },
+ {
+  "key": "cr[44].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/494/cr_float_90",
+  "value": 0.098728904554398
+ },
+ {
+  "key": "cr[45].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/495/cr_float_30",
+  "value": 0.16392860680520463
+ },
+ {
+  "key": "cr[45].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/495/cr_float_90",
+  "value": 0.10178797390855716
+ },
+ {
+  "key": "cr[46].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/496/cr_float_30",
+  "value": 0.16419291625966423
+ },
+ {
+  "key": "cr[46].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/496/cr_float_90",
+  "value": 0.10430030895885262
+ },
+ {
+  "key": "cr[47].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/497/cr_float_30",
+  "value": 0.1623837069309186
+ },
+ {
+  "key": "cr[47].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/497/cr_float_90",
+  "value": 0.10507654979669302
+ },
+ {
+  "key": "cr[48].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/498/cr_float_30",
+  "value": 0.15625194968854936
+ },
+ {
+  "key": "cr[48].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/498/cr_float_90",
+  "value": 0.10527010063298753
+ },
+ {
+  "key": "cr[49].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/499/cr_float_30",
+  "value": 0.15767559874919918
+ },
+ {
+  "key": "cr[49].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/499/cr_float_90",
+  "value": 0.10760163109364461
+ },
+ {
+  "key": "cr[50].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/500/cr_float_30",
+  "value": 0.15841788430829926
+ },
+ {
+  "key": "cr[50].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/500/cr_float_90",
+  "value": 0.10864722015427543
+ },
+ {
+  "key": "cr[51].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/501/cr_float_30",
+  "value": 0.1606028898105696
+ },
+ {
+  "key": "cr[51].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/501/cr_float_90",
+  "value": 0.11015389392822832
+ },
+ {
+  "key": "cr[52].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/502/cr_float_30",
+  "value": 0.16139344159937422
+ },
+ {
+  "key": "cr[52].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/502/cr_float_90",
+  "value": 0.11149869451922988
+ },
+ {
+  "key": "cr[53].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/503/cr_float_30",
+  "value": 0.16182079809208663
+ },
+ {
+  "key": "cr[53].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/503/cr_float_90",
+  "value": 0.11286973401401276
+ },
+ {
+  "key": "cr[54].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/504/cr_float_30",
+  "value": 0.15852548002523384
+ },
+ {
+  "key": "cr[54].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/504/cr_float_90",
+  "value": 0.11273784971748703
+ },
+ {
+  "key": "cr[55].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/505/cr_float_30",
+  "value": 0.15901024317848142
+ },
+ {
+  "key": "cr[55].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/505/cr_float_90",
+  "value": 0.11337851579272991
+ },
+ {
+  "key": "cr[56].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/506/cr_float_30",
+  "value": 0.15893620485359664
+ },
+ {
+  "key": "cr[56].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/506/cr_float_90",
+  "value": 0.11371777251450507
+ },
+ {
+  "key": "cr[57].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/507/cr_float_30",
+  "value": 0.16017971720286195
+ },
+ {
+  "key": "cr[57].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/507/cr_float_90",
+  "value": 0.11439136607958326
+ },
+ {
+  "key": "cr[58].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/508/cr_float_30",
+  "value": 0.1627607697271037
+ },
+ {
+  "key": "cr[58].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/508/cr_float_90",
+  "value": 0.11596953764795817
+ },
+ {
+  "key": "cr[59].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/509/cr_float_30",
+  "value": 0.1659707046367874
+ },
+ {
+  "key": "cr[59].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/509/cr_float_90",
+  "value": 0.116893564032297
+ },
+ {
+  "key": "cr[60].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/510/cr_float_30",
+  "value": 0.16293949822834836
+ },
+ {
+  "key": "cr[60].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/510/cr_float_90",
+  "value": 0.11711992288600799
+ },
+ {
+  "key": "cr[61].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/511/cr_float_30",
+  "value": 0.15509027303216003
+ },
+ {
+  "key": "cr[61].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/511/cr_float_90",
+  "value": 0.11722584349925971
+ },
+ {
+  "key": "cr[62].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/512/cr_float_30",
+  "value": 0.1427617490618187
+ },
+ {
+  "key": "cr[62].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/512/cr_float_90",
+  "value": 0.11714525089898914
+ },
+ {
+  "key": "cr[63].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/513/cr_float_30",
+  "value": 0.14242081151286123
+ },
+ {
+  "key": "cr[63].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/513/cr_float_90",
+  "value": 0.1173145087624143
+ },
+ {
+  "key": "cr[64].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/514/cr_float_30",
+  "value": 0.13917165220331051
+ },
+ {
+  "key": "cr[64].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/514/cr_float_90",
+  "value": 0.11732335056980672
+ },
+ {
+  "key": "cr[65].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/515/cr_float_30",
+  "value": 0.13794462444110972
+ },
+ {
+  "key": "cr[65].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/515/cr_float_90",
+  "value": 0.1175395131989672
+ },
+ {
+  "key": "cr[66].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/516/cr_float_30",
+  "value": 0.14130761614332701
+ },
+ {
+  "key": "cr[66].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/516/cr_float_90",
+  "value": 0.11965493635927323
+ },
+ {
+  "key": "cr[67].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/517/cr_float_30",
+  "value": 0.14274282229823848
+ },
+ {
+  "key": "cr[67].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/517/cr_float_90",
+  "value": 0.12125639276832868
+ },
+ {
+  "key": "cr[68].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/518/cr_float_30",
+  "value": 0.14310842897641038
+ },
+ {
+  "key": "cr[68].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/518/cr_float_90",
+  "value": 0.12215577031896914
+ },
+ {
+  "key": "cr[69].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/519/cr_float_30",
+  "value": 0.14564358778814196
+ },
+ {
+  "key": "cr[69].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/519/cr_float_90",
+  "value": 0.1235753203379002
+ },
+ {
+  "key": "cr[70].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/520/cr_float_30",
+  "value": 0.14389248064524407
+ },
+ {
+  "key": "cr[70].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/520/cr_float_90",
+  "value": 0.1234406433798336
+ },
+ {
+  "key": "cr[71].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/521/cr_float_30",
+  "value": 0.14338303138236114
+ },
+ {
+  "key": "cr[71].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/521/cr_float_90",
+  "value": 0.12360298695102268
+ },
+ {
+  "key": "cr[72].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/522/cr_float_30",
+  "value": 0.14801016469445707
+ },
+ {
+  "key": "cr[72].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/522/cr_float_90",
+  "value": 0.1254416769359982
+ },
+ {
+  "key": "cr[73].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/523/cr_float_30",
+  "value": 0.14935316455782724
+ },
+ {
+  "key": "cr[73].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/523/cr_float_90",
+  "value": 0.12643930649389928
+ },
+ {
+  "key": "cr[74].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/524/cr_float_30",
+  "value": 0.14555737014643053
+ },
+ {
+  "key": "cr[74].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/524/cr_float_90",
+  "value": 0.12610910946632856
+ },
+ {
+  "key": "cr[75].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/525/cr_float_30",
+  "value": 0.13846385089789265
+ },
+ {
+  "key": "cr[75].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/525/cr_float_90",
+  "value": 0.12630709952957075
+ },
+ {
+  "key": "cr[76].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/526/cr_float_30",
+  "value": 0.1317083683388501
+ },
+ {
+  "key": "cr[76].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/526/cr_float_90",
+  "value": 0.12636556544826252
+ },
+ {
+  "key": "cr[77].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/527/cr_float_30",
+  "value": 0.12999560219810385
+ },
+ {
+  "key": "cr[77].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/527/cr_float_90",
+  "value": 0.12601945860899713
+ },
+ {
+  "key": "cr[78].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/528/cr_float_30",
+  "value": 0.13159048102089735
+ },
+ {
+  "key": "cr[78].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/528/cr_float_90",
+  "value": 0.12608679369877568
+ },
+ {
+  "key": "cr[79].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/529/cr_float_30",
+  "value": 0.1276456313002718
+ },
+ {
+  "key": "cr[79].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/529/cr_float_90",
+  "value": 0.126342535148392
+ },
+ {
+  "key": "cr[80].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/530/cr_float_30",
+  "value": 0.12434645580949183
+ },
+ {
+  "key": "cr[80].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/530/cr_float_90",
+  "value": 0.1265133817012235
+ },
+ {
+  "key": "cr[81].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/531/cr_float_30",
+  "value": 0.12058564267270944
+ },
+ {
+  "key": "cr[81].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/531/cr_float_90",
+  "value": 0.12739926730698464
+ },
+ {
+  "key": "cr[82].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/532/cr_float_30",
+  "value": 0.11775112693353458
+ },
+ {
+  "key": "cr[82].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/532/cr_float_90",
+  "value": 0.12741712550613363
+ },
+ {
+  "key": "cr[83].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/533/cr_float_30",
+  "value": 0.11652094055495861
+ },
+ {
+  "key": "cr[83].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/533/cr_float_90",
+  "value": 0.12801455929619018
+ },
+ {
+  "key": "cr[84].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/534/cr_float_30",
+  "value": 0.11932008876982596
+ },
+ {
+  "key": "cr[84].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/534/cr_float_90",
+  "value": 0.12858030892149308
+ },
+ {
+  "key": "cr[85].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/535/cr_float_30",
+  "value": 0.12108960249460846
+ },
+ {
+  "key": "cr[85].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/535/cr_float_90",
+  "value": 0.12978253967582667
+ },
+ {
+  "key": "cr[86].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/536/cr_float_30",
+  "value": 0.12206784833116426
+ },
+ {
+  "key": "cr[86].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/536/cr_float_90",
+  "value": 0.13004567574631679
+ },
+ {
+  "key": "cr[87].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/537/cr_float_30",
+  "value": 0.12230823833655873
+ },
+ {
+  "key": "cr[87].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/537/cr_float_90",
+  "value": 0.13100723464738645
+ },
+ {
+  "key": "cr[88].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/538/cr_float_30",
+  "value": 0.12188929621802577
+ },
+ {
+  "key": "cr[88].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/538/cr_float_90",
+  "value": 0.13194806558752065
+ },
+ {
+  "key": "cr[89].cr30",
+  "file": "coverage.json",
+  "pointer": "/series/539/cr_float_30",
+  "value": 0.12023308721991423
+ },
+ {
+  "key": "cr[89].cr90",
+  "file": "coverage.json",
+  "pointer": "/series/539/cr_float_90",
+  "value": 0.13313289424881036
+ },
+ {
+  "key": "issuance[0]",
+  "file": "coverage.json",
+  "pointer": "/series/450/issuance_gross_near",
+  "value": 81220.6055176057
+ },
+ {
+  "key": "issuance[1]",
+  "file": "coverage.json",
+  "pointer": "/series/451/issuance_gross_near",
+  "value": 81863.98484138594
+ },
+ {
+  "key": "issuance[2]",
+  "file": "coverage.json",
+  "pointer": "/series/452/issuance_gross_near",
+  "value": 108733.77526655326
+ },
+ {
+  "key": "issuance[3]",
+  "file": "coverage.json",
+  "pointer": "/series/453/issuance_gross_near",
+  "value": 82302.1568699588
+ },
+ {
+  "key": "issuance[4]",
+  "file": "coverage.json",
+  "pointer": "/series/454/issuance_gross_near",
+  "value": 82149.9588337116
+ },
+ {
+  "key": "issuance[5]",
+  "file": "coverage.json",
+  "pointer": "/series/455/issuance_gross_near",
+  "value": 81158.3268527602
+ },
+ {
+  "key": "issuance[6]",
+  "file": "coverage.json",
+  "pointer": "/series/456/issuance_gross_near",
+  "value": 108337.66767256183
+ },
+ {
+  "key": "issuance[7]",
+  "file": "coverage.json",
+  "pointer": "/series/457/issuance_gross_near",
+  "value": 81581.33870964416
+ },
+ {
+  "key": "issuance[8]",
+  "file": "coverage.json",
+  "pointer": "/series/458/issuance_gross_near",
+  "value": 81933.56487408215
+ },
+ {
+  "key": "issuance[9]",
+  "file": "coverage.json",
+  "pointer": "/series/459/issuance_gross_near",
+  "value": 82843.51508275892
+ },
+ {
+  "key": "issuance[10]",
+  "file": "coverage.json",
+  "pointer": "/series/460/issuance_gross_near",
+  "value": 108674.64375220443
+ },
+ {
+  "key": "issuance[11]",
+  "file": "coverage.json",
+  "pointer": "/series/461/issuance_gross_near",
+  "value": 80870.76445626559
+ },
+ {
+  "key": "issuance[12]",
+  "file": "coverage.json",
+  "pointer": "/series/462/issuance_gross_near",
+  "value": 83130.00082598714
+ },
+ {
+  "key": "issuance[13]",
+  "file": "coverage.json",
+  "pointer": "/series/463/issuance_gross_near",
+  "value": 81658.19108609814
+ },
+ {
+  "key": "issuance[14]",
+  "file": "coverage.json",
+  "pointer": "/series/464/issuance_gross_near",
+  "value": 108448.8250308991
+ },
+ {
+  "key": "issuance[15]",
+  "file": "coverage.json",
+  "pointer": "/series/465/issuance_gross_near",
+  "value": 81971.53146945471
+ },
+ {
+  "key": "issuance[16]",
+  "file": "coverage.json",
+  "pointer": "/series/466/issuance_gross_near",
+  "value": 81337.74219009379
+ },
+ {
+  "key": "issuance[17]",
+  "file": "coverage.json",
+  "pointer": "/series/467/issuance_gross_near",
+  "value": 108549.87064088444
+ },
+ {
+  "key": "issuance[18]",
+  "file": "coverage.json",
+  "pointer": "/series/468/issuance_gross_near",
+  "value": 83341.32804486236
+ },
+ {
+  "key": "issuance[19]",
+  "file": "coverage.json",
+  "pointer": "/series/469/issuance_gross_near",
+  "value": 83156.08073201975
+ },
+ {
+  "key": "issuance[20]",
+  "file": "coverage.json",
+  "pointer": "/series/470/issuance_gross_near",
+  "value": 81647.06186513802
+ },
+ {
+  "key": "issuance[21]",
+  "file": "coverage.json",
+  "pointer": "/series/471/issuance_gross_near",
+  "value": 108456.59227090854
+ },
+ {
+  "key": "issuance[22]",
+  "file": "coverage.json",
+  "pointer": "/series/472/issuance_gross_near",
+  "value": 81514.97898177501
+ },
+ {
+  "key": "issuance[23]",
+  "file": "coverage.json",
+  "pointer": "/series/473/issuance_gross_near",
+  "value": 81368.48313587774
+ },
+ {
+  "key": "issuance[24]",
+  "file": "coverage.json",
+  "pointer": "/series/474/issuance_gross_near",
+  "value": 82504.5552258148
+ },
+ {
+  "key": "issuance[25]",
+  "file": "coverage.json",
+  "pointer": "/series/475/issuance_gross_near",
+  "value": 109829.17987013259
+ },
+ {
+  "key": "issuance[26]",
+  "file": "coverage.json",
+  "pointer": "/series/476/issuance_gross_near",
+  "value": 82253.6142276751
+ },
+ {
+  "key": "issuance[27]",
+  "file": "coverage.json",
+  "pointer": "/series/477/issuance_gross_near",
+  "value": 82862.45375512348
+ },
+ {
+  "key": "issuance[28]",
+  "file": "coverage.json",
+  "pointer": "/series/478/issuance_gross_near",
+  "value": 83049.27544021816
+ },
+ {
+  "key": "issuance[29]",
+  "file": "coverage.json",
+  "pointer": "/series/479/issuance_gross_near",
+  "value": 110579.59971983367
+ },
+ {
+  "key": "issuance[30]",
+  "file": "coverage.json",
+  "pointer": "/series/480/issuance_gross_near",
+  "value": 83410.07260910772
+ },
+ {
+  "key": "issuance[31]",
+  "file": "coverage.json",
+  "pointer": "/series/481/issuance_gross_near",
+  "value": 85634.57864315534
+ },
+ {
+  "key": "issuance[32]",
+  "file": "coverage.json",
+  "pointer": "/series/482/issuance_gross_near",
+  "value": 83612.36532189428
+ },
+ {
+  "key": "issuance[33]",
+  "file": "coverage.json",
+  "pointer": "/series/483/issuance_gross_near",
+  "value": 82698.4167562365
+ },
+ {
+  "key": "issuance[34]",
+  "file": "coverage.json",
+  "pointer": "/series/484/issuance_gross_near",
+  "value": 110233.16343631092
+ },
+ {
+  "key": "issuance[35]",
+  "file": "coverage.json",
+  "pointer": "/series/485/issuance_gross_near",
+  "value": 82957.09827817224
+ },
+ {
+  "key": "issuance[36]",
+  "file": "coverage.json",
+  "pointer": "/series/486/issuance_gross_near",
+  "value": 82713.10998906412
+ },
+ {
+  "key": "issuance[37]",
+  "file": "coverage.json",
+  "pointer": "/series/487/issuance_gross_near",
+  "value": 82820.98133206335
+ },
+ {
+  "key": "issuance[38]",
+  "file": "coverage.json",
+  "pointer": "/series/488/issuance_gross_near",
+  "value": 82357.38983770703
+ },
+ {
+  "key": "issuance[39]",
+  "file": "coverage.json",
+  "pointer": "/series/489/issuance_gross_near",
+  "value": 110991.14391065495
+ },
+ {
+  "key": "issuance[40]",
+  "file": "coverage.json",
+  "pointer": "/series/490/issuance_gross_near",
+  "value": 82643.05102075615
+ },
+ {
+  "key": "issuance[41]",
+  "file": "coverage.json",
+  "pointer": "/series/491/issuance_gross_near",
+  "value": 82606.5880960733
+ },
+ {
+  "key": "issuance[42]",
+  "file": "coverage.json",
+  "pointer": "/series/492/issuance_gross_near",
+  "value": 82284.93316469023
+ },
+ {
+  "key": "issuance[43]",
+  "file": "coverage.json",
+  "pointer": "/series/493/issuance_gross_near",
+  "value": 110219.13186699174
+ },
+ {
+  "key": "issuance[44]",
+  "file": "coverage.json",
+  "pointer": "/series/494/issuance_gross_near",
+  "value": 82603.13510114292
+ },
+ {
+  "key": "issuance[45]",
+  "file": "coverage.json",
+  "pointer": "/series/495/issuance_gross_near",
+  "value": 82454.71630740007
+ },
+ {
+  "key": "issuance[46]",
+  "file": "coverage.json",
+  "pointer": "/series/496/issuance_gross_near",
+  "value": 81548.26615988
+ },
+ {
+  "key": "issuance[47]",
+  "file": "coverage.json",
+  "pointer": "/series/497/issuance_gross_near",
+  "value": 108194.23060681197
+ },
+ {
+  "key": "issuance[48]",
+  "file": "coverage.json",
+  "pointer": "/series/498/issuance_gross_near",
+  "value": 82511.9366479342
+ },
+ {
+  "key": "issuance[49]",
+  "file": "coverage.json",
+  "pointer": "/series/499/issuance_gross_near",
+  "value": 81490.75838114208
+ },
+ {
+  "key": "issuance[50]",
+  "file": "coverage.json",
+  "pointer": "/series/500/issuance_gross_near",
+  "value": 109411.05705085275
+ },
+ {
+  "key": "issuance[51]",
+  "file": "coverage.json",
+  "pointer": "/series/501/issuance_gross_near",
+  "value": 82251.12645309746
+ },
+ {
+  "key": "issuance[52]",
+  "file": "coverage.json",
+  "pointer": "/series/502/issuance_gross_near",
+  "value": 81110.08257633865
+ },
+ {
+  "key": "issuance[53]",
+  "file": "coverage.json",
+  "pointer": "/series/503/issuance_gross_near",
+  "value": 80200.96839988441
+ },
+ {
+  "key": "issuance[54]",
+  "file": "coverage.json",
+  "pointer": "/series/504/issuance_gross_near",
+  "value": 105988.56543256134
+ },
+ {
+  "key": "issuance[55]",
+  "file": "coverage.json",
+  "pointer": "/series/505/issuance_gross_near",
+  "value": 79612.68442481016
+ },
+ {
+  "key": "issuance[56]",
+  "file": "coverage.json",
+  "pointer": "/series/506/issuance_gross_near",
+  "value": 106352.77148424028
+ },
+ {
+  "key": "issuance[57]",
+  "file": "coverage.json",
+  "pointer": "/series/507/issuance_gross_near",
+  "value": 80600.9238179027
+ },
+ {
+  "key": "issuance[58]",
+  "file": "coverage.json",
+  "pointer": "/series/508/issuance_gross_near",
+  "value": 82834.46644935782
+ },
+ {
+  "key": "issuance[59]",
+  "file": "coverage.json",
+  "pointer": "/series/509/issuance_gross_near",
+  "value": 82046.49747656446
+ },
+ {
+  "key": "issuance[60]",
+  "file": "coverage.json",
+  "pointer": "/series/510/issuance_gross_near",
+  "value": 105823.97399043811
+ },
+ {
+  "key": "issuance[61]",
+  "file": "coverage.json",
+  "pointer": "/series/511/issuance_gross_near",
+  "value": 78852.89681167444
+ },
+ {
+  "key": "issuance[62]",
+  "file": "coverage.json",
+  "pointer": "/series/512/issuance_gross_near",
+  "value": 105239.75492028419
+ },
+ {
+  "key": "issuance[63]",
+  "file": "coverage.json",
+  "pointer": "/series/513/issuance_gross_near",
+  "value": 78989.07790299176
+ },
+ {
+  "key": "issuance[64]",
+  "file": "coverage.json",
+  "pointer": "/series/514/issuance_gross_near",
+  "value": 79052.95965717874
+ },
+ {
+  "key": "issuance[65]",
+  "file": "coverage.json",
+  "pointer": "/series/515/issuance_gross_near",
+  "value": 106028.04462040456
+ },
+ {
+  "key": "issuance[66]",
+  "file": "coverage.json",
+  "pointer": "/series/516/issuance_gross_near",
+  "value": 79356.56875424301
+ },
+ {
+  "key": "issuance[67]",
+  "file": "coverage.json",
+  "pointer": "/series/517/issuance_gross_near",
+  "value": 105596.42810357972
+ },
+ {
+  "key": "issuance[68]",
+  "file": "coverage.json",
+  "pointer": "/series/518/issuance_gross_near",
+  "value": 79654.5460128206
+ },
+ {
+  "key": "issuance[69]",
+  "file": "coverage.json",
+  "pointer": "/series/519/issuance_gross_near",
+  "value": 79615.37798473597
+ },
+ {
+  "key": "issuance[70]",
+  "file": "coverage.json",
+  "pointer": "/series/520/issuance_gross_near",
+  "value": 106163.78960728255
+ },
+ {
+  "key": "issuance[71]",
+  "file": "coverage.json",
+  "pointer": "/series/521/issuance_gross_near",
+  "value": 79645.15582881542
+ },
+ {
+  "key": "issuance[72]",
+  "file": "coverage.json",
+  "pointer": "/series/522/issuance_gross_near",
+  "value": 95338.7716647471
+ },
+ {
+  "key": "issuance[73]",
+  "file": "coverage.json",
+  "pointer": "/series/523/issuance_gross_near",
+  "value": 80224.63863858816
+ },
+ {
+  "key": "issuance[74]",
+  "file": "coverage.json",
+  "pointer": "/series/524/issuance_gross_near",
+  "value": 107081.80667071567
+ },
+ {
+  "key": "issuance[75]",
+  "file": "coverage.json",
+  "pointer": "/series/525/issuance_gross_near",
+  "value": 80366.3234819858
+ },
+ {
+  "key": "issuance[76]",
+  "file": "coverage.json",
+  "pointer": "/series/526/issuance_gross_near",
+  "value": 80129.826701426
+ },
+ {
+  "key": "issuance[77]",
+  "file": "coverage.json",
+  "pointer": "/series/527/issuance_gross_near",
+  "value": 106907.87155937855
+ },
+ {
+  "key": "issuance[78]",
+  "file": "coverage.json",
+  "pointer": "/series/528/issuance_gross_near",
+  "value": 80614.82224885159
+ },
+ {
+  "key": "issuance[79]",
+  "file": "coverage.json",
+  "pointer": "/series/529/issuance_gross_near",
+  "value": 80786.15852302601
+ },
+ {
+  "key": "issuance[80]",
+  "file": "coverage.json",
+  "pointer": "/series/530/issuance_gross_near",
+  "value": 105864.87441031438
+ },
+ {
+  "key": "issuance[81]",
+  "file": "coverage.json",
+  "pointer": "/series/531/issuance_gross_near",
+  "value": 78703.06076476457
+ },
+ {
+  "key": "issuance[82]",
+  "file": "coverage.json",
+  "pointer": "/series/532/issuance_gross_near",
+  "value": 102938.09761927734
+ },
+ {
+  "key": "issuance[83]",
+  "file": "coverage.json",
+  "pointer": "/series/533/issuance_gross_near",
+  "value": 77862.30097613565
+ },
+ {
+  "key": "issuance[84]",
+  "file": "coverage.json",
+  "pointer": "/series/534/issuance_gross_near",
+  "value": 103320.48500723336
+ },
+ {
+  "key": "issuance[85]",
+  "file": "coverage.json",
+  "pointer": "/series/535/issuance_gross_near",
+  "value": 84380.44664589727
+ },
+ {
+  "key": "issuance[86]",
+  "file": "coverage.json",
+  "pointer": "/series/536/issuance_gross_near",
+  "value": 78051.0561119557
+ },
+ {
+  "key": "issuance[87]",
+  "file": "coverage.json",
+  "pointer": "/series/537/issuance_gross_near",
+  "value": 104699.46204793677
+ },
+ {
+  "key": "issuance[88]",
+  "file": "coverage.json",
+  "pointer": "/series/538/issuance_gross_near",
+  "value": 78661.23084028326
+ },
+ {
+  "key": "issuance[89]",
+  "file": "coverage.json",
+  "pointer": "/series/539/issuance_gross_near",
+  "value": 78281.50470734491
+ },
+ {
+  "key": "buyback[0]",
+  "file": "coverage.json",
+  "pointer": "/series/450/buyback_near",
+  "value": 4822.063485163148
+ },
+ {
+  "key": "buyback[1]",
+  "file": "coverage.json",
+  "pointer": "/series/451/buyback_near",
+  "value": 5074.275422825944
+ },
+ {
+  "key": "buyback[2]",
+  "file": "coverage.json",
+  "pointer": "/series/452/buyback_near",
+  "value": 7636.764743772452
+ },
+ {
+  "key": "buyback[3]",
+  "file": "coverage.json",
+  "pointer": "/series/453/buyback_near",
+  "value": 4497.335758218891
+ },
+ {
+  "key": "buyback[4]",
+  "file": "coverage.json",
+  "pointer": "/series/454/buyback_near",
+  "value": 8810.984463035478
+ },
+ {
+  "key": "buyback[5]",
+  "file": "coverage.json",
+  "pointer": "/series/455/buyback_near",
+  "value": 5583.252329657553
+ },
+ {
+  "key": "buyback[6]",
+  "file": "coverage.json",
+  "pointer": "/series/456/buyback_near",
+  "value": 5985.282347476925
+ },
+ {
+  "key": "buyback[7]",
+  "file": "coverage.json",
+  "pointer": "/series/457/buyback_near",
+  "value": 6706.934673683136
+ },
+ {
+  "key": "buyback[8]",
+  "file": "coverage.json",
+  "pointer": "/series/458/buyback_near",
+  "value": 7429.531489924062
+ },
+ {
+  "key": "buyback[9]",
+  "file": "coverage.json",
+  "pointer": "/series/459/buyback_near",
+  "value": 6876.219015024952
+ },
+ {
+  "key": "buyback[10]",
+  "file": "coverage.json",
+  "pointer": "/series/460/buyback_near",
+  "value": 4910.8682172616245
+ },
+ {
+  "key": "buyback[11]",
+  "file": "coverage.json",
+  "pointer": "/series/461/buyback_near",
+  "value": 5734.194449044066
+ },
+ {
+  "key": "buyback[12]",
+  "file": "coverage.json",
+  "pointer": "/series/462/buyback_near",
+  "value": 3189.276142448769
+ },
+ {
+  "key": "buyback[13]",
+  "file": "coverage.json",
+  "pointer": "/series/463/buyback_near",
+  "value": 3433.260555742192
+ },
+ {
+  "key": "buyback[14]",
+  "file": "coverage.json",
+  "pointer": "/series/464/buyback_near",
+  "value": 9952.04243598401
+ },
+ {
+  "key": "buyback[15]",
+  "file": "coverage.json",
+  "pointer": "/series/465/buyback_near",
+  "value": 6117.720104427659
+ },
+ {
+  "key": "buyback[16]",
+  "file": "coverage.json",
+  "pointer": "/series/466/buyback_near",
+  "value": 23410.291982698604
+ },
+ {
+  "key": "buyback[17]",
+  "file": "coverage.json",
+  "pointer": "/series/467/buyback_near",
+  "value": 16694.962115958682
+ },
+ {
+  "key": "buyback[18]",
+  "file": "coverage.json",
+  "pointer": "/series/468/buyback_near",
+  "value": 24066.722817263682
+ },
+ {
+  "key": "buyback[19]",
+  "file": "coverage.json",
+  "pointer": "/series/469/buyback_near",
+  "value": 14818.15266257408
+ },
+ {
+  "key": "buyback[20]",
+  "file": "coverage.json",
+  "pointer": "/series/470/buyback_near",
+  "value": 11264.714984507067
+ },
+ {
+  "key": "buyback[21]",
+  "file": "coverage.json",
+  "pointer": "/series/471/buyback_near",
+  "value": 15202.611458543222
+ },
+ {
+  "key": "buyback[22]",
+  "file": "coverage.json",
+  "pointer": "/series/472/buyback_near",
+  "value": 9962.241634868667
+ },
+ {
+  "key": "buyback[23]",
+  "file": "coverage.json",
+  "pointer": "/series/473/buyback_near",
+  "value": 12253.761517846724
+ },
+ {
+  "key": "buyback[24]",
+  "file": "coverage.json",
+  "pointer": "/series/474/buyback_near",
+  "value": 10791.120400096523
+ },
+ {
+  "key": "buyback[25]",
+  "file": "coverage.json",
+  "pointer": "/series/475/buyback_near",
+  "value": 10365.5437936862
+ },
+ {
+  "key": "buyback[26]",
+  "file": "coverage.json",
+  "pointer": "/series/476/buyback_near",
+  "value": 6720.807534702588
+ },
+ {
+  "key": "buyback[27]",
+  "file": "coverage.json",
+  "pointer": "/series/477/buyback_near",
+  "value": 9467.997982588247
+ },
+ {
+  "key": "buyback[28]",
+  "file": "coverage.json",
+  "pointer": "/series/478/buyback_near",
+  "value": 7829.819722569198
+ },
+ {
+  "key": "buyback[29]",
+  "file": "coverage.json",
+  "pointer": "/series/479/buyback_near",
+  "value": 8861.151339564007
+ },
+ {
+  "key": "buyback[30]",
+  "file": "coverage.json",
+  "pointer": "/series/480/buyback_near",
+  "value": 11941.05394082528
+ },
+ {
+  "key": "buyback[31]",
+  "file": "coverage.json",
+  "pointer": "/series/481/buyback_near",
+  "value": 25540.855676307227
+ },
+ {
+  "key": "buyback[32]",
+  "file": "coverage.json",
+  "pointer": "/series/482/buyback_near",
+  "value": 35024.65944845707
+ },
+ {
+  "key": "buyback[33]",
+  "file": "coverage.json",
+  "pointer": "/series/483/buyback_near",
+  "value": 9403.12191473029
+ },
+ {
+  "key": "buyback[34]",
+  "file": "coverage.json",
+  "pointer": "/series/484/buyback_near",
+  "value": 20495.632194793085
+ },
+ {
+  "key": "buyback[35]",
+  "file": "coverage.json",
+  "pointer": "/series/485/buyback_near",
+  "value": 7947.359551059548
+ },
+ {
+  "key": "buyback[36]",
+  "file": "coverage.json",
+  "pointer": "/series/486/buyback_near",
+  "value": 7994.756789536448
+ },
+ {
+  "key": "buyback[37]",
+  "file": "coverage.json",
+  "pointer": "/series/487/buyback_near",
+  "value": 11465.980783186504
+ },
+ {
+  "key": "buyback[38]",
+  "file": "coverage.json",
+  "pointer": "/series/488/buyback_near",
+  "value": 10282.688484093873
+ },
+ {
+  "key": "buyback[39]",
+  "file": "coverage.json",
+  "pointer": "/series/489/buyback_near",
+  "value": 11650.096233638003
+ },
+ {
+  "key": "buyback[40]",
+  "file": "coverage.json",
+  "pointer": "/series/490/buyback_near",
+  "value": 9640.86119694286
+ },
+ {
+  "key": "buyback[41]",
+  "file": "coverage.json",
+  "pointer": "/series/491/buyback_near",
+  "value": 9422.404099607142
+ },
+ {
+  "key": "buyback[42]",
+  "file": "coverage.json",
+  "pointer": "/series/492/buyback_near",
+  "value": 9820.76620405959
+ },
+ {
+  "key": "buyback[43]",
+  "file": "coverage.json",
+  "pointer": "/series/493/buyback_near",
+  "value": 11362.45756200212
+ },
+ {
+  "key": "buyback[44]",
+  "file": "coverage.json",
+  "pointer": "/series/494/buyback_near",
+  "value": 12557.62014376861
+ },
+ {
+  "key": "buyback[45]",
+  "file": "coverage.json",
+  "pointer": "/series/495/buyback_near",
+  "value": 24509.86829654989
+ },
+ {
+  "key": "buyback[46]",
+  "file": "coverage.json",
+  "pointer": "/series/496/buyback_near",
+  "value": 23818.49774601683
+ },
+ {
+  "key": "buyback[47]",
+  "file": "coverage.json",
+  "pointer": "/series/497/buyback_near",
+  "value": 11823.701206988655
+ },
+ {
+  "key": "buyback[48]",
+  "file": "coverage.json",
+  "pointer": "/series/498/buyback_near",
+  "value": 7598.267238476081
+ },
+ {
+  "key": "buyback[49]",
+  "file": "coverage.json",
+  "pointer": "/series/499/buyback_near",
+  "value": 18197.88235620805
+ },
+ {
+  "key": "buyback[50]",
+  "file": "coverage.json",
+  "pointer": "/series/500/buyback_near",
+  "value": 17309.119394659298
+ },
+ {
+  "key": "buyback[51]",
+  "file": "coverage.json",
+  "pointer": "/series/501/buyback_near",
+  "value": 16693.18748958665
+ },
+ {
+  "key": "buyback[52]",
+  "file": "coverage.json",
+  "pointer": "/series/502/buyback_near",
+  "value": 11835.03544471343
+ },
+ {
+  "key": "buyback[53]",
+  "file": "coverage.json",
+  "pointer": "/series/503/buyback_near",
+  "value": 12819.777133995201
+ },
+ {
+  "key": "buyback[54]",
+  "file": "coverage.json",
+  "pointer": "/series/504/buyback_near",
+  "value": 5596.949920719024
+ },
+ {
+  "key": "buyback[55]",
+  "file": "coverage.json",
+  "pointer": "/series/505/buyback_near",
+  "value": 6196.843622994609
+ },
+ {
+  "key": "buyback[56]",
+  "file": "coverage.json",
+  "pointer": "/series/506/buyback_near",
+  "value": 9450.48529862566
+ },
+ {
+  "key": "buyback[57]",
+  "file": "coverage.json",
+  "pointer": "/series/507/buyback_near",
+  "value": 11707.911598988809
+ },
+ {
+  "key": "buyback[58]",
+  "file": "coverage.json",
+  "pointer": "/series/508/buyback_near",
+  "value": 13355.30861241254
+ },
+ {
+  "key": "buyback[59]",
+  "file": "coverage.json",
+  "pointer": "/series/509/buyback_near",
+  "value": 10619.855017587775
+ },
+ {
+  "key": "buyback[60]",
+  "file": "coverage.json",
+  "pointer": "/series/510/buyback_near",
+  "value": 7401.578606726136
+ },
+ {
+  "key": "buyback[61]",
+  "file": "coverage.json",
+  "pointer": "/series/511/buyback_near",
+  "value": 3731.4935008911416
+ },
+ {
+  "key": "buyback[62]",
+  "file": "coverage.json",
+  "pointer": "/series/512/buyback_near",
+  "value": 5338.1319522941485
+ },
+ {
+  "key": "buyback[63]",
+  "file": "coverage.json",
+  "pointer": "/series/513/buyback_near",
+  "value": 7876.333726997953
+ },
+ {
+  "key": "buyback[64]",
+  "file": "coverage.json",
+  "pointer": "/series/514/buyback_near",
+  "value": 7382.5885697233025
+ },
+ {
+  "key": "buyback[65]",
+  "file": "coverage.json",
+  "pointer": "/series/515/buyback_near",
+  "value": 7758.347372329328
+ },
+ {
+  "key": "buyback[66]",
+  "file": "coverage.json",
+  "pointer": "/series/516/buyback_near",
+  "value": 15904.157076887088
+ },
+ {
+  "key": "buyback[67]",
+  "file": "coverage.json",
+  "pointer": "/series/517/buyback_near",
+  "value": 18580.91875427775
+ },
+ {
+  "key": "buyback[68]",
+  "file": "coverage.json",
+  "pointer": "/series/518/buyback_near",
+  "value": 8990.80289446842
+ },
+ {
+  "key": "buyback[69]",
+  "file": "coverage.json",
+  "pointer": "/series/519/buyback_near",
+  "value": 10805.95707893325
+ },
+ {
+  "key": "buyback[70]",
+  "file": "coverage.json",
+  "pointer": "/series/520/buyback_near",
+  "value": 7966.411634263117
+ },
+ {
+  "key": "buyback[71]",
+  "file": "coverage.json",
+  "pointer": "/series/521/buyback_near",
+  "value": 7148.161538172979
+ },
+ {
+  "key": "buyback[72]",
+  "file": "coverage.json",
+  "pointer": "/series/522/buyback_near",
+  "value": 23881.9613766307
+ },
+ {
+  "key": "buyback[73]",
+  "file": "coverage.json",
+  "pointer": "/series/523/buyback_near",
+  "value": 6448.42574661877
+ },
+ {
+  "key": "buyback[74]",
+  "file": "coverage.json",
+  "pointer": "/series/524/buyback_near",
+  "value": 5932.766985853901
+ },
+ {
+  "key": "buyback[75]",
+  "file": "coverage.json",
+  "pointer": "/series/525/buyback_near",
+  "value": 5298.09355857037
+ },
+ {
+  "key": "buyback[76]",
+  "file": "coverage.json",
+  "pointer": "/series/526/buyback_near",
+  "value": 5943.668898119591
+ },
+ {
+  "key": "buyback[77]",
+  "file": "coverage.json",
+  "pointer": "/series/527/buyback_near",
+  "value": 7213.2166795765515
+ },
+ {
+  "key": "buyback[78]",
+  "file": "coverage.json",
+  "pointer": "/series/528/buyback_near",
+  "value": 11834.468425000552
+ },
+ {
+  "key": "buyback[79]",
+  "file": "coverage.json",
+  "pointer": "/series/529/buyback_near",
+  "value": 7700.992832490476
+ },
+ {
+  "key": "buyback[80]",
+  "file": "coverage.json",
+  "pointer": "/series/530/buyback_near",
+  "value": 8474.086996263359
+ },
+ {
+  "key": "buyback[81]",
+  "file": "coverage.json",
+  "pointer": "/series/531/buyback_near",
+  "value": 6568.986510776682
+ },
+ {
+  "key": "buyback[82]",
+  "file": "coverage.json",
+  "pointer": "/series/532/buyback_near",
+  "value": 7131.431658475194
+ },
+ {
+  "key": "buyback[83]",
+  "file": "coverage.json",
+  "pointer": "/series/533/buyback_near",
+  "value": 9766.55457130284
+ },
+ {
+  "key": "buyback[84]",
+  "file": "coverage.json",
+  "pointer": "/series/534/buyback_near",
+  "value": 13065.287920112256
+ },
+ {
+  "key": "buyback[85]",
+  "file": "coverage.json",
+  "pointer": "/series/535/buyback_near",
+  "value": 12243.603716811165
+ },
+ {
+  "key": "buyback[86]",
+  "file": "coverage.json",
+  "pointer": "/series/536/buyback_near",
+  "value": 9457.816179236397
+ },
+ {
+  "key": "buyback[87]",
+  "file": "coverage.json",
+  "pointer": "/series/537/buyback_near",
+  "value": 15931.313337594736
+ },
+ {
+  "key": "buyback[88]",
+  "file": "coverage.json",
+  "pointer": "/series/538/buyback_near",
+  "value": 12998.603511761408
+ },
+ {
+  "key": "buyback[89]",
+  "file": "coverage.json",
+  "pointer": "/series/539/buyback_near",
+  "value": 7969.481588393915
+ },
+ {
+  "key": "burn[0]",
+  "file": "coverage.json",
+  "pointer": "/series/450/burnt_near",
+  "value": 816.6287014283326
+ },
+ {
+  "key": "burn[1]",
+  "file": "coverage.json",
+  "pointer": "/series/451/burnt_near",
+  "value": 842.5854070578607
+ },
+ {
+  "key": "burn[2]",
+  "file": "coverage.json",
+  "pointer": "/series/452/burnt_near",
+  "value": 882.8094035638406
+ },
+ {
+  "key": "burn[3]",
+  "file": "coverage.json",
+  "pointer": "/series/453/burnt_near",
+  "value": 804.0405936946108
+ },
+ {
+  "key": "burn[4]",
+  "file": "coverage.json",
+  "pointer": "/series/454/burnt_near",
+  "value": 790.9099393062324
+ },
+ {
+  "key": "burn[5]",
+  "file": "coverage.json",
+  "pointer": "/series/455/burnt_near",
+  "value": 807.9189357374956
+ },
+ {
+  "key": "burn[6]",
+  "file": "coverage.json",
+  "pointer": "/series/456/burnt_near",
+  "value": 760.0619956724058
+ },
+ {
+  "key": "burn[7]",
+  "file": "coverage.json",
+  "pointer": "/series/457/burnt_near",
+  "value": 813.6165547884326
+ },
+ {
+  "key": "burn[8]",
+  "file": "coverage.json",
+  "pointer": "/series/458/burnt_near",
+  "value": 806.8899816566139
+ },
+ {
+  "key": "burn[9]",
+  "file": "coverage.json",
+  "pointer": "/series/459/burnt_near",
+  "value": 826.5809172811693
+ },
+ {
+  "key": "burn[10]",
+  "file": "coverage.json",
+  "pointer": "/series/460/burnt_near",
+  "value": 787.9845481982394
+ },
+ {
+  "key": "burn[11]",
+  "file": "coverage.json",
+  "pointer": "/series/461/burnt_near",
+  "value": 784.5085227424117
+ },
+ {
+  "key": "burn[12]",
+  "file": "coverage.json",
+  "pointer": "/series/462/burnt_near",
+  "value": 689.9756005862184
+ },
+ {
+  "key": "burn[13]",
+  "file": "coverage.json",
+  "pointer": "/series/463/burnt_near",
+  "value": 728.1852233852795
+ },
+ {
+  "key": "burn[14]",
+  "file": "coverage.json",
+  "pointer": "/series/464/burnt_near",
+  "value": 829.493039703425
+ },
+ {
+  "key": "burn[15]",
+  "file": "coverage.json",
+  "pointer": "/series/465/burnt_near",
+  "value": 849.6641575002187
+ },
+ {
+  "key": "burn[16]",
+  "file": "coverage.json",
+  "pointer": "/series/466/burnt_near",
+  "value": 916.0774144838257
+ },
+ {
+  "key": "burn[17]",
+  "file": "coverage.json",
+  "pointer": "/series/467/burnt_near",
+  "value": 996.0075088844718
+ },
+ {
+  "key": "burn[18]",
+  "file": "coverage.json",
+  "pointer": "/series/468/burnt_near",
+  "value": 1080.969007463069
+ },
+ {
+  "key": "burn[19]",
+  "file": "coverage.json",
+  "pointer": "/series/469/burnt_near",
+  "value": 1041.8502883037015
+ },
+ {
+  "key": "burn[20]",
+  "file": "coverage.json",
+  "pointer": "/series/470/burnt_near",
+  "value": 927.6082971563071
+ },
+ {
+  "key": "burn[21]",
+  "file": "coverage.json",
+  "pointer": "/series/471/burnt_near",
+  "value": 1021.0648830511008
+ },
+ {
+  "key": "burn[22]",
+  "file": "coverage.json",
+  "pointer": "/series/472/burnt_near",
+  "value": 913.989926618303
+ },
+ {
+  "key": "burn[23]",
+  "file": "coverage.json",
+  "pointer": "/series/473/burnt_near",
+  "value": 835.4046024667177
+ },
+ {
+  "key": "burn[24]",
+  "file": "coverage.json",
+  "pointer": "/series/474/burnt_near",
+  "value": 849.8206023826357
+ },
+ {
+  "key": "burn[25]",
+  "file": "coverage.json",
+  "pointer": "/series/475/burnt_near",
+  "value": 883.8627939263762
+ },
+ {
+  "key": "burn[26]",
+  "file": "coverage.json",
+  "pointer": "/series/476/burnt_near",
+  "value": 723.3987447248916
+ },
+ {
+  "key": "burn[27]",
+  "file": "coverage.json",
+  "pointer": "/series/477/burnt_near",
+  "value": 756.35385440098
+ },
+ {
+  "key": "burn[28]",
+  "file": "coverage.json",
+  "pointer": "/series/478/burnt_near",
+  "value": 861.7456133386537
+ },
+ {
+  "key": "burn[29]",
+  "file": "coverage.json",
+  "pointer": "/series/479/burnt_near",
+  "value": 853.9062050097604
+ },
+ {
+  "key": "burn[30]",
+  "file": "coverage.json",
+  "pointer": "/series/480/burnt_near",
+  "value": 846.4551936795576
+ },
+ {
+  "key": "burn[31]",
+  "file": "coverage.json",
+  "pointer": "/series/481/burnt_near",
+  "value": 1014.6439405205301
+ },
+ {
+  "key": "burn[32]",
+  "file": "coverage.json",
+  "pointer": "/series/482/burnt_near",
+  "value": 1040.0256760316945
+ },
+ {
+  "key": "burn[33]",
+  "file": "coverage.json",
+  "pointer": "/series/483/burnt_near",
+  "value": 857.7628169893721
+ },
+ {
+  "key": "burn[34]",
+  "file": "coverage.json",
+  "pointer": "/series/484/burnt_near",
+  "value": 946.2247303897474
+ },
+ {
+  "key": "burn[35]",
+  "file": "coverage.json",
+  "pointer": "/series/485/burnt_near",
+  "value": 914.9304121806466
+ },
+ {
+  "key": "burn[36]",
+  "file": "coverage.json",
+  "pointer": "/series/486/burnt_near",
+  "value": 864.4241143635762
+ },
+ {
+  "key": "burn[37]",
+  "file": "coverage.json",
+  "pointer": "/series/487/burnt_near",
+  "value": 928.017817735348
+ },
+ {
+  "key": "burn[38]",
+  "file": "coverage.json",
+  "pointer": "/series/488/burnt_near",
+  "value": 854.6642064700019
+ },
+ {
+  "key": "burn[39]",
+  "file": "coverage.json",
+  "pointer": "/series/489/burnt_near",
+  "value": 1005.5261392678566
+ },
+ {
+  "key": "burn[40]",
+  "file": "coverage.json",
+  "pointer": "/series/490/burnt_near",
+  "value": 757.6966799644483
+ },
+ {
+  "key": "burn[41]",
+  "file": "coverage.json",
+  "pointer": "/series/491/burnt_near",
+  "value": 728.8269871980364
+ },
+ {
+  "key": "burn[42]",
+  "file": "coverage.json",
+  "pointer": "/series/492/burnt_near",
+  "value": 847.9363318426398
+ },
+ {
+  "key": "burn[43]",
+  "file": "coverage.json",
+  "pointer": "/series/493/burnt_near",
+  "value": 860.2166994216193
+ },
+ {
+  "key": "burn[44]",
+  "file": "coverage.json",
+  "pointer": "/series/494/burnt_near",
+  "value": 885.8958762321874
+ },
+ {
+  "key": "burn[45]",
+  "file": "coverage.json",
+  "pointer": "/series/495/burnt_near",
+  "value": 1017.2144782527301
+ },
+ {
+  "key": "burn[46]",
+  "file": "coverage.json",
+  "pointer": "/series/496/burnt_near",
+  "value": 1248.326995479907
+ },
+ {
+  "key": "burn[47]",
+  "file": "coverage.json",
+  "pointer": "/series/497/burnt_near",
+  "value": 977.298875111069
+ },
+ {
+  "key": "burn[48]",
+  "file": "coverage.json",
+  "pointer": "/series/498/burnt_near",
+  "value": 1044.6933885042654
+ },
+ {
+  "key": "burn[49]",
+  "file": "coverage.json",
+  "pointer": "/series/499/burnt_near",
+  "value": 1200.2788338798905
+ },
+ {
+  "key": "burn[50]",
+  "file": "coverage.json",
+  "pointer": "/series/500/burnt_near",
+  "value": 1261.9728900479972
+ },
+ {
+  "key": "burn[51]",
+  "file": "coverage.json",
+  "pointer": "/series/501/burnt_near",
+  "value": 1212.1856088000536
+ },
+ {
+  "key": "burn[52]",
+  "file": "coverage.json",
+  "pointer": "/series/502/burnt_near",
+  "value": 1086.3129721325654
+ },
+ {
+  "key": "burn[53]",
+  "file": "coverage.json",
+  "pointer": "/series/503/burnt_near",
+  "value": 1221.1626912376319
+ },
+ {
+  "key": "burn[54]",
+  "file": "coverage.json",
+  "pointer": "/series/504/burnt_near",
+  "value": 974.7746088632928
+ },
+ {
+  "key": "burn[55]",
+  "file": "coverage.json",
+  "pointer": "/series/505/burnt_near",
+  "value": 1552.5808781907385
+ },
+ {
+  "key": "burn[56]",
+  "file": "coverage.json",
+  "pointer": "/series/506/burnt_near",
+  "value": 1626.9110485160136
+ },
+ {
+  "key": "burn[57]",
+  "file": "coverage.json",
+  "pointer": "/series/507/burnt_near",
+  "value": 1493.5216164885971
+ },
+ {
+  "key": "burn[58]",
+  "file": "coverage.json",
+  "pointer": "/series/508/burnt_near",
+  "value": 2226.6249943750536
+ },
+ {
+  "key": "burn[59]",
+  "file": "coverage.json",
+  "pointer": "/series/509/burnt_near",
+  "value": 2971.56548522573
+ },
+ {
+  "key": "burn[60]",
+  "file": "coverage.json",
+  "pointer": "/series/510/burnt_near",
+  "value": 992.0236291862878
+ },
+ {
+  "key": "burn[61]",
+  "file": "coverage.json",
+  "pointer": "/series/511/burnt_near",
+  "value": 761.3635477527006
+ },
+ {
+  "key": "burn[62]",
+  "file": "coverage.json",
+  "pointer": "/series/512/burnt_near",
+  "value": 896.632288019106
+ },
+ {
+  "key": "burn[63]",
+  "file": "coverage.json",
+  "pointer": "/series/513/burnt_near",
+  "value": 938.5780989718314
+ },
+ {
+  "key": "burn[64]",
+  "file": "coverage.json",
+  "pointer": "/series/514/burnt_near",
+  "value": 986.308044420099
+ },
+ {
+  "key": "burn[65]",
+  "file": "coverage.json",
+  "pointer": "/series/515/burnt_near",
+  "value": 1026.5320934155702
+ },
+ {
+  "key": "burn[66]",
+  "file": "coverage.json",
+  "pointer": "/series/516/burnt_near",
+  "value": 1492.982607888329
+ },
+ {
+  "key": "burn[67]",
+  "file": "coverage.json",
+  "pointer": "/series/517/burnt_near",
+  "value": 905.4100767509522
+ },
+ {
+  "key": "burn[68]",
+  "file": "coverage.json",
+  "pointer": "/series/518/burnt_near",
+  "value": 2746.6153983491745
+ },
+ {
+  "key": "burn[69]",
+  "file": "coverage.json",
+  "pointer": "/series/519/burnt_near",
+  "value": 4116.171927902697
+ },
+ {
+  "key": "burn[70]",
+  "file": "coverage.json",
+  "pointer": "/series/520/burnt_near",
+  "value": 1149.5957748850958
+ },
+ {
+  "key": "burn[71]",
+  "file": "coverage.json",
+  "pointer": "/series/521/burnt_near",
+  "value": 1208.6960860309246
+ },
+ {
+  "key": "burn[72]",
+  "file": "coverage.json",
+  "pointer": "/series/522/burnt_near",
+  "value": 1146.0950263823008
+ },
+ {
+  "key": "burn[73]",
+  "file": "coverage.json",
+  "pointer": "/series/523/burnt_near",
+  "value": 4918.948839517807
+ },
+ {
+  "key": "burn[74]",
+  "file": "coverage.json",
+  "pointer": "/series/524/burnt_near",
+  "value": 943.6060920260916
+ },
+ {
+  "key": "burn[75]",
+  "file": "coverage.json",
+  "pointer": "/series/525/burnt_near",
+  "value": 835.039551207297
+ },
+ {
+  "key": "burn[76]",
+  "file": "coverage.json",
+  "pointer": "/series/526/burnt_near",
+  "value": 756.0858814949756
+ },
+ {
+  "key": "burn[77]",
+  "file": "coverage.json",
+  "pointer": "/series/527/burnt_near",
+  "value": 813.6222341031264
+ },
+ {
+  "key": "burn[78]",
+  "file": "coverage.json",
+  "pointer": "/series/528/burnt_near",
+  "value": 846.6492673509631
+ },
+ {
+  "key": "burn[79]",
+  "file": "coverage.json",
+  "pointer": "/series/529/burnt_near",
+  "value": 1009.0648929505523
+ },
+ {
+  "key": "burn[80]",
+  "file": "coverage.json",
+  "pointer": "/series/530/burnt_near",
+  "value": 794.8673836420212
+ },
+ {
+  "key": "burn[81]",
+  "file": "coverage.json",
+  "pointer": "/series/531/burnt_near",
+  "value": 820.7923063981672
+ },
+ {
+  "key": "burn[82]",
+  "file": "coverage.json",
+  "pointer": "/series/532/burnt_near",
+  "value": 767.135600310668
+ },
+ {
+  "key": "burn[83]",
+  "file": "coverage.json",
+  "pointer": "/series/533/burnt_near",
+  "value": 679.6257940315347
+ },
+ {
+  "key": "burn[84]",
+  "file": "coverage.json",
+  "pointer": "/series/534/burnt_near",
+  "value": 740.9471697280283
+ },
+ {
+  "key": "burn[85]",
+  "file": "coverage.json",
+  "pointer": "/series/535/burnt_near",
+  "value": 853.0571829494277
+ },
+ {
+  "key": "burn[86]",
+  "file": "coverage.json",
+  "pointer": "/series/536/burnt_near",
+  "value": 806.4790371895293
+ },
+ {
+  "key": "burn[87]",
+  "file": "coverage.json",
+  "pointer": "/series/537/burnt_near",
+  "value": 859.9087981008115
+ },
+ {
+  "key": "burn[88]",
+  "file": "coverage.json",
+  "pointer": "/series/538/burnt_near",
+  "value": 945.1183641728056
+ },
+ {
+  "key": "burn[89]",
+  "file": "coverage.json",
+  "pointer": "/series/539/burnt_near",
+  "value": 710.7537062252902
+ },
+ {
+  "key": "hero.date",
+  "file": "summary.json",
+  "pointer": "/hero/date",
+  "value": "2026-10-31"
+ },
+ {
+  "key": "hero.cr30",
+  "file": "summary.json",
+  "pointer": "/hero/cr_float_30",
+  "value": 0.12023308721991423
+ },
+ {
+  "key": "hero.crUsd30",
+  "file": "summary.json",
+  "pointer": "/hero/cr_float_usd_30",
+  "value": 0.11959320589744347
+ },
+ {
+  "key": "breakeven.asOf",
+  "file": "summary.json",
+  "pointer": "/levers/as_of",
+  "value": "2026-10-30"
+ },
+ {
+  "key": "breakeven.volumeUsdPerDay",
+  "file": "summary.json",
+  "pointer": "/levers/volume_usd_per_day",
+  "value": 130406943.66666667
+ },
+ {
+  "key": "breakeven.vStarUsdPerDay",
+  "file": "summary.json",
+  "pointer": "/levers/steps/0/v_star_usd_per_day",
+  "value": 989871849.2813166
+ },
+ {
+  "key": "breakeven.multiple",
+  "file": "summary.json",
+  "pointer": "/levers/steps/0/volume_multiple",
+  "value": 7.590637595276592
+ },
+ {
+  "key": "proof.network",
+  "file": "proof.json",
+  "pointer": "/near/network",
+  "value": "testnet"
+ },
+ {
+  "key": "proof.contract",
+  "file": "proof.json",
+  "pointer": "/near/contract",
+  "value": "nepu-ledger.testnet"
+ },
+ {
+  "key": "proof.txHash",
+  "file": "proof.json",
+  "pointer": "/near/tx_hash",
+  "value": "2CsbDXKFmFPqUpBDvQxiamodirssdd9NT63E6dqeg76D"
+ },
+ {
+  "key": "proof.blockHeight",
+  "file": "proof.json",
+  "pointer": "/near/block_height",
+  "value": 276017917
+ },
+ {
+  "key": "proof.manifestSha256",
+  "file": "proof.json",
+  "pointer": "/manifest_sha256",
+  "value": "48c59060cee309e2aafb62614dfb24454828bf5ae8f534bd52154165b5b8c096"
+ },
+ {
+  "key": "proof.otsStatus",
+  "file": "proof.json",
+  "pointer": "/opentimestamps/status",
+  "value": "pending"
+ },
+ {
+  "key": "proof.runId",
+  "file": "proof.json",
+  "pointer": "/run_id",
+  "value": "capture-ledger-2026-11-01-48c59060cee3"
+ },
+ {
+  "key": "windows.mid",
+  "file": "coverage.json",
+  "pointer": "/windows/1",
+  "value": 30
+ },
+ {
+  "key": "windows.long",
+  "file": "coverage.json",
+  "pointer": "/windows/2",
+  "value": 90
+ },
+ {
+  "key": "cards.distribution.month",
+  "file": "distribution.json",
+  "pointer": "/periods/month/3/period",
+  "value": "2026-10"
+ },
+ {
+  "key": "cards.distribution.hhiChannel",
+  "file": "distribution.json",
+  "pointer": "/periods/month/3/hhi_channel",
+  "value": 0.2143849545246802
+ },
+ {
+  "key": "cards.distribution.top5ChannelShare",
+  "file": "distribution.json",
+  "pointer": "/periods/month/3/top5_channel_share",
+  "value": 0.7933306180735306
+ },
+ {
+  "key": "cards.valuation.horizonYears",
+  "file": "valuation.json",
+  "pointer": "/reverse/rows/0/horizon_years",
+  "value": 1
+ },
+ {
+  "key": "cards.valuation.inflation",
+  "file": "valuation.json",
+  "pointer": "/reverse/rows/0/inflation",
+  "value": 0.025
+ },
+ {
+  "key": "cards.valuation.basis",
+  "file": "valuation.json",
+  "pointer": "/reverse/rows/0/basis",
+  "value": "buyback"
+ },
+ {
+  "key": "cards.valuation.breakevenVolumeUsdPerDay",
+  "file": "valuation.json",
+  "pointer": "/reverse/rows/0/breakeven_volume_usd_per_day",
+  "value": 989871849.2813166
+ },
+ {
+  "key": "cards.developer.cohort",
+  "file": "developer.json",
+  "pointer": "/cohorts/11/cohort",
+  "value": "2026-09"
+ },
+ {
+  "key": "cards.developer.cohortSize",
+  "file": "developer.json",
+  "pointer": "/cohorts/11/cohort_size",
+  "value": 467
+ },
+ {
+  "key": "cards.developer.share1",
+  "file": "developer.json",
+  "pointer": "/cohorts/11/share_1",
+  "value": 0.31263383297644537
+ }
+]

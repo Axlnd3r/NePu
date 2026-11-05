@@ -118,7 +118,9 @@ curl -s https://rpc.testnet.fastnear.com -H 'content-type: application/json' -d 
 ## Dashboard and demo video
 - Dashboard: https://axlnd3r.github.io/NePu/ (six pages; every chart shows its query,
   one plain sentence and its provenance).
-- Demo video: not published yet.
+- Demo video: 45 seconds, rendered from the Remotion project in [`video/`](video/README.md) (the
+  rendered files are not committed). Its X post link is pending; it will be added here once the post
+  is up.
 
 ## Methodology
 Formulas, definitions and limitations: [docs/METHODOLOGY.md](docs/METHODOLOGY.md). The thesis with the
@@ -155,7 +157,7 @@ organisers' official requirement list was not available when this was written, s
 - [x] BigQuery queries filter on `block_date`, except `sql/fee_wallet_inflows_daily.sql`, which filters
   on `epoch_date` because the `ft_balances_daily` table has no `block_date` column (stated in that
   file and in [DATA_AUDIT.md](DATA_AUDIT.md))
-- [ ] Demo video (not published yet)
+- [ ] Demo video published on X (pending; the source and its tests are in `video/`)
 
 ## AI & libraries disclosure
 - The code, tests and documentation were written with Claude Code (Anthropic), using the Claude
