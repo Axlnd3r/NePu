@@ -119,7 +119,7 @@ This project measures it and reports how far the network is from that point:
 - **Not yet:** daily Intents volume would have to reach $989.9M, 7.6x its $130.4M average, for capture to cover issuance at today's rates.
 - That multiple does not depend on how volume is counted: at half or twice DefiLlama's volume it stays 7.6x. It is the growth in buyback revenue that break-even needs.
 - The issuance cut HSP-029, read on chain from `vote.dao`: status `Timelock`, 99.97% of the veNEAR cast for one option, timelock ends 2026-11-16T16:48:08Z. It would close 1.58x of the gap once validators adopt it.
-- Proof: the SHA-256 of the snapshot manifest is committed on NEAR **testnet** (contract `nepu-ledger.testnet`, run id `capture-ledger-2026-11-01-48c59060cee3`, [transaction](https://explorer.testnet.near.org/transactions/2CsbDXKFmFPqUpBDvQxiamodirssdd9NT63E6dqeg76D), block 276,017,917). OpenTimestamps (Bitcoin): pending.
+- Proof: the SHA-256 of the snapshot manifest is committed on NEAR **testnet** (contract `nepu-ledger.testnet`, run id `capture-ledger-2026-11-01-48c59060cee3`, [transaction](https://explorer.testnet.near.org/transactions/2CsbDXKFmFPqUpBDvQxiamodirssdd9NT63E6dqeg76D), block 276,017,917). OpenTimestamps (Bitcoin): confirmed.
 <!-- results:end -->
 
 ## Quickstart (offline)
