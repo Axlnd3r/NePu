@@ -1,0 +1,12 @@
+{
+ "manifest_sha256": "c6307dc8b49232540f1e677b6acce18ac7afd3b14de0b2e03c9ee70bf54d6502",
+ "near": {
+  "network": "testnet",
+  "contract": "nepu-ledger.testnet",
+  "signer": "nepu-ledger.testnet",
+  "run_id": "prereg-2026-11-09-c6307dc8b492",
+  "tx_hash": "EkVdoTm1jTpTaKqzd9VbtTvJ8coVoUMuFJNG6DA1CGXH",
+  "block_height": 276897781,
+  "explorer_url": "https://explorer.testnet.near.org/transactions/EkVdoTm1jTpTaKqzd9VbtTvJ8coVoUMuFJNG6DA1CGXH"
+ }
+}
