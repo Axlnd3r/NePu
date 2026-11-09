@@ -1,0 +1,24 @@
+{
+  "files": [
+    {
+      "path": "PREREG.md",
+      "sha256": "e145a5f524d56ca81513c9fcb2e9acc768acba2b1c6b9083b804f2083a76702a",
+      "rows": null,
+      "source": "capture prereg write",
+      "query_file": null,
+      "date_range": null,
+      "pulled_at_utc": "2026-11-09T08:19:30Z",
+      "query_sha256": null
+    },
+    {
+      "path": "tests.json",
+      "sha256": "1a0766ff57f1de88f5d894fd0fbd18ce391d4c83e9b3d0c4d4bb197147a578e0",
+      "rows": null,
+      "source": "capture prereg write",
+      "query_file": null,
+      "date_range": null,
+      "pulled_at_utc": "2026-11-09T08:19:30Z",
+      "query_sha256": null
+    }
+  ]
+}
