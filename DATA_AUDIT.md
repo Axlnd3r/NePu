@@ -496,6 +496,49 @@ older log entries in this file and PROGRESS.md (they record what was true then; 
 and run URLs), and `repository` in `contracts/proof-of-analysis/Cargo.toml`, which is embedded in the deployed wasm
 (NEP-330 metadata): changing it would change the code hash that was verified against the chain.
 
+## F8 reference checks (2026-11-09)
+
+New files in `data/reference/` (their own manifest, checked by `make verify`); the snapshot and its
+proof are unchanged. Every number below is in `site/public/data/summary.json`.
+
+- **HSP-029 vote, read on chain** (`hsp029_vote.json`, `capture reference hsp029`). One keyless view
+  call, `vote.dao` `get_proposal(29)` at the final block (block 223,734,663 on 2026-11-09), stored as
+  it came. Status `Timelock`; option 0 holds 99.97 % of the veNEAR cast, 36 voters, turnout 62.35 % of
+  the snapshot's veNEAR; voting ran 2026-10-19T16:48:08Z to 2026-11-02T16:48:08Z and the timelock ends
+  2026-11-16T16:48:08Z. The contract stores no option labels, so the label of option 0 is not
+  asserted. This resolves the F6 "vote result not found": the events row "HSP-029 outcome" was removed
+  from `events.csv` and the verification text of the HSP-029 rows of `parameters.csv` was updated.
+  The ramp still needs validators to adopt it, so the Valuation Lab keeps it as a scenario.
+- **Official revenue dashboard** (`revenue_near_org.html`, `capture reference official`). The page as
+  served on 2026-11-09; its embedded series `absoluteRevEmissions` gives cumulative emissions and
+  revenue in NEAR since 2026-01-01 (312 days to 2026-11-08). On 2026-10-30 it shows 15.92 %
+  (4,275,736 / 26,853,327 NEAR). Over the same days our gross issuance is 26,888,613 NEAR (0.13 %
+  apart) but the three revenue wallets received 3,697,105 NEAR, so the official revenue is 15.6 %
+  higher. Its revenue rises in monthly steps on the first of each month; the steps match neither our
+  monthly revenue nor our monthly revenue shifted by one month. The page calls its figures
+  illustrative and documents no method: **the gap is reported, not explained.** The row is labelled
+  "quoted" and never enters a measured series.
+- **Volume definition check** (`intents_stable_legs_daily.parquet`, `sql/intents_stable_legs_daily.sql`,
+  `capture reference stable-legs`). Dry-run 1.41 GB for one day and 8.85 GB for 2026-10-24..10-30;
+  run under `maximum_bytes_billed` = `BQ_MAX_BYTES`: 1.41 GB (one-day trial) + 8.85 GB billed. Stablecoin
+  legs counted once were 24.0 % of DefiLlama volume over the seven days (16 % to 28 % by day), while
+  80.5 % of token_diff entries carry a stablecoin and stablecoins were 53.3 % of 1Click volume in
+  2026-10. A ratio near half the stablecoin share is what counting both legs gives, so DefiLlama's
+  Intents volume looks two-sided (or includes flow that is not settled as public token_diff events).
+  The headline multiple does not depend on it (`summary.invariance`); V\* in dollars does. Sample:
+  seven days, not a time series; failed receipts are not filtered (the `status` column was not used).
+- **Buyback wallet gross flows** (`buyback_wallet_activities.json`, `capture reference buyback-flows`).
+  The keyless NearBlocks API, `/v1/account/buybacks.multisignature.near/activities`, 100 rows a page,
+  cursor paging. Found: inflows from accounts other than `intents.near` and the revenue wallets exist
+  (tip bots and individuals), and the net-change method counts them as buybacks. Over 2026-04-27..10-31
+  (the days CR counts the wallet): 1,626,880 NEAR from `intents.near`, 510,068 NEAR from the other
+  revenue wallets (netted by CR), 8,228 NEAR from 10 other accounts (0.5 % of what CR counts as
+  buybacks), 12,000 NEAR sent out on 2026-07-10 plus a few hundredths of a NEAR of multisig gas. The
+  activity nets to 2,133,175 NEAR against 2,133,521 NEAR in `ft_balances_daily` (0.016 % apart, day
+  boundaries). The wallet's first activity is 2026-03-18 (5 NEAR from `multisignature.near`), which
+  fits Check 5 (absent on 2026-03-01). 3,304 activities. *Rate limit:* the free API throttles hard
+  (about one page a minute with backoff); two earlier attempts were stopped before the final pull.
+
 ## Original open questions
 
 | # | Question | Status | Where answered |

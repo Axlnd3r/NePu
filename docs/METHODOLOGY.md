@@ -225,6 +225,57 @@ could not be confirmed are listed as "not drawn" with the reason. The issuance s
 fall between 14-day means, dated to the first day closer to the new level; a day between the two
 levels (a change during the day) is reported as a transition day.
 
+**Volume-invariant multiple** (`summary.invariance`). Public sources count Intents volume
+differently (one or both legs of a swap, confidential flow). The buyback wallet's revenue R is
+measured on chain and does not depend on that choice. With tau = R / V0, V\* = net issuance in
+USD / tau = V0 x net issuance / R, so V\* / V0 = net issuance / R: scaling the volume by s scales
+V\* by s and leaves the multiple unchanged. `ledger.volume_scale_invariance` publishes the rows
+for s = 0.5, 1 and 2, and the headline reads the multiple as the growth in buyback revenue that
+break-even needs.
+
+**Why public estimates differ** (`summary.definitions`). `ledger.definition_table` computes, on
+the same end day, the coverage of gross issuance under the definitions in public use: the buyback
+wallet plus burn over 30 and 90 days (USD), all three revenue wallets plus burn (USD), DefiLlama
+holders revenue converted to NEAR plus burn (USD), all three revenue wallets without burn since
+1 January (NEAR) and burn alone (NEAR). Every row divides by gross issuance over the same days. One
+row is quoted, not measured: revenue.near.org's cumulative revenue / emissions since 1 January,
+parsed from the page stored in `data/reference/revenue_near_org.html` (the page calls its figures
+illustrative). The row carries its emissions and revenue next to ours for the same days, so the
+size of any gap is visible; its method is not documented, so a gap is reported, not explained.
+
+**Volume definition check** (`summary.volume_check`, `sql/intents_stable_legs_daily.sql`). For a
+sample of days, every `token_diff` event `intents.near` logged is read from BigQuery. A swap writes
+one entry per side (user and solver); an entry's stablecoin notional is the larger of the
+stablecoins it received and gave, priced at one dollar, and the day's once-counted stablecoin
+volume is half the sum over entries. Swaps without a stablecoin leg are left out, so this is a lower
+bound on once-counted public volume. If DefiLlama counted each swap once, the stablecoin legs alone
+would come to about the stablecoin share of 1Click volume; about half of that share is what counting
+both legs gives. The stablecoin ids and decimals come from the 1Click token list in the snapshot.
+
+**Buyback wallet gross flows** (`summary.buyback_flows`, `models/wallet_flows.py`). NearBlocks lists
+every balance change of `buybacks.multisignature.near` with the balance after it and the
+counterparty; the change of an activity is the difference between consecutive balances. Inflows
+are split into `intents.near` (fee revenue), the other revenue wallets (internal transfers, netted
+by the coverage ratio) and other accounts (gifts and transfers, which the net-change method counts as
+buybacks); outflows are listed one by one. The window is the one CR counts the wallet over.
+
+**HSP-029 on chain** (`summary.governance.hsp029`). One view call, `get_proposal(29)` on `vote.dao`,
+stored as it came in `data/reference/hsp029_vote.json`. The contract stores votes per option index
+and no labels, so the summary reports each option's share of the veNEAR cast, the turnout against
+the snapshot, and the contract's own status and dates. A proposal in `Timelock` has closed its vote;
+the issuance ramp still needs validators to adopt it, so the Valuation Lab keeps it as a scenario.
+
+## Pre-registered forward tests (`capture prereg`, `data/prereg/`)
+
+`capture prereg write` freezes `tests.json` and `PREREG.md` with their own manifest and refuses to
+overwrite them. Each test names a quantity this project publishes, a window that closes after the
+registration (PREREG.md states which windows had started), and a pass rule; bands are half to twice the value measured at registration, so no
+threshold is typed by hand. `capture prereg anchor` commits the SHA-256 of `data/prereg/manifest.json`
+to the proof contract, which fixes the registration time by a block, and `.github/workflows/proof.yml`
+stamps the same file with OpenTimestamps. `capture prereg score` evaluates a test only once its
+window has closed and its data exists, writes `data/prereg/scores.json`, and reports a miss as a
+miss. No test is about a price.
+
 ## Valuation Lab (`valuation.json`)
 
 Two outputs, both conditional on stated assumptions and neither a forecast. No price is predicted
@@ -349,20 +400,26 @@ from the data, its SQL text or API request, the model function and a provenance 
 range, pulled_at, hash prefix); headline numbers open an evidence panel with the formula and
 input hashes. `make qa` opens every page in Chrome on desktop (light and dark) and phone widths
 and fails on console errors, failed requests or horizontal overflow; it also checks that the
-in-browser break-even meter equals V* in the data. GitHub Pages builds the same site from
+in-browser break-even meter equals V* in the data, that the "Path to yes" calculator reproduces the
+lever bridge at its defaults and with all revenue routed at the HSP-029 rate, and that every step
+of the "How it works" tour opens. The calculator uses the lever bridge's inputs and formula: progress
+to break-even is buyback revenue per day over net issuance per day in USD, and its inverse is the
+revenue growth still needed. GitHub Pages builds the same site from
 `data/snapshot` with `.github/workflows/pages.yml` after `make verify` passes.
 
 ## Limitations of the coverage ratio
 
 - Wallet data is end-of-day balance (float64), so a day with an inflow and an outflow shows only
-  the net change. Outflows of the buyback wallet are ignored, not subtracted.
+  the net change. Outflows of the buyback wallet are ignored, not subtracted, and inflows from
+  accounts other than `intents.near` count as buybacks; `summary.buyback_flows` measures both.
 - Buyback value is NEAR received by the wallet. The data does not show whether any NEAR was
   bought on a market afterwards; fees are collected in NEAR and delivered to the wallet.
 - Buybacks are not burns. The two coverage views are kept separate on purpose.
 - Gross issuance is derived, not read from the protocol, and daily values are lumpy because rewards
   are minted per epoch. Use windows, not single days.
 - DefiLlama revenue and volume are third-party; the last days of its history are not final and are
-  dropped. DefiLlama's volume definition (`dexs`) is assumed to be Intents volume.
+  dropped. DefiLlama's volume definition (`dexs`) is taken as Intents volume; the volume check
+  suggests it counts both legs of a swap, which moves V\* in dollars and not the multiple.
 - Prices exist only for part of the history (CoinGecko public API serves 365 days), so USD views
   have a later start than NEAR views.
 - Correlation is not causation; out-of-sample lag tests, including null results, are reported as

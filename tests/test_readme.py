@@ -11,7 +11,7 @@ from capture import build, thesis
 README = build.ROOT / "README.md"
 START, END = "<!-- results:start -->", "<!-- results:end -->"
 # Names that contain digits but are not data, and the numbers of markdown list items.
-NAMES = ("SHA-256", "HACKATHON 2026", "1Click")
+NAMES = ("SHA-256", "HACKATHON 2026", "1Click", "HSP-029")
 LIST_ITEM = re.compile(r"(?m)^\s*\d+\.\s")
 
 
@@ -43,7 +43,8 @@ def test_the_results_block_uses_registered_facts_only(text: str) -> None:
 
 def test_no_number_is_stated_outside_the_block_code_and_links(text: str) -> None:
     outside = text[: text.index(START)] + text[text.index(END) :]
-    outside = re.sub(r"```.*?```", "", outside, flags=re.S)  # fenced commands
+    outside = re.sub(r"```.*?```", "", outside, flags=re.S)  # fenced commands (and the diagram)
+    outside = re.sub(r"<[^>]+>", "", outside)  # HTML markup (widths, links) states no data
     outside = re.sub(r"`[^`]*`", "", outside)  # code spans (versions, ids, ports)
     outside = re.sub(r"\]\([^)]*\)|https?://\S+", "", outside)  # link targets
     outside = LIST_ITEM.sub("", outside)
@@ -101,6 +102,8 @@ def test_links_the_dashboard_the_thesis_and_both_diffs(text: str) -> None:
         assert needle in text
 
 
-def test_the_checklist_does_not_claim_the_official_requirements(text: str) -> None:
+def test_the_checklist_maps_the_official_sources_and_marks_our_own_items(text: str) -> None:
     checklist = text[text.index("## Track checklist") : text.index("## AI & libraries")]
-    assert "own" in checklist.lower() and "official" in checklist.lower()
+    assert "https://nearhackathon.com/HACKATHON.md" in checklist
+    assert "near-hackathon-prompt-examples/blob/main/tracks/02-thesis.md" in checklist
+    assert "Our own" in checklist

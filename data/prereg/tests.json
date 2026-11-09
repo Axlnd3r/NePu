@@ -1,0 +1,99 @@
+{
+ "registered_at_utc": "2026-11-09T08:19:30Z",
+ "band": [
+  0.5,
+  2.0
+ ],
+ "tests": [
+  {
+   "id": "T1",
+   "claim": "Fee revenue keeps reaching the buyback wallet at about the recent rate.",
+   "quantity": "NEAR received by buybacks.multisignature.near from intents.near, summed over the balance changes NearBlocks lists in the window",
+   "window": [
+    "2026-11-10T00:00:00Z",
+    "2026-11-14T00:00:00Z"
+   ],
+   "base": {
+    "near_per_day": 9490.79471088409,
+    "days": 4,
+    "measured_over": [
+     "2026-10-12",
+     "2026-11-08"
+    ]
+   },
+   "pass_if": [
+    18981.58942176818,
+    75926.35768707273
+   ],
+   "scored_on": "2026-11-14"
+  },
+  {
+   "id": "T2",
+   "claim": "Not yet: buybacks and burn stay far from covering issuance.",
+   "quantity": "CR_float over 30 days in NEAR units (coverage.json cr_float_30)",
+   "window": [
+    "2026-11-01",
+    "2026-11-30"
+   ],
+   "base": {
+    "value": 0.12023308721991423,
+    "date": "2026-10-31"
+   },
+   "pass_if": [
+    0.060116543609957114,
+    0.24046617443982846
+   ],
+   "scored_on": "first snapshot that covers 2026-11-30"
+  },
+  {
+   "id": "T3",
+   "claim": "Most protocol revenue reaching NEAR wallets goes to the buyback wallet.",
+   "quantity": "buyback wallet inflow / on-chain revenue of the three revenue wallets, USD at daily prices, 30 days (summary.ledger.kept.buyback_of_onchain)",
+   "window": [
+    "2026-11-01",
+    "2026-11-30"
+   ],
+   "base": {
+    "value": 0.6549216204128513,
+    "date": "2026-10-30"
+   },
+   "pass_if": [
+    0.32746081020642565,
+    1.0
+   ],
+   "scored_on": "first snapshot that covers 2026-11-30"
+  },
+  {
+   "id": "T4",
+   "claim": "The measurement keeps holding: on-chain revenue matches DefiLlama.",
+   "quantity": "absolute deviation of on-chain from DefiLlama revenue, month 2026-11",
+   "window": [
+    "2026-11-01",
+    "2026-11-30"
+   ],
+   "base": {
+    "tolerance": 0.15
+   },
+   "pass_if": [
+    0.0,
+    0.15
+   ],
+   "scored_on": "first snapshot that covers 2026-11-30"
+  },
+  {
+   "id": "T5",
+   "claim": "The HSP-029 issuance cut is not rejected or vetoed in its timelock.",
+   "quantity": "vote.dao get_proposal(29): rejecter_id and status",
+   "window": [
+    "2026-11-09T08:19:30Z",
+    "2026-11-17T00:00:00Z"
+   ],
+   "base": {
+    "status": "Timelock",
+    "block": 223734663
+   },
+   "pass_if": "rejecter_id is null and the status is neither a rejection nor a veto",
+   "scored_on": "2026-11-17"
+  }
+ ]
+}

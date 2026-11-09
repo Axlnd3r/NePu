@@ -20,6 +20,11 @@ def utc_now_iso() -> str:
     return datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
+def utc_day(timestamp_ns: int) -> str:
+    """ISO date (UTC) of a NEAR block timestamp in nanoseconds."""
+    return datetime.fromtimestamp(timestamp_ns // 1_000_000_000, UTC).date().isoformat()
+
+
 def with_retries[T](
     fn: Callable[[], T],
     *,

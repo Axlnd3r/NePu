@@ -1,26 +1,75 @@
 {
   "files": [
     {
+      "path": "buyback_wallet_activities.json",
+      "sha256": "702485be2d60149ceda3c6979eee7214e381a0b711f1594f00c9f6a022b14913",
+      "rows": null,
+      "source": "https://api.nearblocks.io/v1/account/buybacks.multisignature.near/activities (per_page 100, cursor paging; fields: event_index, block_height, block_timestamp, receipt_id, transaction_hash, involved_account_id, direction, cause, absolute_nonstaked_amount)",
+      "query_file": null,
+      "date_range": [
+        "2026-03-18",
+        "2026-11-09"
+      ],
+      "pulled_at_utc": "2026-11-09T08:15:11Z",
+      "query_sha256": null
+    },
+    {
       "path": "events.csv",
-      "sha256": "931da26c78faced4864c2fada754c44dc90a559b00ce2eeebf81ecc468036418",
-      "rows": 4,
+      "sha256": "b5f228c1acc941a4bed7a9552d1feda06cade775f21226c307f9d1d402afb5cb",
+      "rows": 3,
       "source": "manual: curated from the web sources listed in each row (sources column)",
       "query_file": null,
       "date_range": [
         "2026-02-23",
         "2026-10-01"
       ],
-      "pulled_at_utc": "2026-11-03T05:00:00Z",
+      "pulled_at_utc": "2026-11-09T07:18:15Z",
       "query_sha256": null
     },
     {
+      "path": "hsp029_vote.json",
+      "sha256": "b2eb849e51cb484a8b3ef62e0097d0256a3906674d32e264680eddef813faced",
+      "rows": null,
+      "source": "near rpc https://rpc.mainnet.fastnear.com call_function vote.dao get_proposal proposal_id=29 (finality final, block 223734663)",
+      "query_file": null,
+      "date_range": null,
+      "pulled_at_utc": "2026-11-09T07:17:59Z",
+      "query_sha256": null
+    },
+    {
+      "path": "intents_stable_legs_daily.parquet",
+      "sha256": "f290dee5133080dc7468176247f0c3946f8d3392b2344f7b949e26269949668d",
+      "rows": 7,
+      "source": "bigquery:bigquery-public-data.crypto_near_mainnet_us",
+      "query_file": "sql/intents_stable_legs_daily.sql",
+      "date_range": [
+        "2026-10-24",
+        "2026-10-30"
+      ],
+      "pulled_at_utc": "2026-11-09T07:53:26Z",
+      "query_sha256": "71232b8408337f2c327a6deb163ccc88a77dcff0fba73da614cbaa9ee826cd2a"
+    },
+    {
       "path": "parameters.csv",
-      "sha256": "cc10f88344e45d22d83f45f072c95ed0b7d8a8e3e0339369fed55cd1d5a76b99",
+      "sha256": "04c3f44e2abedb5c054f5fe052b66d10088427fb9e2ceadb3939c811d3b751c3",
       "rows": 4,
       "source": "manual: policy parameters with the sources listed in each row (sources column)",
       "query_file": null,
       "date_range": null,
-      "pulled_at_utc": "2026-11-03T08:00:00Z",
+      "pulled_at_utc": "2026-11-09T07:18:15Z",
+      "query_sha256": null
+    },
+    {
+      "path": "revenue_near_org.html",
+      "sha256": "dd5735bee69a3a19629751b14d87c560a043715113cd3c2bb2f76482798b05af",
+      "rows": null,
+      "source": "https://revenue.near.org/ (page as served; embedded series absoluteRevEmissions)",
+      "query_file": null,
+      "date_range": [
+        "2026-01-01",
+        "2026-11-08"
+      ],
+      "pulled_at_utc": "2026-11-09T07:20:06Z",
       "query_sha256": null
     }
   ]

@@ -97,6 +97,98 @@ def lever_bridge(
     return steps
 
 
+VOLUME_SCALES = (0.5, 1.0, 2.0)
+
+
+def volume_scale_invariance(
+    v0: float,
+    supply: float,
+    price: float,
+    burnt_near_per_day: float,
+    *,
+    tau: float,
+    inflation: float,
+    scales: tuple[float, ...] = VOLUME_SCALES,
+) -> dict:
+    """V* and the multiple when the same revenue is divided by a volume counted differently.
+
+    Public sources disagree on Intents volume (one- or two-sided counting, confidential flow). The
+    revenue reaching the buyback wallet is measured on chain and does not depend on that choice:
+    scaling volume by s divides tau by s, so V* scales by s and V*/V0 does not move. The multiple
+    is therefore the revenue growth needed, whatever the volume definition.
+    """
+    revenue = tau * v0
+    rows = []
+    for scale in scales:
+        volume = v0 * scale
+        tau_s = revenue / volume
+        v_star = breakeven_volume(inflation, supply, price, burnt_near_per_day, tau_s)
+        rows.append(
+            {
+                "volume_scale": scale,
+                "volume_usd_per_day": volume,
+                "tau_eff": tau_s,
+                "v_star_usd_per_day": v_star,
+                "volume_multiple": v_star / volume,
+            }
+        )
+    return {"buyback_usd_per_day": revenue, "inflation": inflation, "rows": rows}
+
+
+# (id, label, numerator columns, window in days or "ytd", unit). Every row divides by gross
+# issuance over the same days; "usd" values each day at that day's price.
+DEFINITIONS = (
+    ("headline", "Buyback wallet + gas burn, 30 days (the headline's basis)",
+     ("buyback_near", "burnt_near"), 30, "usd"),
+    ("window_90", "Buyback wallet + gas burn, 90 days",
+     ("buyback_near", "burnt_near"), 90, "usd"),
+    ("all_wallets", "All three revenue wallets + gas burn, 30 days",
+     ("onchain_revenue_near", "burnt_near"), 30, "usd"),
+    ("defillama_proxy", "DefiLlama holders revenue (as NEAR) + gas burn, 30 days",
+     ("buyback_near_proxy", "burnt_near"), 30, "usd"),
+    ("all_wallets_ytd", "All three revenue wallets, no burn, since 1 January, in NEAR",
+     ("onchain_revenue_near",), "ytd", "near"),
+    ("burn_only", "Gas burn only (total-supply view), 30 days, in NEAR",
+     ("burnt_near",), 30, "near"),
+)  # fmt: skip
+
+
+def definition_table(daily: pd.DataFrame, end: pd.Timestamp) -> list[dict]:
+    """Coverage of issuance under the definitions other public estimates use, on our own data.
+
+    Same end day for every row. A day with an empty numerator counts as zero and is reported in
+    `empty_days` (a source gap whose change lands on the next day keeps the sum whole).
+    """
+    rows = []
+    for key, label, numerator, window, unit in DEFINITIONS:
+        start = (
+            pd.Timestamp(year=end.year, month=1, day=1)
+            if window == "ytd"
+            else end - pd.Timedelta(days=int(window) - 1)
+        )
+        frame = daily.loc[start:end]
+        if frame["issuance_gross_near"].isna().any():
+            raise ValueError(f"{key}: issuance missing in {start.date()}..{end.date()}")
+        top = frame[list(numerator)].fillna(0.0).sum(axis=1)
+        bottom = frame["issuance_gross_near"]
+        if unit == "usd":
+            top, bottom = top * frame["near_usd"], bottom * frame["near_usd"]
+        rows.append(
+            {
+                "id": key,
+                "label": label,
+                "numerator": list(numerator),
+                "start": start.date().isoformat(),
+                "end": end.date().isoformat(),
+                "days": len(frame),
+                "unit": unit,
+                "value": float(top.sum() / bottom.sum()),
+                "empty_days": int(frame[list(numerator)].isna().any(axis=1).sum()),
+            }
+        )
+    return rows
+
+
 def conditions(
     volume: float,
     v_star: float,

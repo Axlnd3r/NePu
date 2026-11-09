@@ -23,7 +23,16 @@ import pandas as pd
 from capture import config, thesis
 from capture import manifest as mf
 from capture import proof as proof_mod
-from capture.models import breakeven, coverage, developer, distribution, ledger, valuation
+from capture.extract import governance, official
+from capture.models import (
+    breakeven,
+    coverage,
+    developer,
+    distribution,
+    ledger,
+    valuation,
+    wallet_flows,
+)
 
 ROOT = Path(__file__).resolve().parents[2]
 SITE_DATA = ROOT / "site" / "public" / "data"
@@ -442,9 +451,10 @@ VALUATION_ASSUMPTIONS = {
         "Two annual rates: 2.5 % constant (observed net supply growth is about 2.5 %, "
         "DATA_AUDIT.md Check 6), and the HSP-029 proposal: 2.5 % held for a 90-day grace "
         "period, then lowered to 1.6 % over 24 months and held. The proposal steps down every "
-        "epoch; a linear monthly ramp approximates it. HSP-029 went to a vote in October 2026 "
-        "and its result is not confirmed in our sources (data/reference/parameters.csv, "
-        "events.csv)."
+        "epoch; a linear monthly ramp approximates it. The House of Stake vote on HSP-029 is read "
+        "on chain from vote.dao (data/reference/hsp029_vote.json): it has closed and the proposal "
+        "is in its timelock (summary.governance.hsp029), so the ramp's start date is not yet "
+        "fixed and the ramp stays a scenario."
     ),
     "scenarios": {
         "historical": "bootstrapped growth as drawn (its drift is the history's)",
@@ -621,6 +631,150 @@ LEVERS_NOTE = (
     "Price is not a lever here: buyback and issuance are both valued at the latest NEAR price, and "
     "V* scales with it (see the Valuation Lab sensitivity). Each step keeps the previous ones."
 )
+INVARIANCE_NOTE = (
+    "Public sources count Intents volume differently (one or both legs of a swap, confidential "
+    "flow). The buyback wallet's revenue is measured on chain, so a volume counted at half or "
+    "twice the DefiLlama figure halves or doubles V* in dollars and leaves the multiple unchanged: "
+    "the multiple is the growth in buyback revenue that break-even needs."
+)
+DEFINITIONS_NOTE = (
+    "Public estimates of how much of NEAR's issuance is covered differ mainly by definition: "
+    "which wallets count as buybacks, whether burn is included, the window, and NEAR or USD. "
+    "Every row is computed from this project's data, except the official row, which is quoted "
+    "from revenue.near.org as published (the page calls its figures illustrative)."
+)
+FLOWS_NOTE = (
+    "Rebuilt from every balance change of the buyback wallet listed by NearBlocks (a check on the "
+    "net daily balance change the coverage ratio uses). Inflows from accounts other than "
+    "intents.near and the other revenue wallets are gifts or transfers, not fee revenue, but the "
+    "net-change method counts them as buybacks; outflows are hidden from it on days with a larger "
+    "inflow."
+)
+FLOWS_FILE = REFERENCE / "buyback_wallet_activities.json"
+STABLE_LEGS_FILE = REFERENCE / "intents_stable_legs_daily.parquet"
+VOLUME_CHECK_NOTE = (
+    "Stablecoin legs of the swaps settled on intents.near (token_diff events, BigQuery), "
+    "counted once per swap, against DefiLlama's Intents volume on the same days. Swaps "
+    "without a stablecoin leg are left out, so this is a lower bound on once-counted public "
+    "volume. If DefiLlama counted each swap once, the stablecoin legs alone would be about "
+    "the stablecoin share of 1Click volume; a ratio near half of that share is what counting "
+    "both legs would give. Confidential flow is not in token_diff events either. Either way "
+    "the dollar break-even moves and the multiple does not."
+)
+HSP029_FILE = REFERENCE / "hsp029_vote.json"
+OFFICIAL_FILE = REFERENCE / "revenue_near_org.html"
+
+
+def buyback_flows(table: pd.DataFrame, frame: pd.DataFrame, path: Path = FLOWS_FILE) -> dict | None:
+    """Gross flows of the buyback wallet over the days the coverage ratio counts it."""
+    if not path.exists():
+        return None
+    activities = json.loads(path.read_text(encoding="utf-8"))["activities"]
+    others = set(config.FEE_WALLETS) - {coverage.BUYBACK_WALLET}
+    changes = wallet_flows.activity_changes(activities, others)
+    counted = table["buyback_near"].dropna()
+    start, end = counted.index[0], counted.index[-1]
+    flows = wallet_flows.gross_flows(changes, start, end)
+    counted_near = float(counted.sum())
+    return {
+        **flows,
+        "counted_as_buyback_near": counted_near,
+        "other_share_of_counted": flows["inflow_near"]["other"] / counted_near,
+        "net_balance_change_near": float(frame.loc[start:end, "chg_buybacks"].sum()),
+        "note": FLOWS_NOTE,
+    }
+
+
+def volume_check(
+    frame: pd.DataFrame, stablecoin_share: float | None, path: Path = STABLE_LEGS_FILE
+) -> dict | None:
+    """Once-counted stablecoin legs of Intents swaps against DefiLlama volume, same days."""
+    if not path.exists():
+        return None
+    legs = pd.read_parquet(path).assign(date=lambda d: pd.to_datetime(d["date"]))
+    legs = legs.set_index("date").sort_index()
+    llama = frame.loc[legs.index, "volume_usd"]
+    ratio = float(legs["stable_leg_volume_usd"].sum() / llama.sum())
+    return {
+        "start": legs.index[0].date().isoformat(),
+        "end": legs.index[-1].date().isoformat(),
+        "days": len(legs),
+        "stable_leg_volume_usd": float(legs["stable_leg_volume_usd"].sum()),
+        "defillama_volume_usd": float(llama.sum()),
+        "ratio": ratio,
+        "ratio_by_day": [float(x) for x in legs["stable_leg_volume_usd"] / llama],
+        "entries_with_stablecoin_share": float(
+            legs["entries_with_stablecoin"].sum() / legs["token_diff_entries"].sum()
+        ),
+        "explorer_stablecoin_share": stablecoin_share,
+        "note": VOLUME_CHECK_NOTE,
+    }
+
+
+def hsp029_status(path: Path = HSP029_FILE) -> dict | None:
+    """The HSP-029 vote as read from vote.dao (data/reference/hsp029_vote.json)."""
+    if not path.exists():
+        return None
+    return governance.summarize(json.loads(path.read_text(encoding="utf-8")))
+
+
+def official_row(
+    end: str, daily: pd.DataFrame | None = None, path: Path = OFFICIAL_FILE
+) -> dict | None:
+    """revenue.near.org's revenue / emissions since 1 January, on `end` (as published)."""
+    if not path.exists():
+        return None
+    rows = official.revenue_emissions(path.read_text(encoding="utf-8"))
+    row = official.on(rows, end)
+    sums = {}
+    if daily is not None:
+        days = daily.loc[rows[0]["date"] : row["date"]]
+        sums = {
+            "our_issuance_near": float(days["issuance_gross_near"].sum()),
+            "our_revenue_near": float(days["onchain_revenue_near"].sum()),
+        }
+    return {
+        "id": "official_ytd",
+        "label": "revenue.near.org: revenue / emissions since 1 January, as published",
+        "numerator": ["revenueNear (as published)"],
+        "start": rows[0]["date"],
+        "end": row["date"],
+        "days": None,
+        "unit": "near",
+        "value": row["revenue_share"],
+        "empty_days": None,
+        "quoted": True,
+        "source": official.URL,
+        "official_emissions_near": row["emissions_near"],
+        "official_revenue_near": row["revenue_near"],
+        **sums,
+    }
+
+
+def ledger_daily(start: StartState) -> pd.DataFrame:
+    """Daily series of the capture ledger (USD flows, NEAR flows, price), one row per day."""
+    frame, table = start.frame, start.table
+    changes = frame[[c for c in frame.columns if c.startswith("chg_")]]
+    return pd.DataFrame(
+        {
+            "volume_usd": frame["volume_usd"],
+            "fees_usd": frame["fees_usd"],
+            "revenue_usd": frame["revenue_usd"],
+            "onchain_revenue_near": coverage.onchain_revenue_near(changes),
+            "buyback_near": table["buyback_near"],
+            "burnt_near": table["burnt_near"],
+            "issuance_gross_near": table["issuance_gross_near"],
+            "near_usd": table["near_usd"],
+            "buyback_near_proxy": table["buyback_near_proxy"],
+        }
+    )
+
+
+def explorer_stablecoin_share(data_dir: Path) -> float | None:
+    """Stablecoin share of 1Click volume in the last complete month (None without Explorer data)."""
+    payload = distribution_payload(data_dir, "snapshot")
+    months = [m for m in payload.get("periods", {}).get("month", []) if m["complete"]]
+    return float(months[-1]["stablecoin_share"]) if months else None
 
 
 def summary_payload(data_dir: Path, source: str) -> dict:
@@ -642,23 +796,15 @@ def summary_payload(data_dir: Path, source: str) -> dict:
         ),
     }
 
-    changes = frame[[c for c in frame.columns if c.startswith("chg_")]]
-    daily = pd.DataFrame(
-        {
-            "volume_usd": frame["volume_usd"],
-            "fees_usd": frame["fees_usd"],
-            "revenue_usd": frame["revenue_usd"],
-            "onchain_revenue_near": coverage.onchain_revenue_near(changes),
-            "buyback_near": table["buyback_near"],
-            "burnt_near": table["burnt_near"],
-            "issuance_gross_near": table["issuance_gross_near"],
-            "near_usd": table["near_usd"],
-        }
-    )
+    daily = ledger_daily(start)
     args = (inputs.total_supply_near, inputs.near_usd, inputs.burnt_near_per_day)
     v0 = inputs.volume_usd_per_day
     worst = coverage.monthly_reconciliation(frame)["deviation"].abs().max()
     waterfall = ledger.waterfall(daily, start.as_of, TAU_WINDOW)
+    definitions = ledger.definition_table(daily, start.as_of)
+    quoted = official_row(start.as_of.date().isoformat(), daily)
+    if quoted:
+        definitions.append(quoted)
     return {
         "schema_version": 1,
         "source": f"data/{source}",
@@ -685,6 +831,16 @@ def summary_payload(data_dir: Path, source: str) -> dict:
             ),
             "note": LEVERS_NOTE,
         },
+        "invariance": {
+            **ledger.volume_scale_invariance(
+                v0, *args, tau=taus["buyback"], inflation=config.INFLATION_CURRENT
+            ),
+            "note": INVARIANCE_NOTE,
+        },
+        "definitions": {"rows": definitions, "note": DEFINITIONS_NOTE},
+        "governance": {"hsp029": hsp029_status()},
+        "buyback_flows": buyback_flows(table, frame),
+        "volume_check": volume_check(frame, explorer_stablecoin_share(data_dir)),
         "conditions": ledger.conditions(
             volume=v0,
             v_star=valuation.breakeven_volume(config.INFLATION_CURRENT, *args, taus["buyback"]),
@@ -828,6 +984,29 @@ def markers_payload(data_dir: Path) -> dict:
     }
 
 
+PREREG_DIR = ROOT / "data" / "prereg"
+
+
+def prereg_payload(directory: Path = PREREG_DIR) -> dict:
+    """prereg.json: the registered forward tests, their anchor on NEAR and any scores so far."""
+    tests_file = directory / "tests.json"
+    if not tests_file.exists():
+        return {"schema_version": 1, "registered": False}
+
+    def read(name: str) -> dict | None:
+        path = directory / name
+        return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+
+    return {
+        "schema_version": 1,
+        "registered": True,
+        "manifest_sha256": mf.sha256_file(directory / mf.MANIFEST_NAME),
+        **read("tests.json"),  # type: ignore[dict-item]
+        "anchor": read("anchor.json"),
+        "scores": read("scores.json"),
+    }
+
+
 def ots_files(out_dir: Path) -> list[Path]:
     """The OpenTimestamps file of the recorded run, served as is (empty before a stamp exists)."""
     record = proof_mod.read_proof(PROOF_FILE)
@@ -862,6 +1041,7 @@ def build_payloads(source: str, data_dir: Path) -> dict[str, dict]:
         "queries": queries_payload(data_dir),
         "provenance": provenance_payload(data_dir, source),
         "markers": markers_payload(data_dir),
+        "prereg": prereg_payload(),
     }
 
 

@@ -12,6 +12,7 @@ import hashlib
 import itertools
 import json
 import os
+import re
 
 import numpy as np
 import pandas as pd
@@ -497,6 +498,123 @@ def test_methodology_claims(ind, pub) -> None:
 # Every JSON path that THESIS.md or the README results block uses (with list positions and selectors
 # written as [*]) must be named here, and each one is recomputed by a test below. test_thesis.py
 # fails when the thesis starts citing a path that is not listed.
+def test_the_multiple_does_not_move_with_the_volume_definition(ind, pub) -> None:
+    s = pub["summary"]
+    st = _start(ind, s["levers"]["as_of"])
+    revenue = st["tau_bb"] * st["v0"]
+    for row in s["invariance"]["rows"]:
+        volume = st["v0"] * row["volume_scale"]
+        v_star = _vstar(st, config.INFLATION_CURRENT, revenue / volume)
+        assert close(row["v_star_usd_per_day"], v_star), row["volume_scale"]
+        assert close(row["volume_multiple"], v_star / volume), row["volume_scale"]
+        assert close(row["volume_multiple"], s["levers"]["steps"][0]["volume_multiple"])
+
+
+def test_every_definition_row(ind, pub) -> None:
+    rows = {r["id"]: r for r in pub["summary"]["definitions"]["rows"]}
+    proxy = ind.llama_raw["holders_revenue_usd"].reindex(ind.idx) / ind.price
+    numerators = {
+        "headline": (ind.bb.fillna(0) + ind.burn, 30, True),
+        "window_90": (ind.bb.fillna(0) + ind.burn, 90, True),
+        "all_wallets": (ind.onchain.fillna(0) + ind.burn, 30, True),
+        "defillama_proxy": (proxy.fillna(0) + ind.burn, 30, True),
+        "all_wallets_ytd": (ind.onchain.fillna(0), None, False),
+        "burn_only": (ind.burn, 30, False),
+    }
+    for key, (top, days, usd) in numerators.items():
+        row = rows[key]
+        end = D(row["end"])
+        start = D(f"{end.year}-01-01") if days is None else end - pd.Timedelta(days=days - 1)
+        assert row["start"] == start.date().isoformat(), key
+        w = slice(start, end)
+        t, b = top[w], ind.issuance[w]
+        if usd:
+            t, b = t * ind.price[w], b * ind.price[w]
+        assert close(row["value"], t.sum() / b.sum()), key
+    # the headline row is the published CR_float in USD on the same day
+    cr_usd = ind.roll((ind.bb + ind.burn) * ind.price) / ind.roll(ind.issuance * ind.price)
+    assert close(rows["headline"]["value"], cr_usd[D(rows["headline"]["end"])])
+
+
+def test_the_official_row_is_quoted_from_the_stored_page(ind, pub) -> None:
+    row = next(r for r in pub["summary"]["definitions"]["rows"] if r.get("quoted"))
+    page = (build.REFERENCE / "revenue_near_org.html").read_text(encoding="utf-8")
+    page = page.replace('\\"', '"')
+    m = re.search(r'\{"date":"' + row["end"] + r'","emissionsNear":[^{}]*\}', page)
+    found = json.loads(m.group(0))
+    assert close(row["official_emissions_near"], found["emissionsNear"])
+    assert close(row["official_revenue_near"], found["revenueNear"])
+    assert close(row["value"], found["revenueNear"] / found["emissionsNear"])
+    w = slice(D(row["start"]), D(row["end"]))
+    assert close(row["our_issuance_near"], ind.issuance[w].sum())
+    assert close(row["our_revenue_near"], ind.onchain[w].sum())
+
+
+def test_the_buyback_wallet_flows_are_rebuilt_from_its_activity(ind, pub) -> None:
+    flows = pub["summary"]["buyback_flows"]
+    path = build.REFERENCE / "buyback_wallet_activities.json"
+    if flows is None:
+        assert not path.exists()
+        return
+    acts = sorted(json.loads(path.read_text(encoding="utf-8"))["activities"],
+                  key=lambda a: int(a["event_index"]))  # fmt: skip
+    prev, sums, out, senders = 0, {"intents": 0.0, "revenue_wallet": 0.0, "other": 0.0}, 0.0, set()
+    start, end = D(flows["start"]), D(flows["end"])
+    others = {"fefundsadmin.sputnik-dao.near", "1csfundsadmin.sputnik-dao.near"}
+    for a in acts:
+        bal = int(a["absolute_nonstaked_amount"])
+        change, prev = (bal - prev) / 10**24, bal
+        day = pd.Timestamp(int(a["block_timestamp"]), unit="ns").normalize()
+        if not start <= day <= end:
+            continue
+        who = a["involved_account_id"]
+        if change > 0:
+            kind = (
+                "intents"
+                if who == "intents.near"
+                else "revenue_wallet"
+                if who in others
+                else "other"
+            )
+            sums[kind] += change
+            if kind == "other":
+                senders.add(who)
+        else:
+            out -= change
+    for k, v in sums.items():
+        assert close(flows["inflow_near"][k], v, 1e-6), k
+    assert close(flows["outflow_near"], out, 1e-6) and flows["other_senders"] == len(senders)
+    assert close(flows["net_near"], sum(sums.values()) - out, 1e-6)
+    assert close(flows["net_balance_change_near"], ind.filled[BUY][start:end].sum(), 1e-9)
+    counted = ind.bb[start:end].sum()
+    assert close(flows["counted_as_buyback_near"], counted)
+    assert close(flows["other_share_of_counted"], sums["other"] / counted, 1e-6)
+
+
+def test_the_volume_check_is_recomputed_from_the_stored_legs(ind, pub) -> None:
+    v = pub["summary"]["volume_check"]
+    legs = pd.read_parquet(build.REFERENCE / "intents_stable_legs_daily.parquet")
+    days = pd.to_datetime(legs["date"])
+    llama = ind.vol.reindex(days)
+    assert v["start"] == days.min().date().isoformat() and v["end"] == days.max().date().isoformat()
+    assert close(v["ratio"], legs["stable_leg_volume_usd"].sum() / llama.sum())
+
+
+def test_the_hsp029_vote_is_read_from_the_stored_reply(pub) -> None:
+    g = pub["summary"]["governance"]["hsp029"]
+    raw = json.loads((build.REFERENCE / "hsp029_vote.json").read_text(encoding="utf-8"))
+    p = raw["proposal"]
+    cast = int(p["total_votes"]["total_venear"])
+    assert g["status"] == p["status"] and g["read_at_block"] == raw["block_height"]
+    assert g["contract"] == raw["request"]["account_id"] == "vote.dao"
+    assert close(g["top_option_share"], max(int(v["total_venear"]) for v in p["votes"]) / cast)
+    assert close(g["turnout"], cast / int(p["snapshot_and_state"]["total_venear"]))
+    end_s = (int(p["voting_start_time_ns"]) + int(p["voting_duration_ns"])
+             + int(p["timelock_duration_ns"])) // 10**9  # fmt: skip
+    stamp = pd.Timestamp(end_s, unit="s", tz="UTC").strftime("%Y-%m-%dT%H:%M:%SZ")
+    assert g["timelock_end_utc"] == stamp
+
+
 AUDITED = {
     "coverage.availability.buyback_near.first_date",
     "coverage.latest.cr_supply_30.date",
@@ -506,6 +624,7 @@ AUDITED = {
     "distribution.periods.month[*].hhi_channel",
     "distribution.periods.month[*].max_channel_share",
     "distribution.periods.month[*].period",
+    "distribution.periods.month[*].stablecoin_share",
     "distribution.scope.explorer_share_of_defillama_volume_by_month[*].explorer_share_of_defillama_volume",
     "distribution.scope.explorer_share_of_defillama_volume_by_month[*].period",
     "markers.not_drawn[*].label",
@@ -520,11 +639,35 @@ AUDITED = {
     "summary.conditions[*].text",
     "summary.conditions[*].threshold",
     "summary.conditions[*].value",
+    "summary.definitions.rows[*].end",
+    "summary.definitions.rows[*].label",
+    "summary.definitions.rows[*].official_emissions_near",
+    "summary.definitions.rows[*].official_revenue_near",
+    "summary.definitions.rows[*].our_issuance_near",
+    "summary.definitions.rows[*].our_revenue_near",
+    "summary.definitions.rows[*].start",
+    "summary.definitions.rows[*].value",
+    "summary.buyback_flows.end",
+    "summary.buyback_flows.inflow_near.intents",
+    "summary.buyback_flows.inflow_near.other",
+    "summary.buyback_flows.inflow_near.revenue_wallet",
+    "summary.buyback_flows.net_balance_change_near",
+    "summary.buyback_flows.net_near",
+    "summary.buyback_flows.other_senders",
+    "summary.buyback_flows.other_share_of_counted",
+    "summary.buyback_flows.outflow_near",
+    "summary.buyback_flows.start",
+    "summary.governance.hsp029.read_at_block",
+    "summary.governance.hsp029.timelock_end_utc",
+    "summary.governance.hsp029.top_option_share",
+    "summary.governance.hsp029.turnout",
     "summary.hero.cr_float_30",
     "summary.hero.cr_float_usd_30",
     "summary.hero.date",
     "summary.history.cr_float_30_max.date",
     "summary.history.cr_float_30_max.value",
+    "summary.invariance.rows[*].v_star_usd_per_day",
+    "summary.invariance.rows[*].volume_multiple",
     "summary.ledger.days",
     "summary.ledger.kept.buyback_of_onchain",
     "summary.ledger.per_10k_volume.buyback_wallet",
@@ -538,6 +681,9 @@ AUDITED = {
     "summary.levers.steps[*].v_star_usd_per_day",
     "summary.levers.steps[*].volume_multiple",
     "summary.levers.volume_usd_per_day",
+    "summary.volume_check.end",
+    "summary.volume_check.ratio",
+    "summary.volume_check.start",
     "valuation.growth.mean_after_launch",
     "valuation.growth.mean_all",
     "valuation.growth.n_months",

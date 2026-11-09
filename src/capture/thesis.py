@@ -149,6 +149,17 @@ def render(payloads: dict[str, dict]) -> tuple[str, list[Fact]]:
         f"{f.integer(f'{s}.ledger.days')}-day average, before capture covers issuance."
     )
     out("")
+    inv = f"{s}.invariance.rows"
+    out(
+        "That multiple does not depend on how Intents volume is counted. The revenue that reaches "
+        "the buyback wallet is measured on chain; counted at half or twice DefiLlama's volume, "
+        f"break-even becomes {f.usd(f'{inv}[volume_scale=0.5].v_star_usd_per_day')} or "
+        f"{f.usd(f'{inv}[volume_scale=2.0].v_star_usd_per_day')} a day and the multiple stays "
+        f"{f.times(f'{inv}[volume_scale=0.5].volume_multiple', 1)}. Read it as the growth in "
+        "buyback revenue that break-even needs; the dollar volume is only as good as the volume "
+        "definition."
+    )
+    out("")
     out(
         "Buybacks are not burns: the NEAR bought back is held in a wallet, so only gas burn lowers "
         f"total supply (CR_supply {f.num('coverage.latest.cr_supply_30.value', 3)} on "
@@ -184,9 +195,18 @@ def render(payloads: dict[str, dict]) -> tuple[str, list[Fact]]:
         f"{f.pct(f'{steps}[1].inflation')} a year) would cut the required volume by a factor of "
         f"{f.times(f'{steps}[1].closes_by')}, and sending all protocol revenue to buybacks by a "
         f"further {f.times(f'{steps}[2].closes_by')}, leaving "
-        f"{f.times(f'{steps}[2].volume_multiple')} to come from volume growth. Its vote result is not "
-        "confirmed in the sources used."
+        f"{f.times(f'{steps}[2].volume_multiple')} to come from volume growth."
     )
+    hsp = f"{s}.governance.hsp029"
+    if f.val(hsp):
+        out(
+            f"- The House of Stake vote on HSP-029, read on chain from `{f.word(f'{hsp}.contract')}` "
+            f"at block {f.integer(f'{hsp}.read_at_block')}, has closed with status "
+            f"`{f.word(f'{hsp}.status')}`: {f.pct(f'{hsp}.top_option_share', 2)} of the veNEAR "
+            f"cast went to one option (turnout {f.pct(f'{hsp}.turnout')}), and its timelock ends "
+            f"{f.word(f'{hsp}.timelock_end_utc')}. Validators still have to adopt the ramp, so it "
+            "is a scenario here, not a measurement."
+        )
     out(
         "- Required growth is finite: reaching break-even in "
         f"{f.integer(f'{reverse}.horizon_years')} years at "
@@ -217,6 +237,33 @@ def render(payloads: dict[str, dict]) -> tuple[str, list[Fact]]:
         f"{f.pct(f'{coverage_last}.explorer_share_of_defillama_volume')} in "
         f"{f.word(f'{coverage_last}.period')}."
     )
+    bf = f"{s}.buyback_flows"
+    if f.val(bf):
+        out(
+            "- The buyback wallet's own activity (NearBlocks, "
+            f"{f.date(f'{bf}.start')} to {f.date(f'{bf}.end')}): it received "
+            f"{f.integer(f'{bf}.inflow_near.intents')} NEAR from `intents.near`, "
+            f"{f.integer(f'{bf}.inflow_near.revenue_wallet')} NEAR moved in from the other revenue "
+            f"wallets and {f.integer(f'{bf}.inflow_near.other')} NEAR from "
+            f"{f.integer(f'{bf}.other_senders')} other accounts, and sent "
+            f"{f.integer(f'{bf}.outflow_near')} NEAR out. The net daily change behind CR counts "
+            "the NEAR from other accounts as buybacks "
+            f"({f.pct(f'{bf}.other_share_of_counted')} of what it counts), and cannot see an "
+            "outflow on a day with a larger inflow. The activity nets to "
+            f"{f.integer(f'{bf}.net_near')} NEAR against "
+            f"{f.integer(f'{bf}.net_balance_change_near')} NEAR in the balance series CR uses."
+        )
+    vc = f"{s}.volume_check"
+    if f.val(vc):
+        out(
+            "- DefiLlama's Intents volume looks counted on both sides of a swap. From "
+            f"{f.date(f'{vc}.start')} to {f.date(f'{vc}.end')} the stablecoin legs of swaps settled "
+            "on `intents.near` (token_diff events, BigQuery), counted once, came to "
+            f"{f.pct(f'{vc}.ratio')} of DefiLlama's volume, while stablecoins were "
+            f"{f.pct(f'{month0}.stablecoin_share')} of 1Click volume in "
+            f"{f.word(f'{month0}.period')}: about what counting both legs would give. The dollar "
+            "break-even above may be about half as large; the multiple does not change."
+        )
     out(
         f"- Volume is concentrated: in {f.word(f'{month0}.period')} one channel carried "
         f"{f.pct(f'{month0}.max_channel_share')} of 1Click volume (channel HHI "
@@ -239,6 +286,44 @@ def render(payloads: dict[str, dict]) -> tuple[str, list[Fact]]:
         f"- Developer activity does not lead revenue (a null result): {f.text('developer.lead_lag.verdict.text')}"
     )
     out(f"- {f.text('valuation.assumptions.price')}")
+    out("")
+
+    # ------------------------------------------------------------------ definitions
+    out("## Why public estimates differ")
+    out("")
+    out(
+        "Published figures for how much of NEAR's issuance is covered range widely. Most of the "
+        "spread is definition, not data. The same days, on this project's data:"
+    )
+    out("")
+    rows = f.val(f"{s}.definitions.rows")
+    for index, row in enumerate(rows):  # type: ignore[arg-type]
+        base = f"{s}.definitions.rows[{index}]"
+        if row.get("quoted"):
+            continue
+        out(
+            f"- {f.text(f'{base}.label')}: {f.pct(f'{base}.value')} "
+            f"({f.date(f'{base}.start')} to {f.date(f'{base}.end')})."
+        )
+    for index, row in enumerate(rows):  # type: ignore[arg-type]
+        base = f"{s}.definitions.rows[{index}]"
+        if not row.get("quoted"):
+            continue
+        out(
+            f"- {f.text(f'{base}.label')}: {f.pct(f'{base}.value')} (to {f.date(f'{base}.end')}). "
+            "On the same days its emissions agree with our gross issuance "
+            f"({f.integer(f'{base}.official_emissions_near')} against "
+            f"{f.integer(f'{base}.our_issuance_near')} NEAR) but its revenue is "
+            f"{f.integer(f'{base}.official_revenue_near')} NEAR against the "
+            f"{f.integer(f'{base}.our_revenue_near')} NEAR the three revenue wallets received. "
+            "The page books revenue in monthly steps, does not document its method and calls its "
+            "figures illustrative, so the gap is reported here, not explained."
+        )
+    out("")
+    out(
+        "The headline uses the strictest buyback basis on purpose: only the buyback wallet holds "
+        "NEAR bought back; the other revenue wallets have not paid out."
+    )
     out("")
 
     # ------------------------------------------------------------------ triggers
@@ -335,11 +420,24 @@ def render_results(payloads: dict[str, dict]) -> tuple[str, list[Fact]]:
         f"- **Not yet:** daily Intents volume would have to reach {f.usd(f'{steps}[0].v_star_usd_per_day')}, "
         f"{f.times(f'{steps}[0].volume_multiple', 1)} its {f.usd(f'{s}.levers.volume_usd_per_day')} "
         "average, for capture to cover issuance at today's rates.",
+        "- That multiple does not depend on how volume is counted: at half or twice DefiLlama's "
+        "volume it stays "
+        f"{f.times(f'{s}.invariance.rows[volume_scale=2.0].volume_multiple', 1)}. It is the growth "
+        "in buyback revenue that break-even needs.",
         f"- Proof: the SHA-256 of the snapshot manifest is committed on NEAR "
         f"**{f.word(f'{proof}.network')}** (contract `{f.word(f'{proof}.contract')}`, run id "
         f"`{f.word(f'{proof}.run_id')}`, [transaction]({f.word(f'{proof}.explorer_url')}), block "
         f"{f.integer(f'{proof}.block_height')}). {ots}",
     ]
+    hsp = f"{s}.governance.hsp029"
+    if f.val(hsp):
+        lines.insert(
+            -1,
+            "- The issuance cut HSP-029, read on chain from `vote.dao`: status "
+            f"`{f.word(f'{hsp}.status')}`, {f.pct(f'{hsp}.top_option_share', 2)} of the veNEAR "
+            f"cast for one option, timelock ends {f.word(f'{hsp}.timelock_end_utc')}. It would "
+            f"close {f.times(f'{steps}[1].closes_by')} of the gap once validators adopt it.",
+        )
     return "\n".join(lines), f.used
 
 

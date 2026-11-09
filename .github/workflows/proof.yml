@@ -9,6 +9,7 @@ on:
   push:
     paths:
       - "data/proof.json"
+      - "data/prereg/anchor.json"
       - ".github/workflows/proof.yml"
   workflow_dispatch:
 
@@ -54,6 +55,20 @@ jobs:
           fi
           ots info manifest.json.ots 2>&1 | tee "$RUNNER_TEMP/ots-info.txt"
 
+      - name: Stamp (or upgrade) the pre-registration manifest
+        run: |
+          [ -f data/prereg/manifest.json ] || exit 0
+          dir="data/prereg/ots"
+          mkdir -p "$dir"
+          if [ -f "$dir/manifest.json.ots" ]; then
+            cmp -s data/prereg/manifest.json "$dir/manifest.json" || { echo "::error::data/prereg/manifest.json changed after it was stamped"; exit 1; }
+            ( cd "$dir" && { ots upgrade manifest.json.ots || true; rm -f manifest.json.ots.bak; } )
+          else
+            cp data/prereg/manifest.json "$dir/manifest.json"
+            ( cd "$dir" && ots stamp manifest.json )
+          fi
+          ( cd "$dir" && ots info manifest.json.ots ) | tail -20
+
       - name: Show the ots output as an annotation
         if: always()
         run: |
@@ -71,6 +86,7 @@ jobs:
       - name: Commit the proof files
         run: |
           git add data/proof data/proof.json
+          [ -d data/prereg/ots ] && git add data/prereg/ots
           if ! git diff --cached --quiet; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

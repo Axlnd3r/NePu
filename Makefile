@@ -17,6 +17,7 @@ verify:
 	uv run ruff check src tests
 	uv run capture verify-manifest data/snapshot
 	uv run capture verify-manifest data/reference
+	uv run capture verify-manifest data/prereg
 	uv run pytest -q
 
 site: build
