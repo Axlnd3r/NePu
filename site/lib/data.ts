@@ -4,12 +4,13 @@ import developer from "../public/data/developer.json";
 import distribution from "../public/data/distribution.json";
 import markers from "../public/data/markers.json";
 import meta from "../public/data/meta.json";
+import prereg from "../public/data/prereg.json";
 import provenance from "../public/data/provenance.json";
 import queries from "../public/data/queries.json";
 import summary from "../public/data/summary.json";
 import valuation from "../public/data/valuation.json";
 
-export { coverage, developer, distribution, markers, meta, provenance, queries, summary, valuation };
+export { coverage, developer, distribution, markers, meta, prereg, provenance, queries, summary, valuation };
 
 export type SourceRow = (typeof provenance.sources)[number];
 export type Query = (typeof queries.queries)[number];
@@ -17,6 +18,14 @@ export type Query = (typeof queries.queries)[number];
 export function source(table: string): SourceRow {
   const row = provenance.sources.find((s) => s.path === `${table}.parquet`);
   if (!row) throw new Error(`no provenance for ${table}`);
+  return row;
+}
+
+export type ReferenceRow = (typeof provenance.reference)[number];
+
+export function reference(path: string): ReferenceRow {
+  const row = provenance.reference.find((r) => r.path === path);
+  if (!row) throw new Error(`no reference file ${path}`);
   return row;
 }
 

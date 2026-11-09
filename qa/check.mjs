@@ -122,6 +122,32 @@ for (const [vpName, viewport] of Object.entries(VIEWPORTS)) {
           fail(`meter revenue basis ${gotRevenue} != ${revenueRow.breakeven_volume_usd_per_day}`);
         await page.getByRole("button", { name: "Buyback wallet" }).click();
         console.log(`ok   meter matches the data (${got.toFixed(0)} and ${gotRevenue.toFixed(0)})`);
+
+        // Path to yes: the defaults are the lever bridge's first step; all revenue to buybacks at
+        // the HSP-029 rate is its last step.
+        const needed = page.getByTestId("ptys-needed");
+        const readNeeded = async () => Number(await needed.getAttribute("data-value"));
+        const steps = summary.levers.steps;
+        const n0 = await readNeeded();
+        if (Math.abs(n0 / steps[0].volume_multiple - 1) > 1e-9)
+          fail(`path-to-yes default ${n0} != lever step 0 ${steps[0].volume_multiple}`);
+        await page.getByTestId("ptys-share").fill("1");
+        await page.getByTestId("ptys-hsp").click();
+        const n2 = await readNeeded();
+        if (Math.abs(n2 / steps[2].volume_multiple - 1) > 1e-9)
+          fail(`path-to-yes all revenue + HSP-029 ${n2} != lever step 2 ${steps[2].volume_multiple}`);
+        await page.getByTestId("ptys-growth").fill(String(Math.ceil(n2 * 10) / 10));
+        const reached = (await needed.textContent()) ?? "";
+        if (!reached.includes("Break-even reached")) fail(`path-to-yes never reaches break-even`);
+        await page.getByRole("button", { name: "Reset to the measured state" }).click();
+        console.log(`ok   path to yes matches the lever bridge (${n0.toFixed(2)}x and ${n2.toFixed(2)}x)`);
+
+        // How it works: every step opens its panel.
+        for (const title of ["Freeze and hash", "Measure and reconcile", "Prove on NEAR", "Pull"]) {
+          await page.getByRole("tab", { name: new RegExp(title) }).click();
+          const selected = await page.getByRole("tab", { name: new RegExp(title) }).getAttribute("aria-selected");
+          if (selected !== "true") fail(`how-it-works tab ${title} did not open`);
+        }
       }
 
       if (name === "methodology" && vpName === "desktop" && scheme === "light") {

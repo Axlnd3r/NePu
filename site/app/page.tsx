@@ -1,16 +1,25 @@
 import { BarRows, Badge, MarkerList, Meter } from "@/components/Bits";
 import { ChartCard } from "@/components/ChartCard";
 import { BreakEvenMeter } from "@/components/charts/BreakEvenMeter";
+import { HowItWorks } from "@/components/HowItWorks";
 import { NearMark } from "@/components/NearMark";
+import { PathToYes } from "@/components/PathToYes";
+import { Prereg, type PreregData } from "@/components/Prereg";
 import { TimeChart } from "@/components/charts/TimeChart";
 import { Evidence } from "@/components/Evidence";
-import { coverage, distribution, markersBetween, summary, valuation } from "@/lib/data";
+import { coverage, distribution, markersBetween, prereg, provenance, summary, valuation } from "@/lib/data";
 import { pct, ratio, times, usd } from "@/lib/format";
 
 const CORE = ["supply_daily", "fee_wallet_inflows_daily", "price_daily", "defillama_intents_daily"];
+const REPO = "https://github.com/Axlnd3r/NePu";
 
 export default function Overview() {
-  const { hero, ledger, levers, conditions } = summary;
+  const { hero, ledger, levers, conditions, governance, definitions, invariance } = summary;
+  const hsp = governance.hsp029;
+  const proof = provenance.proof;
+  const months = provenance.reconciliation.months.length;
+  const own = definitions.rows.filter((r) => !("quoted" in r));
+  const quoted = definitions.rows.find((r) => "quoted" in r);
   const start = valuation.start;
   const steps = levers.steps;
   const explorerShares = distribution.scope.explorer_share_of_defillama_volume_by_month;
@@ -113,6 +122,110 @@ export default function Overview() {
         </div>
       </section>
 
+      <section aria-labelledby="what" className="rounded-xl border border-[var(--ring)] bg-surface p-5 sm:p-8">
+        <p className="eyebrow">What NePu is</p>
+        <h2 id="what" className="display mt-2 max-w-3xl text-2xl font-medium sm:text-3xl">
+          A ledger that checks one claim about NEAR against the chain, and lets you check it back.
+        </h2>
+        <p className="mt-3 max-w-3xl text-ink-2">
+          NEAR Intents routes cross-chain swaps and part of its fees buys NEAR, while new NEAR is
+          issued every epoch. NePu measures whether that capture can outgrow issuance: it pulls the
+          numbers from NEAR&apos;s own chain and three public APIs, reconciles them, publishes the
+          evidence for and against, and commits a hash of its inputs to NEAR so anyone can tell the
+          published numbers came from these files. It predicts no price.
+        </p>
+        <div className="mt-6">
+          <HowItWorks
+            steps={[
+              {
+                key: "pull",
+                title: "Pull",
+                short: "NEAR BigQuery, Intents Explorer, DefiLlama, CoinGecko",
+                body: (
+                  <>
+                    <p>
+                      Every BigQuery query filters on <code>block_date</code>, is dry-run first and
+                      runs under a byte cap. Revenue wallets are read as NEAR transfers from{" "}
+                      <code>intents.near</code>; 1Click transactions come from the Intents Explorer
+                      with a partner key.
+                    </p>
+                    <p>Each query or request is shown under its chart (open “Query and model”).</p>
+                  </>
+                ),
+                href: `${REPO}/blob/main/DATA_AUDIT.md`,
+                link: "How each source was checked",
+              },
+              {
+                key: "freeze",
+                title: "Freeze and hash",
+                short: "Committed snapshot, SHA-256 per file",
+                body: (
+                  <p>
+                    The inputs are frozen in <code>data/snapshot/</code> with a manifest holding each
+                    file&apos;s hash, query text, date range and pull time. The whole dashboard and
+                    the thesis rebuild from it offline, without credentials.
+                  </p>
+                ),
+                command: "make all",
+                href: `${REPO}#quickstart-offline`,
+                link: "Rebuild it yourself",
+              },
+              {
+                key: "measure",
+                title: "Measure and reconcile",
+                short: "Coverage ratio, break-even, independent audit",
+                body: (
+                  <p>
+                    Coverage, break-even and every published number are recomputed by a second,
+                    independent implementation in the tests. On-chain revenue is reconciled with
+                    DefiLlama month by month: {months} of {months} complete months within tolerance.
+                  </p>
+                ),
+                command: "make verify",
+                href: `${REPO}/blob/main/THESIS.md`,
+                link: "Read the thesis, evidence against included",
+              },
+              {
+                key: "prove",
+                title: "Prove on NEAR",
+                short: `Manifest hash on NEAR ${proof.network}`,
+                body: (
+                  <p>
+                    The SHA-256 of the manifest is written to the contract{" "}
+                    <code>{proof.contract}</code> on NEAR {proof.network} (block{" "}
+                    {proof.block_height?.toLocaleString("en-US")}) and stamped with OpenTimestamps.
+                    It shows the hash existed no later than that block; it does not show the data is
+                    correct.
+                  </p>
+                ),
+                href: "methodology/#proof",
+                link: "Verify it in your browser",
+              },
+            ]}
+          />
+        </div>
+        <div className="mt-8 grid items-center gap-6 border-t border-[var(--ring)] pt-8 md:grid-cols-[minmax(0,22rem)_1fr]">
+          <video
+            controls
+            preload="none"
+            poster="media/nepu-demo-cover.png"
+            className="w-full rounded-lg border border-[var(--ring)] bg-raised"
+          >
+            <source src="media/nepu-demo.mp4" type="video/mp4" />
+          </video>
+          <div className="text-sm text-ink-2">
+            <p className="eyebrow">Demo</p>
+            <p className="mt-2 text-base text-ink">
+              The whole argument in under a minute: the gap, what closes it, and the proof.
+            </p>
+            <p className="mt-2">
+              Every figure on screen is read from the same JSON files as this dashboard. The video is
+              rendered from code in <code>video/</code>, so it rebuilds with the data.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <ChartCard
         id="ledger"
         title="Where $10,000 of Intents volume goes"
@@ -176,7 +289,99 @@ export default function Overview() {
             { label: "+ all revenue to buybacks", value: steps[2].volume_multiple, text: times(steps[2].volume_multiple), accent: true },
           ]}
         />
-        <p className="mt-3 text-xs text-muted">{levers.note} HSP-029 is a proposal; its vote result is not confirmed in our sources.</p>
+        <p className="mt-3 text-xs text-muted">{levers.note}</p>
+        {hsp && (
+          <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-[var(--ring)] bg-raised p-4 text-sm">
+            <Badge tone="neutral">HSP-029 on chain: {hsp.status}</Badge>
+            <span className="text-ink-2">
+              Read from <code>{hsp.contract}</code> at block {hsp.read_at_block.toLocaleString("en-US")}:{" "}
+              {pct(hsp.top_option_share, 2)} of the veNEAR cast went to one option (turnout{" "}
+              {pct(hsp.turnout)}); the timelock ends {hsp.timelock_end_utc.replace("T", " ").replace("Z", " UTC")}.
+              Validators still have to adopt the ramp, so the cut stays a scenario.
+            </span>
+          </div>
+        )}
+      </ChartCard>
+
+      <ChartCard
+        id="path"
+        title="Path to yes: move the levers yourself"
+        sentence={
+          <>
+            Today the buyback wallet receives {pct(1 / steps[0].volume_multiple)} of what break-even
+            needs. Push revenue, routing and issuance and see when buybacks would cover new NEAR. The
+            multiple does not depend on how Intents volume is counted: at half or twice
+            DefiLlama&apos;s volume it stays {times(invariance.rows[0].volume_multiple, 1)}.
+          </>
+        }
+        tables={CORE}
+        model="ledger.lever_bridge and ledger.volume_scale_invariance (same formula, in the browser)"
+        references={hsp ? ["hsp029_vote.json"] : []}
+      >
+        <PathToYes
+          asOf={valuation.start.as_of}
+          supply={start.total_supply_near}
+          price={start.near_usd}
+          burnPerDay={start.burnt_near_per_day}
+          volume={start.volume_usd_per_day}
+          tauBuyback={start.tau_buyback_30}
+          tauRevenue={start.tau_revenue_30}
+          inflationNow={steps[0].inflation}
+          inflationTarget={steps[1].inflation}
+          hsp029Status={hsp?.status ?? null}
+        />
+      </ChartCard>
+
+      <ChartCard
+        id="definitions"
+        title="Why public estimates differ"
+        sentence={
+          <>
+            Depending on the definition, coverage of issuance runs from{" "}
+            {pct(Math.min(...own.map((r) => r.value)))} (burn only) to{" "}
+            {pct(Math.max(...definitions.rows.map((r) => r.value)))}. Most of the spread is
+            definition, not data: counting all three revenue wallets instead of the buyback wallet
+            alone moves the 30-day figure from {pct(own[0].value)} to{" "}
+            {pct(own.find((r) => r.id === "all_wallets")!.value)}.
+          </>
+        }
+        tables={CORE}
+        model="ledger.definition_table (src/capture/models/ledger.py)"
+        references={quoted ? ["revenue_near_org.html"] : []}
+        table={{
+          columns: ["Definition", "Days", "Unit", "Coverage"],
+          rows: definitions.rows.map((r) => [
+            r.label,
+            `${r.start} to ${r.end}`,
+            r.unit === "usd" ? "USD at daily prices" : "NEAR",
+            pct(r.value),
+          ]),
+        }}
+      >
+        <BarRows
+          max={Math.max(...definitions.rows.map((r) => r.value))}
+          rows={definitions.rows.map((r) => ({
+            label: r.label,
+            value: r.value,
+            text: pct(r.value),
+            accent: r.id === "headline",
+            muted: "quoted" in r,
+          }))}
+        />
+        <p className="mt-3 text-xs text-muted">
+          {definitions.note} The gold bar is the headline&apos;s basis; the outlined bar is quoted, not
+          measured.
+          {quoted?.official_revenue_near && quoted.our_revenue_near && quoted.official_emissions_near && quoted.our_issuance_near && (
+            <>
+              {" "}
+              On the same days the official emissions match our gross issuance within{" "}
+              {pct(Math.abs(quoted.official_emissions_near / quoted.our_issuance_near - 1), 1)}, while
+              its revenue is {pct(quoted.official_revenue_near / quoted.our_revenue_near - 1, 0)}{" "}
+              above what the three revenue wallets received; its method is not documented, so the
+              gap is shown, not explained.
+            </>
+          )}
+        </p>
       </ChartCard>
 
       <ChartCard
@@ -269,6 +474,8 @@ export default function Overview() {
           ))}
         </ul>
       </section>
+
+      <Prereg data={prereg as unknown as PreregData} />
     </div>
   );
 }
