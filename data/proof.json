@@ -14,15 +14,19 @@
  "opentimestamps": {
   "proof_file": "data/proof/capture-ledger-2026-11-01-48c59060cee3/manifest.json.ots",
   "manifest_copy": "data/proof/capture-ledger-2026-11-01-48c59060cee3/manifest.json",
-  "status": "pending",
+  "status": "confirmed",
   "file_sha256": "48c59060cee309e2aafb62614dfb24454828bf5ae8f534bd52154165b5b8c096",
-  "bitcoin_blocks": [],
+  "bitcoin_blocks": [
+   974389,
+   974372,
+   974381
+  ],
   "pending_calendars": [
    "https://finney.calendar.eternitywall.com",
    "https://bob.btc.calendar.opentimestamps.org",
    "https://alice.btc.calendar.opentimestamps.org",
    "https://btc.calendar.catallaxy.com"
   ],
-  "checked_at_utc": "2026-11-03T08:01:58Z"
+  "checked_at_utc": "2026-11-09T08:51:11Z"
  }
 }
