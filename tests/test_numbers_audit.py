@@ -97,7 +97,9 @@ def pub(data_dir) -> dict:
         "valuation": build.valuation_payload(data_dir, src),
         "distribution": build.distribution_payload(data_dir, src),
         "developer": build.developer_payload(data_dir, src),
+        "usage": build.usage_payload(data_dir, src),
         "markers": build.markers_payload(data_dir),
+        "prereg": build.prereg_payload(),
         "provenance": build.provenance_payload(data_dir, src),
     }
 
@@ -109,7 +111,7 @@ def test_every_file_matches_its_manifest_and_every_payload_cites_that_hash(data_
         for e in json.loads((d / "manifest.json").read_text(encoding="utf-8"))["files"]:
             assert sha(d / e["path"]) == e["sha256"], e["path"]
             hashes[e["path"]] = e["sha256"]
-    for name in ("coverage", "summary", "valuation", "distribution", "developer"):
+    for name in ("coverage", "summary", "valuation", "distribution", "developer", "usage"):
         for inp in pub[name]["inputs"]:
             assert inp["sha256"] == hashes[inp["path"]], (name, inp["path"])
     for s in pub["provenance"]["sources"] + pub["provenance"]["reference"]:
@@ -469,6 +471,161 @@ def test_every_cohort_and_the_lead_lag_table(data_dir, ind, pub) -> None:
             shuffled = rng.permuted(np.tile(zb, (10_000, 1)), axis=1)
         p = float(np.mean(np.abs((shuffled * za).mean(axis=1)) >= abs(obs) - 1e-12))
         assert close(row["p_value"], p), row
+
+
+# ---------------------------------------------------------------- usage.json
+USAGE_MEAN = ("active_signers", "intents_signers", "near_usd")
+USAGE_SPLIT = D("2026-08-10")  # the split week of the plan, fixed before the result was seen
+
+
+def _usage_weekly(data_dir) -> tuple[pd.DataFrame, pd.DataFrame]:
+    def rd(name, cols):
+        df = pd.read_parquet(data_dir / f"{name}.parquet")
+        return df.assign(date=pd.to_datetime(df["date"])).set_index("date")[cols]
+
+    daily = (
+        pd.concat(
+            [
+                rd(
+                    "network_daily",
+                    ["active_signers", "tx_count", "new_accounts", "function_calls"],
+                ),
+                rd("intents_onchain_daily", ["calls_to_intents", "unique_signers"]).rename(
+                    columns={"unique_signers": "intents_signers"}
+                ),
+                rd("defillama_intents_daily", ["volume_usd"]),
+                rd("price_daily", ["near_usd"]),
+            ],
+            axis=1,
+            join="inner",
+        )
+        .dropna()
+        .sort_index()
+    )
+    monday = daily.index - pd.to_timedelta(daily.index.day_of_week, unit="D")
+    grouped = daily.groupby(monday)
+    weekly = grouped.agg({c: "mean" if c in USAGE_MEAN else "sum" for c in daily.columns})
+    return daily, weekly[grouped.size() == 7]
+
+
+def _usage_rows(weekly: pd.DataFrame) -> dict:
+    """(usage, predictor, sample, lag) -> (n, pearson, spearman, p) on weekly log changes."""
+    full = pd.date_range(weekly.index.min(), weekly.index.max(), freq="7D")
+
+    def r_of(a, b):
+        return None if np.std(a) == 0 or np.std(b) == 0 else float(np.corrcoef(a, b)[0, 1])
+
+    out = {}
+    for u in ("active_signers", "tx_count"):
+        for p in ("volume_usd", "near_usd"):
+            x = np.log(weekly[p]).reindex(full).diff()
+            y = np.log(weekly[u]).reindex(full).diff()
+            for sample in ("train", "test"):
+                for lag in range(4):
+                    pairs = []
+                    for t, xv in x.dropna().items():
+                        later = t + pd.Timedelta(weeks=lag)
+                        yv = y.get(later)
+                        ok = later < USAGE_SPLIT if sample == "train" else t >= USAGE_SPLIT
+                        if yv is not None and not pd.isna(yv) and ok:
+                            pairs.append((xv, yv))
+                    key = (u, p, sample, lag)
+                    obs = None
+                    if len(pairs) >= 4:
+                        a, b = np.array(pairs).T
+                        obs = r_of(a, b)
+                    if obs is None:
+                        out[key] = (len(pairs), None, None, None)
+                        continue
+                    rank = r_of(pd.Series(a).rank().to_numpy(), pd.Series(b).rank().to_numpy())
+                    za, zb = (a - a.mean()) / a.std(), (b - b.mean()) / b.std()
+                    if len(a) <= 8:
+                        shuffled = zb[np.array(list(itertools.permutations(range(len(a)))))]
+                    else:
+                        rng = np.random.default_rng(config.RANDOM_SEED + lag)
+                        shuffled = rng.permuted(np.tile(zb, (10_000, 1)), axis=1)
+                    pv = float(np.mean(np.abs((shuffled * za).mean(axis=1)) >= abs(obs) - 1e-12))
+                    out[key] = (len(pairs), obs, rank, pv)
+    return out
+
+
+def test_usage_is_recomputed_independently(data_dir, pub) -> None:
+    u = pub["usage"]
+    daily, weekly = _usage_weekly(data_dir)
+    assert u["window"] == {
+        "first_date": daily.index.min().date().isoformat(),
+        "last_date": daily.index.max().date().isoformat(),
+        "days": len(daily),
+    }
+    assert [w["week"] for w in u["weekly"]] == [d.date().isoformat() for d in weekly.index]
+    for row, (_, mine) in zip(u["weekly"], weekly.iterrows(), strict=True):
+        for column, value in mine.items():
+            assert close(row[column], float(value)), (row["week"], column)
+
+    calls = daily["calls_to_intents"].sum() / daily["function_calls"].sum()
+    signers = (daily["intents_signers"] / daily["active_signers"]).mean()
+    assert close(u["shares"]["intents_call_share"], float(calls))
+    assert close(u["shares"]["intents_signer_share"], float(signers))
+
+    n = len(weekly)
+    first, second = weekly.iloc[: n // 2].mean(), weekly.iloc[n // 2 :].mean()
+    h = u["halves"]
+    assert h["weeks"] == n and h["first"]["weeks"] == n // 2
+    assert h["first"]["start"] == weekly.index[0].date().isoformat()
+    assert h["second"]["end"] == (weekly.index[-1] + pd.Timedelta(days=6)).date().isoformat()
+    for column, change in h["change"].items():
+        assert close(change, float(second[column] / first[column] - 1)), column
+
+    mine = _usage_rows(weekly)
+    assert u["lead_lag"]["split_week"] == USAGE_SPLIT.date().isoformat()
+    for row in u["lead_lag"]["rows"]:
+        n_, r, rank, p = mine[(row["usage"], row["predictor"], row["sample"], row["lag"])]
+        assert row["n"] == n_, row
+        assert close(row["pearson"], r) and close(row["spearman"], rank), row
+        assert close(row["p_value"], p), row
+
+    # The verdict, re-derived from the recomputed rows by the rule in METHODOLOGY.md.
+    v = u["lead_lag"]["verdict"]
+    text = v["text"]
+    results = {}
+    for usage in ("active_signers", "tx_count"):
+        sides = {}
+        for predictor in ("volume_usd", "near_usd"):
+            train = [
+                (lag, mine[(usage, predictor, "train", lag)][1])
+                for lag in (1, 2, 3)
+                if mine[(usage, predictor, "train", lag)][1] is not None
+            ]
+            if not train:
+                sides[predictor] = None
+                continue
+            lag, train_r = min(train, key=lambda item: (-abs(item[1]), item[0]))
+            n_, test_r, _, p = mine[(usage, predictor, "test", lag)]
+            if test_r is None:
+                sides[predictor] = None
+                continue
+            leads = p < 0.1 and np.sign(train_r) == np.sign(test_r)
+            sides[predictor] = (leads, test_r)
+            assert f"r={train_r:.2f} in training and r={test_r:.2f} on {n_} test weeks" in text
+            assert f"(p={p:.2f})" in text
+        vol, price = sides["volume_usd"], sides["near_usd"]
+        if vol is None or price is None:
+            results[usage] = "insufficient_data"
+        elif vol[0] and (not price[0] or abs(vol[1]) > abs(price[1])):
+            results[usage] = "volume_leads"
+        elif price[0]:
+            results[usage] = "price_leads"
+        else:
+            results[usage] = "null"
+    assert {b["usage"]: b["result"] for b in v["by_usage"]} == results
+    if "insufficient_data" in results.values():
+        overall = "insufficient_data"
+    elif set(results.values()) == {"volume_leads"}:
+        overall = "supported"
+    else:
+        overall = "not_supported"
+    assert v["result"] == overall
+    assert v["label"] == overall.replace("_", " ")
 
 
 # ---------------------------------------------------------------- reference parameters

@@ -83,6 +83,7 @@ def test_every_payload_is_deterministic_and_has_lf_endings(tmp_path: Path) -> No
         "queries.json",
         "snapshot-manifest.json",
         "summary.json",
+        "usage.json",
         "valuation.json",
     ]
     for name in names:

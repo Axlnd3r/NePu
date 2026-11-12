@@ -30,6 +30,7 @@ from capture.models import (
     developer,
     distribution,
     ledger,
+    usage,
     valuation,
     wallet_flows,
 )
@@ -423,6 +424,75 @@ def developer_payload(data_dir: Path, source: str) -> dict:
             "lags_in_months": list(developer.LAGS),
             "rows": _frame_records(table),
             "verdict": developer.verdict(table),
+        },
+    }
+
+
+USAGE_TABLES = (
+    "network_daily",
+    "intents_onchain_daily",
+    "defillama_intents_daily",
+    "price_daily",
+)
+# Train weeks lie wholly before this Monday, test weeks start on it. Fixed in the plan
+# (docs/superpowers/plans/2026-11-12-nepu-usage-and-thesis-framing.md) before the result was seen.
+USAGE_SPLIT_WEEK = "2026-08-10"
+USAGE_DEFINITIONS = {
+    "active_signers": "daily active accounts: distinct transaction signers in the day",
+    "tx_count": "transactions in the day",
+    "function_calls": "FUNCTION_CALL receipts in the day, all contracts",
+    "calls_to_intents": "FUNCTION_CALL receipts to intents.near in the day",
+    "intents_signers": "distinct transaction signers of calls to intents.near in the day",
+    "week": "Monday to Sunday, complete weeks only, labelled by the Monday; levels (accounts, "
+    "price) are weekly means, counts and volume are weekly sums",
+    "lead_lag": "weekly log changes of Intents volume and of the NEAR price against those of each "
+    "usage series, lags 0 to 3 weeks; only lags 1 to 3 count as a lead",
+}
+USAGE_NOTES = [
+    "Active accounts are distinct transaction signers. A relayed call is signed by its relayer, "
+    "so they count accounts that sign, not people.",
+    "Intents signers are the signers of calls to intents.near: mostly solvers and relayers, not "
+    "the end users of a swap.",
+    "A rise or fall of a usage series is described, not attributed to a cause.",
+    "The lead/lag test was designed after an exploratory look at the same data (2026-11-12: "
+    "whole-sample weekly correlations and a 60/40 error comparison). The split week, lags, series "
+    "and significance level were then fixed before this result was computed; it is still not a "
+    "blind test.",
+    "Correlation of short weekly series does not show cause; both predictors share market "
+    "conditions. A null result says only that nothing can be told apart from chance yet.",
+]
+
+
+def usage_payload(data_dir: Path, source: str) -> dict:
+    """usage.json: network usage by week, the Intents footprint, and the lead/lag test."""
+    tables = load_tables(data_dir, USAGE_TABLES)
+    daily = usage.daily_table(*(tables[t] for t in USAGE_TABLES))
+    weekly = usage.weekly_table(daily)
+    table = usage.lead_lag_table(weekly, USAGE_SPLIT_WEEK, seed=config.RANDOM_SEED)
+    weeks = weekly.copy()
+    weeks.index = [p.start_time.date().isoformat() for p in weeks.index]
+    return {
+        "schema_version": 1,
+        "source": f"data/{source}",
+        "inputs": manifest_inputs(data_dir, USAGE_TABLES),
+        "window": {
+            "first_date": daily.index.min().date().isoformat(),
+            "last_date": daily.index.max().date().isoformat(),
+            "days": len(daily),
+        },
+        "definitions": USAGE_DEFINITIONS,
+        "notes": USAGE_NOTES,
+        "series": records(daily, "date"),
+        "weekly": records(weeks, "week"),
+        "shares": usage.shares(daily),
+        "halves": usage.halves(weekly),
+        "lead_lag": {
+            "transform": "weekly log changes",
+            "split_week": USAGE_SPLIT_WEEK,
+            "lags_in_weeks": list(usage.LAGS),
+            "lead_lags_in_weeks": list(usage.LEAD_LAGS),
+            "rows": _frame_records(table),
+            "verdict": usage.verdict(table),
         },
     }
 
@@ -1036,6 +1106,7 @@ def build_payloads(source: str, data_dir: Path) -> dict[str, dict]:
         "coverage": coverage_payload(data_dir, source),
         "distribution": distribution_payload(data_dir, source),
         "developer": developer_payload(data_dir, source),
+        "usage": usage_payload(data_dir, source),
         "valuation": valuation_payload(data_dir, source),
         "summary": summary_payload(data_dir, source),
         "queries": queries_payload(data_dir),
