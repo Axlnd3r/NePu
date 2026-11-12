@@ -192,15 +192,17 @@ def lead_lag(
     split: str,
     lags: tuple[int, ...] = LAGS,
     seed: int = 0,
+    freq: str = "M",
 ) -> pd.DataFrame:
     """Cross-correlation of x (leading) with y at each lag, train and test, levels and differences.
 
     Train pairs lie entirely before `split` and test pairs start on or after it, so nothing in the
     test sample was used to look at the train sample. Fewer than MIN_PAIRS pairs gives no value.
+    x and y carry a PeriodIndex of frequency `freq` (months by default; "W-SUN" for weeks).
     """
-    cut = pd.Period(split, "M")
+    cut = pd.Period(split, freq)
     months = pd.period_range(
-        min(x.index.min(), y.index.min()), max(x.index.max(), y.index.max()), freq="M"
+        min(x.index.min(), y.index.min()), max(x.index.max(), y.index.max()), freq=freq
     )
     x, y = x.reindex(months), y.reindex(months)  # a missing month stays empty, so diff() is exact
     rows = []

@@ -156,3 +156,14 @@ def test_verdict_text_makes_no_causal_claim() -> None:
         text = dev.verdict(dev.lead_lag(x, y, split="2023-01", seed=0))["text"].lower()
         for forbidden in ("causes", "drives", "leads to", "because", "results in"):
             assert forbidden not in text
+
+
+def test_lead_lag_works_on_weekly_periods() -> None:
+    weeks = pd.period_range("2026-06-01", periods=16, freq="W-SUN")
+    x = pd.Series(np.arange(16, dtype=float) ** 2, index=weeks)
+    y = x.shift(1)  # y(t + 1) = x(t)
+    table = dev.lead_lag(x, y, "2026-07-27", lags=(0, 1), freq="W-SUN")
+    test = table[(table["transform"] == "levels") & (table["sample"] == "test")]
+    row = test[test["lag"] == 1]
+    assert row["n"].iloc[0] >= dev.MIN_PAIRS
+    assert row["pearson"].iloc[0] == pytest.approx(1.0)
