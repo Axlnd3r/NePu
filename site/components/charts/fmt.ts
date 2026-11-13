@@ -23,6 +23,8 @@ export function formatValue(v: number, fmt: Fmt, axis = false): string {
       if (abs >= 1e3) return `${(v / 1e3).toFixed(0)}K`;
       return v.toFixed(0);
     case "count":
+      if (axis && abs >= 1e4)
+        return new Intl.NumberFormat("en-US", { notation: "compact" }).format(v);
       return new Intl.NumberFormat("en-US").format(Math.round(v));
   }
 }

@@ -15,6 +15,7 @@ const NAV = [
   ["/", "Overview"],
   ["/token/", "Token economics"],
   ["/intents/", "Intents & channels"],
+  ["/network/", "Network usage"],
   ["/valuation/", "Valuation Lab"],
   ["/developer/", "Developer"],
   ["/methodology/", "Methodology & data"],

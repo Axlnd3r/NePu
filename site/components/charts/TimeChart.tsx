@@ -30,9 +30,13 @@ type Props = {
 const AXIS = { stroke: "var(--axis)", fontSize: 11, fill: "var(--muted)" };
 const MAX_TICKS = 8;
 
-/** One tick at the first point of each month, thinned to at most MAX_TICKS (no repeated labels). */
+/** One tick at the first point of each month, thinned to at most MAX_TICKS (no repeated labels).
+ * A series that starts mid-month gets no tick at its first point: it would collide with the next. */
 function monthTicks(xs: string[]): string[] {
-  const firsts = xs.filter((x, i) => i === 0 || x.slice(0, 7) !== xs[i - 1].slice(0, 7));
+  const firsts = xs.filter((x, i) => i > 0 && x.slice(0, 7) !== xs[i - 1].slice(0, 7));
+  if (xs.length > 0 && (firsts.length === 0 || xs[0].length === 7 || xs[0].slice(8, 10) === "01")) {
+    firsts.unshift(xs[0]);
+  }
   const step = Math.ceil(firsts.length / MAX_TICKS);
   return firsts.filter((_, i) => i % step === 0);
 }

@@ -21,6 +21,7 @@ const PAGES = [
   ["overview", "/"],
   ["token", "/token/"],
   ["intents", "/intents/"],
+  ["network", "/network/"],
   ["valuation", "/valuation/"],
   ["developer", "/developer/"],
   ["methodology", "/methodology/"],

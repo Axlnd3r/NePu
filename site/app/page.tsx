@@ -14,7 +14,7 @@ const CORE = ["supply_daily", "fee_wallet_inflows_daily", "price_daily", "defill
 const REPO = "https://github.com/Axlnd3r/NePu";
 
 export default function Overview() {
-  const { hero, ledger, levers, conditions, governance, definitions, invariance } = summary;
+  const { hero, ledger, levers, holder, conditions, governance, definitions, invariance } = summary;
   const hsp = governance.hsp029;
   const proof = provenance.proof;
   const months = provenance.reconciliation.months.length;
@@ -85,7 +85,9 @@ export default function Overview() {
               </Evidence>
             </p>
             <p className="mt-1 text-xs text-muted">
-              {usd(steps[0].v_star_usd_per_day)} per day against {usd(levers.volume_usd_per_day)} today
+              {usd(steps[0].v_star_usd_per_day)} per day against {usd(levers.volume_usd_per_day)} today, at
+              the latest NEAR price; {times(levers.at_window_prices.volume_multiple, 1)} at the prices of
+              the {ledger.days} days behind the cents
             </p>
           </div>
           <div className="rounded-xl border border-[var(--ring)] p-5 sm:p-6">
@@ -304,6 +306,40 @@ export default function Overview() {
       </ChartCard>
 
       <ChartCard
+        id="holder"
+        title="What the gap means for a holder"
+        sentence={
+          <>
+            At the latest price, total supply is valued at {times(holder.value_to_revenue, 0)} the
+            yearly revenue reaching the buyback wallet; coverage reaches one at{" "}
+            {times(holder.breakeven_value_to_revenue, 1)}. Net of buybacks and burn, new NEAR adds{" "}
+            {pct(holder.net_new_supply_rate)} of total supply to the float a year. A yardstick, not a
+            forecast: no price is predicted.
+          </>
+        }
+        tables={CORE}
+        model="ledger.holder_view (src/capture/models/ledger.py)"
+      >
+        <BarRows
+          max={holder.value_to_revenue}
+          rows={[
+            { label: "Today", value: holder.value_to_revenue, text: times(holder.value_to_revenue, 0), accent: true },
+            {
+              label: "At break-even",
+              value: holder.breakeven_value_to_revenue,
+              text: times(holder.breakeven_value_to_revenue, 1),
+              muted: true,
+            },
+          ]}
+        />
+        <p className="mt-3 text-xs text-muted">
+          Market value (total supply at {usd(holder.near_usd)} on {holder.as_of}) over a year of
+          buyback-wallet revenue at the {ledger.days}-day take rate. The ratio of the two bars is the{" "}
+          {times(steps[0].volume_multiple, 1)} above. {holder.note}
+        </p>
+      </ChartCard>
+
+      <ChartCard
         id="path"
         title="Path to yes: move the levers yourself"
         sentence={
@@ -446,9 +482,10 @@ export default function Overview() {
       <section aria-labelledby="mind" className="rounded-xl border border-[var(--ring)] bg-surface p-5 sm:p-8">
         <h2 id="mind" className="text-lg font-medium tracking-tight">What would change our mind</h2>
         <p className="mt-1 text-sm text-ink-2">
-          Three numeric conditions, re-evaluated on every build. The first two would support the
-          thesis that capture can outgrow issuance; they move independently. The third would withdraw
-          the headline until explained.
+          Three numeric conditions, re-evaluated on every build. The first two would change the
+          answer to yes: capture outgrowing issuance; they move independently. The third would
+          withdraw the headline until explained. The pre-registered tests below are forecasts of
+          today&apos;s reading, written down before their windows closed: a miss shows where it was wrong.
         </p>
         <ul className="mt-4 space-y-5">
           {conditions.map((c) => (

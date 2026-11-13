@@ -8,9 +8,10 @@ import prereg from "../public/data/prereg.json";
 import provenance from "../public/data/provenance.json";
 import queries from "../public/data/queries.json";
 import summary from "../public/data/summary.json";
+import usage from "../public/data/usage.json";
 import valuation from "../public/data/valuation.json";
 
-export { coverage, developer, distribution, markers, meta, prereg, provenance, queries, summary, valuation };
+export { coverage, developer, distribution, markers, meta, prereg, provenance, queries, summary, usage, valuation };
 
 export type SourceRow = (typeof provenance.sources)[number];
 export type Query = (typeof queries.queries)[number];
