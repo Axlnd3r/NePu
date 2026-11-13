@@ -539,6 +539,36 @@ proof are unchanged. Every number below is in `site/public/data/summary.json`.
   fits Check 5 (absent on 2026-03-01). 3,304 activities. *Rate limit:* the free API throttles hard
   (about one page a minute with backoff); two earlier attempts were stopped before the final pull.
 
+## F8 network usage and thesis framing (2026-11-12, built 2026-11-13)
+
+No new source, no BigQuery query, no change under `data/snapshot/`, `data/prereg/` or
+`data/reference/`. Four tables already in the snapshot are used for the first time by a model:
+`network_daily` and `intents_onchain_daily` (2026-04-26 to 2026-11-01), `defillama_intents_daily`
+(2024-12-10 to 2026-10-30) and `price_daily` (2025-11-04 to 2026-11-01). Days on which all four have
+a row: 2026-04-26 to 2026-10-30 (188 days, 26 complete weeks). Numbers below are in
+`site/public/data/usage.json` and `summary.json`; each is recomputed in `tests/test_numbers_audit.py`.
+
+- **Intents footprint** (`usage.shares`): calls to `intents.near` were 4.8 % of all function calls,
+  its daily signers 0.45 % of daily active accounts (distinct transaction signers).
+- **Halves** (`usage.halves.change`, first 13 against last 13 complete weeks): daily active accounts
+  -32.9 %, transactions -5.5 %, calls to `intents.near` +122.0 %, Intents volume +71.7 %, NEAR price
+  +62.4 %.
+- **Lead/lag, as it came out** (`usage.lead_lag.verdict`): **not supported**. Daily active accounts:
+  volume lag 3, r 0.21 train, -0.11 on 8 test weeks (p 0.79); price lag 3, r 0.52 train, -0.35 test
+  (p 0.34). Transactions: volume lag 3, r -0.50 train, 0.15 test (p 0.71); price lag 1, r 0.38 train,
+  0.42 on 10 test weeks (p 0.22). Every usage series is a null result; reported, not tuned.
+- **The test was not blind.** On 2026-11-12, before the design, the same data was looked at:
+  whole-sample weekly correlations at lags 0 to 3 and a 60/40 error comparison. The split week
+  (2026-08-10), lags, metrics and significance level (0.1) were then fixed in the plan and not
+  changed after the result.
+- **Price basis of the headline multiple** (`summary.levers.at_window_prices`): at each day's price
+  over the 30 days to 2026-10-30 the gap is 9.23x (mean price 4.92 USD), against 7.59x at the latest
+  price (4.05 USD). The headline cents use each day's price, so THESIS.md and the overview now show
+  both.
+- **Holder view** (`summary.holder`, at 2026-10-30): total supply valued at 308x the yearly revenue
+  reaching the buyback wallet; coverage reaches one at 40.6x (the ratio is the 7.59x). Gross new
+  supply 2.50 % of total supply a year, 2.19 % left as new float after buybacks and burn.
+
 ## Original open questions
 
 | # | Question | Status | Where answered |

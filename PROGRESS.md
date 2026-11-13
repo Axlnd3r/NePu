@@ -18,9 +18,22 @@ Living log. Claude updates this at the end of every session. Newest entry on top
 | F5 Valuation Lab | 8–10 Nov | done | valuation.json: reverse table + Monte Carlo (3 scenarios x 2 inflation paths x 3 prices); historical/decay results rest on launch-phase growth |
 | F6 Dashboard | 9–12 Nov | done, live at https://axlnd3r.github.io/NePu/ | 6 pages, ChartCard + evidence chips, Playwright QA, independent number audit; GitHub Pages workflow ready |
 | F7 THESIS, README, offline, CI, proof | 11–13 Nov | done except the clean-clone `/screener` (user, new session) | proof on testnet + OpenTimestamps; THESIS.md and README generated; weekly workflow ready |
-| F8 Demo + submission | 13–14 Nov | in progress | demo video rendered (video/, 2026-11-04); submission items todo |
+| F8 Demo + submission | 13–14 Nov | in progress | demo video; usage module, Network usage page and thesis framing on branch `f8-usage-thesis` (not merged); deadline-day steps (T1 score, HSP-029 re-read, tag) left |
 
 ## Session log
+### 2026-11-13 — F8 (network usage module and thesis framing, plan 2026-11-12)
+- Done (branch `f8-usage-thesis`, not pushed): plan `docs/superpowers/plans/2026-11-12-nepu-usage-and-thesis-framing.md` Tasks 0-7.
+  - `models/usage.py` and `usage.json` (weekly network usage, Intents footprint, halves, out-of-sample lead/lag of the track's example hypothesis), with its independent audit.
+  - `summary.levers.at_window_prices` (the headline multiple at each day's price) and `summary.holder` (market value against buyback revenue, break-even multiple, gross and net new supply), audited, with the identity value_to_revenue / break-even = volume multiple tested.
+  - THESIS.md re-framed: Summary, the hypothesis before the reading, the price dependence, "What it means for a holder", "Evidence that capture can catch up / that it will not", three usage bullets in the contrary evidence, the pre-registered tests listed under "What would change my mind"; README results block gains the window-price multiple and the usage result.
+  - Dashboard: new Network usage page (four cards), holder card and window-price line on the Overview; nav and QA include the page.
+  - METHODOLOGY (Network usage section, price basis, holder view, generated documents, audit, seven pages), README track checklist (usage SQL row, example-hypothesis row), DATA_AUDIT section.
+- Numbers found (source: site/public/data/usage.json, summary.json; snapshot unchanged): 26 complete weeks 2026-04-27..2026-10-25 (days 2026-04-26..2026-10-30); calls to intents.near 4.8 % of function calls, its signers 0.45 % of daily active accounts; second half against first: active accounts -32.9 %, transactions -5.5 %, Intents volume +71.7 %, NEAR price +62.4 %; lead/lag verdict **not supported** (all null); gap 9.23x at window prices (mean 4.92 USD) against 7.59x at the latest price (4.05 USD); total supply 308x yearly buyback revenue, break-even 40.6x; gross new supply 2.50 %, net new float 2.19 % a year.
+- Decisions (rulings in the plan's ledger): pre-registered tests worded as forecasts of the current reading, not as "signs toward no" (a T2 miss would point toward yes); the net supply rate is called new float (rule 6); "did not follow" is printed only when the signs say so; first x-axis tick dropped when a series starts mid-month (shared chart); compact axis labels for counts.
+- Verification: `make verify` 311 passed, 1 skipped, three manifests OK; `make qa` all pages clean (desktop light/dark, phone) including `/network/`; screenshots checked by eye. Final whole-branch review was a self-review (no reviewer subagent was spawned).
+- Blockers: merge to `main` and push need the user's go-ahead; deferred minor: month labels on phone-width charts are dense (pre-existing, every page).
+- Next: user go-ahead to merge and push, then `QA_URL=https://axlnd3r.github.io/NePu make qa`; on 2026-11-14 after 00:00Z plan Task 8 (HSP-029 re-read, `capture prereg score`, build, commit, push, tag `hackathon-submission` before 23:59Z).
+
 ### 2026-11-09 — F8 (competitor review, evidence upgrades, interactive site, README landing page)
 - Context: the user asked for a review of the other Investment Thesis submissions (17 repositories and 2 sites, read only, cloned outside the repo) and for the P1-P2 improvements that came out of it. Official rules found: https://nearhackathon.com/HACKATHON.md and the track prompt `02-thesis.md` (the README said they were not available).
 - Done:

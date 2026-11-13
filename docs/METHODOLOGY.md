@@ -192,6 +192,59 @@ matches training, `null` otherwise, and `insufficient_data` if a lag cannot be e
   either direction, describes how two short series moved together. It does not show cause or
   effect.
 
+## Network usage (`usage.json`)
+
+Does NEAR's own activity move with Intents, and does Intents volume lead it better than the token
+price (the example hypothesis of the track)? Built by `src/capture/models/usage.py` from four tables
+already in the snapshot; no new source and no new BigQuery query.
+
+| Table | Columns used |
+|---|---|
+| `network_daily` | `active_signers`, `tx_count`, `new_accounts`, `function_calls` |
+| `intents_onchain_daily` | `calls_to_intents`, `intents_signers` |
+| `defillama_intents_daily` | `volume_usd` |
+| `price_daily` | `near_usd` |
+
+**Definitions.**
+- *Daily active accounts* are distinct transaction signers in a day (`active_signers`). A relayed
+  call is signed by its relayer, so they count accounts that sign, not people.
+- Days are kept only where all four tables have a row. Weeks run Monday to Sunday (`W-SUN`),
+  complete weeks only (a week with a missing day is dropped, never summed over fewer days),
+  labelled by the Monday's date. Levels (`active_signers`, `intents_signers`, `near_usd`) are weekly
+  means of daily values; counts and flows (`tx_count`, `new_accounts`, `function_calls`,
+  `calls_to_intents`, `volume_usd`) are weekly sums.
+- *Shares*: calls to `intents.near` over all function calls, and signers of calls to
+  `intents.near` over daily active accounts, both summed over the kept days.
+- *Halves*: the mean weekly value in the first n // 2 complete weeks against the rest, and the
+  relative change between them.
+
+**Lead/lag test.** Predictors are the weekly log changes of Intents volume and of the NEAR price;
+usage series are the weekly log changes of daily active accounts and of transactions. A weekly
+value that is not positive raises an error naming the column (its log does not exist). For lags 0
+to 3 weeks, pairs are `(predictor(t), usage(t + lag))`; only lags 1 to 3 count as a lead. Training
+pairs lie wholly before the week of 2026-08-10, test pairs start on or after it. Correlations and
+permutation p-values come from `developer.lead_lag` (fewer than 4 pairs: no correlation, and the
+row says why).
+
+**Verdict.** For each usage series and each predictor, the lead lag with the largest absolute
+training correlation is chosen and its test correlation reported; the predictor *leads* if the
+test p-value is below 0.1 and the sign matches training. A usage series is `volume_leads` if
+volume leads and either price does not or volume's absolute test correlation is larger,
+`price_leads` if only price leads, `null` otherwise, and `insufficient_data` if either predictor
+has no estimate. The hypothesis is `supported` only if every usage series is `volume_leads`,
+`insufficient_data` if any series is, and `not_supported` otherwise.
+
+**Limitations.**
+- Signers are not people, and relayed traffic is attributed to relayers.
+- The test has about two dozen weekly changes, split into training and test, so it has little
+  power; a null result says only that nothing can be told apart from chance.
+- Both predictors share the same market conditions; a correlation in either direction describes
+  how short series moved together.
+- The test is not blind: an exploratory look at the same data on 2026-11-12 (whole-sample weekly
+  correlations at lags 0 to 3 and a 60/40 error comparison) came before its design. The split week,
+  lags, metrics and significance level were then fixed and not changed after seeing the result.
+- No cause is claimed.
+
 ## Capture ledger, levers and conditions (`summary.json`)
 
 The ledger follows Intents volume to the buyback wallet over the 30 days that end on the
@@ -209,6 +262,25 @@ revenue agrees with DefiLlama revenue within the reconciliation tolerance.
 applied in a fixed order: inflation falls from 2.5 % to the HSP-029 target of 1.6 %, then all
 protocol revenue goes to the buyback wallet (tau on the all-revenue basis). The remaining multiple
 is what volume growth must supply. Price is not a lever: both sides are valued at the same price.
+
+**Price basis** (`summary.levers.at_window_prices`, `ledger.price_basis`). The lever bridge values
+issuance at the latest NEAR price; the coverage ratio values each day at its own price. Over the
+ledger window the same gap at each day's price is `(sum(issuance x price) - sum(burn x price)) /
+sum(buyback x price)`, published with the mean daily price. Issuance is fixed in NEAR and revenue is
+earned in dollars, so the two multiples differ whenever the price moved inside the window.
+
+**Holder view** (`summary.holder`, `ledger.holder_view`), at the levers' date:
+- `market_value_usd` = total supply x latest price (total supply, so that it lines up with the
+  coverage ratio, which counts all new issuance);
+- `buyback_revenue_usd_per_year` = buyback take rate x 30-day volume x 365;
+- `value_to_revenue` = the first over the second;
+- `breakeven_value_to_revenue` = 1 / (inflation - 365 x burn per day / supply);
+- `gross_new_supply_rate` = gross issuance over the window / days x 365 / supply, and
+  `net_new_supply_rate` the same with buyback and burn subtracted (new float, since bought-back
+  NEAR is held, not burnt).
+
+Identity, tested: `value_to_revenue / breakeven_value_to_revenue` equals the first lever step's
+volume multiple. The multiple is a yardstick at the latest price, not a forecast.
 
 **Conditions that would change the thesis.** Evaluated on current data at every build:
 1. *volume* (supports): the 30-day average volume reaches V\* (buyback basis, 2.5 %).
@@ -355,7 +427,9 @@ every series in `coverage.json` (including which days are empty), the reconcilia
 ledger, levers and conditions, the Valuation Lab start and reverse table, all 18 Monte Carlo runs
 (probabilities, first-crossing month, fan and implied volume), every month and week of the
 Distribution Map, every developer cohort (both thresholds) and every lead/lag row with its
-permutation p-value, the markers, and the file hashes against both manifests. Mutating one value
+permutation p-value, the network usage series, weeks, shares, halves and lead/lag rows (and the
+verdict re-derived from them), the price basis and the holder view, the pre-registration as read
+from its frozen files, the markers, and the file hashes against both manifests. Mutating one value
 in each of these areas makes the corresponding test fail. Shared inputs are limited to constants
 (seed, windows, policy parameters); the policy parameters (2.5 %, the HSP-029 target 1.6 %, 24
 months, 3-month grace) are checked against `data/reference/parameters.csv`, which lists their
@@ -371,6 +445,13 @@ in the rendered text is a registered fact, that every fact resolves in the JSON 
 that the committed files are what the build produces, that the README states no number outside its
 generated block, and that every JSON path the documents cite is recomputed by the independent audit
 (`AUDITED` in `tests/test_numbers_audit.py`); citing a new path without a recomputation fails the build.
+
+`THESIS.md` has, in order: Summary, Claim (the hypothesis, then the reading), What it means for a holder,
+Supporting evidence, Contrary evidence, Why public estimates differ, What would change my mind (the
+numeric conditions, then the pre-registered tests as forecasts of the reading), Unavailable metrics and
+why, Limitations. A signed change is written by `Facts.change` as "rose N%" or "fell N%", with the
+absolute value registered against its path. The thesis never cites the pre-registration scores, so a
+score written on the deadline day does not change it.
 
 ## Proof of analysis (`capture proof`, `contracts/proof-of-analysis`)
 
@@ -395,7 +476,7 @@ generated block, and that every JSON path the documents cite is recomputed by th
 
 ## Dashboard (`site/`)
 
-Six static pages read only `site/public/data/*.json`. Every chart shows one plain sentence built
+Seven static pages read only `site/public/data/*.json`. Every chart shows one plain sentence built
 from the data, its SQL text or API request, the model function and a provenance line (file,
 range, pulled_at, hash prefix); headline numbers open an evidence panel with the formula and
 input hashes. `make qa` opens every page in Chrome on desktop (light and dark) and phone widths

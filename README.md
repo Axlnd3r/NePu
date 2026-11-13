@@ -44,7 +44,7 @@ recomputes every published number; and the hash of the inputs is committed to NE
 check that the numbers came from these files. No price is predicted.
 
 For tools and agents: `make build` writes machine-readable outputs to `site/public/data/*.json`
-(summary, coverage, distribution, valuation, developer, markers, provenance, queries) and
+(summary, coverage, distribution, valuation, developer, usage, markers, provenance, queries) and
 regenerates `THESIS.md` and the results block below; `data/snapshot/manifest.json` is the index of
 the inputs; the `capture` command (`uv run capture --help`) is the entry point.
 
@@ -214,7 +214,7 @@ curl -s https://rpc.testnet.fastnear.com -H 'content-type: application/json' -d 
   in the repository.
 
 ## Dashboard and demo video
-- Dashboard: https://axlnd3r.github.io/NePu/ (six pages; every chart shows its query, one plain
+- Dashboard: https://axlnd3r.github.io/NePu/ (seven pages; every chart shows its query, one plain
   sentence and its provenance). The Overview opens with what NePu is, a step-by-step tour of how it
   works, the demo video, and the interactive Path to yes.
 - Demo video: rendered from the Remotion project in [`video/`](video/README.md), so every figure on
@@ -249,7 +249,8 @@ The last items are our own additions.
 
 | Official ask | Where it is in NePu |
 |---|---|
-| SQL against the NEAR BigQuery public dataset, always filtered on `block_date` | [`sql/`](sql/), dry-run first and run under a byte cap; the one exception (`epoch_date`, a table without `block_date`) is stated in the file and in [DATA_AUDIT.md](DATA_AUDIT.md) |
+| SQL against the NEAR BigQuery public dataset for daily active accounts, transaction counts and contract usage, always filtered on `block_date` | [`sql/network_daily.sql`](sql/network_daily.sql), [`sql/intents_onchain_daily.sql`](sql/intents_onchain_daily.sql), [`sql/contracts_daily.sql`](sql/contracts_daily.sql), shown on the [Network usage](https://axlnd3r.github.io/NePu/network/) and [Developer](https://axlnd3r.github.io/NePu/developer/) pages; all of [`sql/`](sql/), dry-run first and run under a byte cap; the one exception (`epoch_date`, a table without `block_date`) is stated in the file and in [DATA_AUDIT.md](DATA_AUDIT.md) |
+| The example hypothesis: Intents volume leads network usage better than token price, with the evidence against | the [Network usage](https://axlnd3r.github.io/NePu/network/) page and [THESIS.md](THESIS.md): tested out of sample and reported as it came out |
 | A pull from the NEAR Intents Explorer API with a JWT in `.env` | [`src/capture/extract/intents_explorer.py`](src/capture/extract/intents_explorer.py); the frozen 1Click tables are in `data/snapshot/` |
 | One command that rebuilds every chart from raw data | `make all`, offline, from a clean clone, no credentials |
 | A static dashboard: each chart, the query behind it, one plain sentence | [the dashboard](https://axlnd3r.github.io/NePu/): every card has the sentence, "Query and model" and the provenance of each file |
@@ -289,7 +290,7 @@ https://github.com/Axlnd3r/NePu/compare/pre-hackathon...main).
 
 ## Layout
 - `sql/`: one parameterised query per BigQuery table; `src/capture/`: extractors, models
-  (coverage, break-even, distribution, valuation, developer, ledger), build, thesis, proof, CLI.
+  (coverage, break-even, distribution, valuation, developer, usage, ledger), build, thesis, proof, CLI.
 - `data/snapshot/`: committed daily aggregates and `manifest.json`; `data/reference/`: dated events,
   policy parameters, the on-chain HSP-029 vote, the official dashboard page and the buyback wallet's
   activity, with their own manifest; `data/proof.json` and `data/proof/`: the proof record.
