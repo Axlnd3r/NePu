@@ -701,6 +701,10 @@ LEVERS_NOTE = (
     "Price is not a lever here: buyback and issuance are both valued at the latest NEAR price, and "
     "V* scales with it (see the Valuation Lab sensitivity). Each step keeps the previous ones."
 )
+HOLDER_NOTE = (
+    "A yardstick at the latest NEAR price, not a forecast: no price is predicted. Market value "
+    "uses total supply so that it lines up with the coverage ratio, which counts all new issuance."
+)
 INVARIANCE_NOTE = (
     "Public sources count Intents volume differently (one or both legs of a swap, confidential "
     "flow). The buyback wallet's revenue is measured on chain, so a volume counted at half or "
@@ -899,7 +903,21 @@ def summary_payload(data_dir: Path, source: str) -> dict:
                 inflation_now=config.INFLATION_CURRENT,
                 inflation_target=config.INFLATION_PROPOSAL,
             ),
+            "at_window_prices": ledger.price_basis(daily, start.as_of, TAU_WINDOW),
             "note": LEVERS_NOTE,
+        },
+        "holder": {
+            **ledger.holder_view(
+                daily,
+                start.as_of,
+                TAU_WINDOW,
+                supply=inputs.total_supply_near,
+                price=inputs.near_usd,
+                buyback_usd_per_day=taus["buyback"] * v0,
+                inflation=config.INFLATION_CURRENT,
+                burnt_near_per_day=inputs.burnt_near_per_day,
+            ),
+            "note": HOLDER_NOTE,
         },
         "invariance": {
             **ledger.volume_scale_invariance(

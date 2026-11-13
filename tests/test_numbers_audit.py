@@ -910,6 +910,32 @@ def test_the_three_conditions_and_the_lever_steps(ind, pub) -> None:
     met = [bool(c[k]["met"]) for k in ("volume", "routing", "reconciliation")]
     assert met == [st["v0"] >= vstar, kept >= 1.0, worst > 0.15]
 
+
+def test_the_price_basis_and_the_holder_view(ind, pub) -> None:
+    s = pub["summary"]
+    as_of = s["levers"]["as_of"]
+    st = _start(ind, as_of)
+    end = D(as_of)
+    w = slice(end - pd.Timedelta(days=29), end)
+    p, iss, bb, burn = ind.price[w], ind.issuance[w], ind.bb[w], ind.burn[w]
+    assert len(p) == 30 and not pd.concat([p, iss, bb, burn], axis=1).isna().any().any()
+
+    at = s["levers"]["at_window_prices"]
+    assert close(at["near_usd_mean"], p.mean())
+    assert close(at["volume_multiple"], ((iss * p).sum() - (burn * p).sum()) / (bb * p).sum())
+
+    h = s["holder"]
+    market = st["S"] * st["P"]
+    revenue = st["tau_bb"] * st["v0"] * 365
+    assert h["as_of"] == as_of and close(h["near_usd"], st["P"])
+    assert close(h["market_value_usd"], market)
+    assert close(h["buyback_revenue_usd_per_year"], revenue)
+    assert close(h["value_to_revenue"], market / revenue)
+    be = 1 / (config.INFLATION_CURRENT - 365 * st["B"] / st["S"])
+    assert close(h["breakeven_value_to_revenue"], be)
+    assert close(h["gross_new_supply_rate"], iss.sum() / 30 * 365 / st["S"])
+    assert close(h["net_new_supply_rate"], (iss - bb - burn).sum() / 30 * 365 / st["S"])
+
     stages = [
         (config.INFLATION_CURRENT, st["tau_bb"]),
         (config.INFLATION_PROPOSAL, st["tau_bb"]),

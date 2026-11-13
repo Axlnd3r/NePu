@@ -149,3 +149,69 @@ def test_step_down_without_a_transition_day() -> None:
     index = pd.date_range("2025-10-01", periods=40, freq="D")
     step = ledger.step_down(pd.Series([100.0] * 20 + [50.0] * 20, index=index), window=10)
     assert step["date"] == D("2025-10-21") and step["transition_date"] is None
+
+
+@pytest.fixture
+def three_days() -> pd.DataFrame:
+    """Price 2, 4 and 6 USD; 10 NEAR issued, 1 bought back and 0.5 burnt each day."""
+    index = pd.date_range("2026-10-28", "2026-10-30", freq="D")
+    return pd.DataFrame(
+        {
+            "issuance_gross_near": 10.0,
+            "buyback_near": 1.0,
+            "burnt_near": 0.5,
+            "near_usd": [2.0, 4.0, 6.0],
+        },
+        index=index,
+    )
+
+
+def test_price_basis_values_the_gap_at_each_days_price(three_days: pd.DataFrame) -> None:
+    out = ledger.price_basis(three_days, D("2026-10-30"), days=3)
+    assert out["near_usd_mean"] == pytest.approx(4.0)
+    assert out["volume_multiple"] == pytest.approx((10 - 0.5) * 12 / (1 * 12))
+
+
+def test_price_basis_refuses_a_gap(three_days: pd.DataFrame) -> None:
+    gap = three_days.copy()
+    gap.loc[D("2026-10-29"), "buyback_near"] = float("nan")
+    with pytest.raises(ValueError, match="buyback_near"):
+        ledger.price_basis(gap, D("2026-10-30"), days=3)
+    with pytest.raises(ValueError):
+        ledger.price_basis(three_days, D("2026-10-30"), days=4)
+
+
+def test_holder_view_identity_and_rates(three_days: pd.DataFrame) -> None:
+    out = ledger.holder_view(
+        three_days,
+        D("2026-10-30"),
+        days=3,
+        supply=1000.0,
+        price=2.0,
+        buyback_usd_per_day=1.0,
+        inflation=0.0365,
+        burnt_near_per_day=0.01,
+    )
+    assert out["as_of"] == "2026-10-30" and out["near_usd"] == 2.0
+    assert out["market_value_usd"] == pytest.approx(2000.0)
+    assert out["buyback_revenue_usd_per_year"] == pytest.approx(365.0)
+    assert out["value_to_revenue"] == pytest.approx(2000.0 / 365.0)
+    assert out["breakeven_value_to_revenue"] == pytest.approx(1 / (0.0365 - 365 * 0.01 / 1000))
+    assert out["gross_new_supply_rate"] == pytest.approx(10 * 365 / 1000)
+    assert out["net_new_supply_rate"] == pytest.approx((10 - 1 - 0.5) * 365 / 1000)
+
+
+def test_holder_multiple_over_its_break_even_is_the_volume_multiple(three_days) -> None:
+    supply, price, burn, tau, v0, inflation = 1000.0, 2.0, 0.01, 0.001, 500.0, 0.0365
+    out = ledger.holder_view(
+        three_days,
+        D("2026-10-30"),
+        days=3,
+        supply=supply,
+        price=price,
+        buyback_usd_per_day=tau * v0,
+        inflation=inflation,
+        burnt_near_per_day=burn,
+    )
+    multiple = val.breakeven_volume(inflation, supply, price, burn, tau) / v0
+    assert out["value_to_revenue"] / out["breakeven_value_to_revenue"] == pytest.approx(multiple)

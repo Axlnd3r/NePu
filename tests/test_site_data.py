@@ -162,3 +162,20 @@ def test_history_names_the_highest_30_day_coverage_and_when(cov: dict, summary: 
     series = [(r["date"], r["cr_float_30"]) for r in cov["series"] if r["cr_float_30"] is not None]
     assert best["value"] == max(v for _, v in series)
     assert best["date"] == next(d for d, v in series if v == best["value"])
+
+
+def test_the_holder_multiple_over_its_break_even_is_the_volume_multiple(summary: dict) -> None:
+    h, steps = summary["holder"], summary["levers"]["steps"]
+    ratio = h["value_to_revenue"] / h["breakeven_value_to_revenue"]
+    assert ratio == pytest.approx(steps[0]["volume_multiple"])
+    assert 0 < h["net_new_supply_rate"] < h["gross_new_supply_rate"]
+    assert h["gross_new_supply_rate"] == pytest.approx(config.INFLATION_CURRENT, abs=0.002)
+    assert h["as_of"] == summary["levers"]["as_of"] and "not a forecast" in h["note"]
+
+
+def test_the_multiple_at_window_prices_follows_the_ledger(summary: dict) -> None:
+    usd = summary["ledger"]["usd"]
+    at = summary["levers"]["at_window_prices"]
+    assert at["volume_multiple"] == pytest.approx(
+        (usd["issuance"] - usd["burn"]) / usd["buyback_wallet"]
+    )

@@ -22,16 +22,23 @@ LEDGER_COLUMNS = (
 )
 
 
+def _window(daily: pd.DataFrame, end: pd.Timestamp, days: int, columns) -> pd.DataFrame:
+    """The `days` rows to `end`; a missing day or value raises instead of shortening the window."""
+    start = end - pd.Timedelta(days=days - 1)
+    window = daily.loc[start:end, list(columns)]
+    if len(window) != days or window.isna().any().any():
+        missing = sorted(window.columns[window.isna().any()].tolist())
+        raise ValueError(f"window {start.date()}..{end.date()} has missing inputs: {missing}")
+    return window
+
+
 def waterfall(daily: pd.DataFrame, end: pd.Timestamp, days: int = 30) -> dict:
     """Sums in USD of each step from Intents volume to the buyback wallet, over `days` to `end`.
 
     Every day of the window must have every input; a gap raises instead of shortening the window.
     """
-    start = end - pd.Timedelta(days=days - 1)
-    window = daily.loc[start:end, list(LEDGER_COLUMNS)]
-    if len(window) != days or window.isna().any().any():
-        missing = sorted(window.columns[window.isna().any()].tolist())
-        raise ValueError(f"window {start.date()}..{end.date()} has missing inputs: {missing}")
+    window = _window(daily, end, days, LEDGER_COLUMNS)
+    start = window.index[0]
     price = window["near_usd"]
     usd = {
         "volume": float(window["volume_usd"].sum()),
@@ -95,6 +102,57 @@ def lever_bridge(
         )
         previous = multiple
     return steps
+
+
+SUPPLY_COLUMNS = ("issuance_gross_near", "buyback_near", "burnt_near", "near_usd")
+
+
+def price_basis(daily: pd.DataFrame, end: pd.Timestamp, days: int = 30) -> dict:
+    """The headline volume multiple with every NEAR amount valued at its own day's price.
+
+    The lever bridge values issuance at the latest price; the coverage ratio uses each day's
+    price. Over the same window, the gap at each day's price is (issuance - burn) / buyback in USD.
+    """
+    window = _window(daily, end, days, SUPPLY_COLUMNS)
+    price = window["near_usd"]
+    usd = {c: float((window[c] * price).sum()) for c in SUPPLY_COLUMNS[:3]}
+    return {
+        "near_usd_mean": float(price.mean()),
+        "volume_multiple": (usd["issuance_gross_near"] - usd["burnt_near"]) / usd["buyback_near"],
+    }
+
+
+def holder_view(
+    daily: pd.DataFrame,
+    end: pd.Timestamp,
+    days: int = 30,
+    *,
+    supply: float,
+    price: float,
+    buyback_usd_per_day: float,
+    inflation: float,
+    burnt_near_per_day: float,
+) -> dict:
+    """Net new supply over the window and total supply valued against buyback revenue.
+
+    value_to_revenue / breakeven_value_to_revenue equals the volume multiple of the lever
+    bridge's first step: coverage reaches one when the multiple falls to the break-even one.
+    """
+    window = _window(daily, end, days, SUPPLY_COLUMNS)
+    issued = float(window["issuance_gross_near"].sum())
+    captured = float((window["buyback_near"] + window["burnt_near"]).sum())
+    market = supply * price
+    revenue = buyback_usd_per_day * 365
+    return {
+        "as_of": end.date().isoformat(),
+        "near_usd": price,
+        "market_value_usd": market,
+        "buyback_revenue_usd_per_year": revenue,
+        "value_to_revenue": market / revenue,
+        "breakeven_value_to_revenue": 1 / (inflation - 365 * burnt_near_per_day / supply),
+        "gross_new_supply_rate": issued / days * 365 / supply,
+        "net_new_supply_rate": (issued - captured) / days * 365 / supply,
+    }
 
 
 VOLUME_SCALES = (0.5, 1.0, 2.0)
