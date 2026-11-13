@@ -9,9 +9,12 @@ from capture import build, thesis
 
 SOURCE = "snapshot"
 SECTIONS = [
+    "## Summary",
     "## Claim",
+    "## What it means for a holder",
     "## Supporting evidence",
     "## Contrary evidence",
+    "## Why public estimates differ",
     "## What would change my mind",
     "## Unavailable metrics and why",
     "## Limitations",
@@ -140,3 +143,68 @@ def test_every_path_the_thesis_and_the_readme_cite_is_independently_audited(payl
     assert not missing, f"cited but not audited: {sorted(missing)}"
     stale = (audit.AUDITED | audit.DESCRIPTIVE) - cited
     assert not stale, f"listed as audited but not cited: {sorted(stale)}"
+
+
+def test_change_words_a_signed_fraction_and_registers_its_absolute_value() -> None:
+    f = thesis.Facts({"a": {"down": -0.341, "up": 0.76}})
+    assert f.change("a.down") == "fell 34%" and f.change("a.up") == "rose 76%"
+    assert [(x.raw, x.text) for x in f.used] == [(-0.341, "34"), (0.76, "76")]
+
+
+def test_the_summary_comes_first_and_answers_not_yet(rendered) -> None:
+    text, _ = rendered
+    summary = text[text.index("## Summary") : text.index("## Claim")]
+    assert "**Answer today: not yet.**" in summary and "**For a holder.**" in summary
+
+
+def test_the_hypothesis_is_stated_before_the_reading(rendered) -> None:
+    text, _ = rendered
+    claim = text[text.index("## Claim") : text.index("## What it means for a holder")]
+    assert claim.index("The hypothesis:") < claim.index("Not yet")
+    assert "It does depend on the NEAR price" in claim
+
+
+def test_the_usage_result_is_reported_as_it_came_out(rendered, payloads) -> None:
+    text, _ = rendered
+    contrary = text[
+        text.index("## Contrary evidence") : text.index("## Why public estimates differ")
+    ]
+    assert payloads["usage"]["lead_lag"]["verdict"]["text"] in contrary
+    assert payloads["usage"]["lead_lag"]["verdict"]["label"] in contrary
+
+
+def test_downside_signals_list_every_pre_registered_test(rendered, payloads) -> None:
+    text, _ = rendered
+    section = text[text.index("## What would change my mind") : text.index("## Unavailable")]
+    assert "would change the answer to yes" in section and "would support the thesis" not in section
+    for t in payloads["prereg"]["tests"]:
+        assert f"- {t['id']}: {t['claim']}" in section
+
+
+def test_scores_do_not_change_the_thesis(payloads) -> None:
+    scored = {
+        **payloads,
+        "prereg": {
+            **payloads["prereg"],
+            "scores": {"scored_at_utc": "x", "results": {"T1": {"status": "pass"}}},
+        },
+    }
+    assert thesis.render(scored)[0] == thesis.render(payloads)[0]
+
+
+def test_a_missing_anchor_drops_only_its_clause(payloads) -> None:
+    bare = {**payloads, "prereg": {**payloads["prereg"], "anchor": None}}
+    text, _ = thesis.render(bare)
+    assert "hash committed on NEAR" not in text and "- T1:" in text
+
+
+def test_no_tests_no_downside_block(payloads) -> None:
+    bare = {**payloads, "prereg": {**payloads["prereg"], "tests": []}}
+    text, _ = thesis.render(bare)
+    assert "Forecasts of this reading were written down" not in text
+
+
+def test_the_readme_results_carry_both_price_bases_and_the_usage_result(payloads) -> None:
+    block, _ = thesis.render_results(payloads)
+    assert "at the prices of the window the cents use" in block
+    assert payloads["usage"]["lead_lag"]["verdict"]["label"] in block

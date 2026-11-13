@@ -853,6 +853,27 @@ AUDITED = {
     "valuation.scenarios[*].volume_p50_usd_per_day.60",
     "valuation.start.tau_monthly_range.max",
     "valuation.start.tau_monthly_range.min",
+    "prereg.anchor.near.block_height",
+    "prereg.registered_at_utc",
+    "prereg.tests[*].claim",
+    "prereg.tests[*].id",
+    "summary.holder.breakeven_value_to_revenue",
+    "summary.holder.gross_new_supply_rate",
+    "summary.holder.near_usd",
+    "summary.holder.net_new_supply_rate",
+    "summary.holder.value_to_revenue",
+    "summary.levers.at_window_prices.near_usd_mean",
+    "summary.levers.at_window_prices.volume_multiple",
+    "usage.halves.change.active_signers",
+    "usage.halves.change.near_usd",
+    "usage.halves.change.tx_count",
+    "usage.halves.change.volume_usd",
+    "usage.halves.weeks",
+    "usage.lead_lag.verdict.text",
+    "usage.shares.intents_call_share",
+    "usage.shares.intents_signer_share",
+    "usage.window.first_date",
+    "usage.window.last_date",
 }
 # Text written in the code (definitions and assumptions), reviewed in docs/METHODOLOGY.md rather
 # than recomputed: a number inside them is a method constant, not a measurement.
@@ -1041,3 +1062,17 @@ def test_the_recorded_transaction_is_on_chain_at_that_block(data_dir) -> None:
     assert block["header"]["height"] == near["block_height"]
     digest = hashlib.sha256((data_dir / "manifest.json").read_bytes()).hexdigest()
     assert digest == record["manifest_sha256"]
+
+
+def test_the_pre_registration_is_read_from_its_frozen_files(pub) -> None:
+    d = build.PREREG_DIR
+    tests = json.loads((d / "tests.json").read_text(encoding="utf-8"))
+    anchor = json.loads((d / "anchor.json").read_text(encoding="utf-8"))
+    p = pub["prereg"]
+    assert p["registered_at_utc"] == tests["registered_at_utc"]
+    shown = [(t["id"], t["claim"]) for t in p["tests"]]
+    assert shown == [(t["id"], t["claim"]) for t in tests["tests"]]
+    assert p["anchor"]["near"]["network"] == anchor["near"]["network"]
+    assert p["anchor"]["near"]["block_height"] == anchor["near"]["block_height"]
+    for e in json.loads((d / "manifest.json").read_text(encoding="utf-8"))["files"]:
+        assert sha(d / e["path"]) == e["sha256"], e["path"]

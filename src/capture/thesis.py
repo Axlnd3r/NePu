@@ -79,6 +79,12 @@ class Facts:
                 return f"${self._register(path, self.val(path), f'{v / limit:.1f}')}{unit}"
         return f"${self._register(path, self.val(path), f'{v:.2f}')}"
 
+    def change(self, path: str, digits: int = 0) -> str:
+        """A signed fraction as "rose N%" or "fell N%"; the absolute value is what is registered."""
+        v = float(self.val(path))  # type: ignore[arg-type]
+        text = self._register(path, self.val(path), f"{abs(v) * 100:.{digits}f}")
+        return f"{'fell' if v < 0 else 'rose'} {text}%"
+
     def integer(self, path: str) -> str:
         v = self.val(path)
         return self._register(path, v, f"{int(v):,}")  # type: ignore[call-overload]
@@ -121,6 +127,12 @@ def render(payloads: dict[str, dict]) -> tuple[str, list[Fact]]:
     attr_first = f"{month_first}.attributable_share"
     attr_last = f"{month0}.attributable_share"
     proof = "provenance.proof"
+    at = f"{s}.levers.at_window_prices"
+    holder = f"{s}.holder"
+    halves = "usage.halves.change"
+    accounts = float(f.val(f"{halves}.active_signers"))  # type: ignore[arg-type]
+    volume = float(f.val(f"{halves}.volume_usd"))  # type: ignore[arg-type]
+    followed = "did not follow" if accounts < 0 < volume else "is compared with"
 
     lines: list[str] = []
     out = lines.append
@@ -134,11 +146,56 @@ def render(payloads: dict[str, dict]) -> tuple[str, list[Fact]]:
     )
     out("")
 
+    cents = round(float(f.val(f"{s}.hero.cr_float_usd_30")) * 100)  # type: ignore[arg-type]
+    f.used.append(Fact(f"{s}.hero.cr_float_usd_30", f.val(f"{s}.hero.cr_float_usd_30"), str(cents)))
+
+    # ------------------------------------------------------------------ summary
+    out("## Summary")
+    out("")
+    out(
+        "- **Question.** Can the value NEAR Intents captures for the token, buybacks plus gas "
+        "burn, outgrow new issuance? That is the long-term case for NEAR as a token backed by "
+        "revenue, tested here as a hypothesis."
+    )
+    out(
+        f"- **Answer today: not yet.** {cents} cents come back per dollar of new NEAR issued "
+        f"({f.integer(f'{s}.ledger.days')} days to {f.date(f'{s}.hero.date')})."
+    )
+    out(
+        "- **The gap.** Revenue reaching the buyback wallet has to grow "
+        f"{f.times(f'{steps}[0].volume_multiple', 1)} at the latest NEAR price "
+        f"({f.times(f'{at}.volume_multiple', 1)} at the prices of the window). The HSP-029 "
+        "issuance cut and routing all protocol revenue to buybacks would leave "
+        f"{f.times(f'{steps}[2].volume_multiple')} for growth."
+    )
+    out(
+        "- **For a holder.** Net of buybacks and burn, new NEAR still adds "
+        f"{f.pct(f'{holder}.net_new_supply_rate')} of total supply to the float a year, and total supply is valued "
+        f"at {f.times(f'{holder}.value_to_revenue', 0)} the yearly revenue reaching the buyback "
+        f"wallet; coverage reaches one at {f.times(f'{holder}.breakeven_value_to_revenue', 1)}."
+    )
+    out(
+        "- **Strongest evidence against.** Mean monthly log growth of volume after the launch "
+        f"phase is {f.num('valuation.growth.mean_after_launch', 3)}, against "
+        f"{f.num('valuation.growth.mean_all', 3)} over all months, and network usage {followed} Intents: "
+        f"daily active accounts {f.change(f'{halves}.active_signers')} while Intents volume "
+        f"{f.change(f'{halves}.volume_usd')}."
+    )
+    out(
+        "- **Check it.** `make all` rebuilds every number offline; the conditions that would "
+        "change the answer are listed below."
+    )
+    out("")
+
     # ------------------------------------------------------------------ claim
     out("## Claim")
     out("")
-    cents = round(float(f.val(f"{s}.hero.cr_float_usd_30")) * 100)  # type: ignore[arg-type]
-    f.used.append(Fact(f"{s}.hero.cr_float_usd_30", f.val(f"{s}.hero.cr_float_usd_30"), str(cents)))
+    out(
+        "The hypothesis: over the long run, fee revenue from NEAR Intents grows until buybacks and "
+        "gas burn cover new NEAR issuance. The evidence for and against it follows. The reading "
+        "today:"
+    )
+    out("")
     out(
         f"**Not yet.** In the {f.integer(f'{s}.ledger.days')} days to {f.date(f'{s}.hero.date')}, "
         f"buybacks and gas burn covered {cents} cents per dollar of new NEAR issued "
@@ -161,6 +218,15 @@ def render(payloads: dict[str, dict]) -> tuple[str, list[Fact]]:
     )
     out("")
     out(
+        f"It does depend on the NEAR price. The {f.times(f'{steps}[0].volume_multiple', 1)} "
+        f"values issuance at the latest price ({f.usd(f'{holder}.near_usd')} on "
+        f"{f.date(f'{s}.levers.as_of')}); the {cents} cents use each day's price (mean "
+        f"{f.usd(f'{at}.near_usd_mean')} over the window), and on that basis the gap is "
+        f"{f.times(f'{at}.volume_multiple', 1)}. Issuance is fixed in NEAR while fee revenue is "
+        "earned in dollars, so a higher NEAR price raises the bar."
+    )
+    out("")
+    out(
         "Buybacks are not burns: the NEAR bought back is held in a wallet, so only gas burn lowers "
         f"total supply (CR_supply {f.num('coverage.latest.cr_supply_30.value', 3)} on "
         f"{f.date('coverage.latest.cr_supply_30.date')}). The thesis is falsifiable: the numeric "
@@ -168,8 +234,30 @@ def render(payloads: dict[str, dict]) -> tuple[str, list[Fact]]:
     )
     out("")
 
+    # ------------------------------------------------------------------ holder
+    out("## What it means for a holder")
+    out("")
+    out(
+        "- Net new supply: gross issuance ran at "
+        f"{f.pct(f'{holder}.gross_new_supply_rate')} of total supply a year over the "
+        f"{f.integer(f'{s}.ledger.days')} days to {f.date(f'{s}.levers.as_of')}; after buybacks "
+        f"and gas burn, {f.pct(f'{holder}.net_new_supply_rate')} was left as new float. Bought-back NEAR "
+        "is held, not burnt, so total supply itself grows by gross issuance less burn."
+    )
+    out(
+        "- A yardstick, not a price view: at the latest price total supply is valued at "
+        f"{f.times(f'{holder}.value_to_revenue', 0)} the yearly revenue reaching the buyback "
+        "wallet. Coverage reaches one when that multiple is "
+        f"{f.times(f'{holder}.breakeven_value_to_revenue', 1)}; the ratio of the two is the "
+        f"{f.times(f'{steps}[0].volume_multiple', 1)} above. The multiple moves with revenue, the "
+        "issuance rate and the price; none of them is forecast here."
+    )
+    out("")
+
     # ------------------------------------------------------------------ supporting
     out("## Supporting evidence")
+    out("")
+    out("Evidence that capture can catch up with issuance:")
     out("")
     out(
         "- The measurement holds: on-chain revenue agrees with DefiLlama's in "
@@ -217,6 +305,8 @@ def render(payloads: dict[str, dict]) -> tuple[str, list[Fact]]:
 
     # ------------------------------------------------------------------ contrary
     out("## Contrary evidence")
+    out("")
+    out("Evidence that it will not, or not soon:")
     out("")
     out(
         f"- Only {f.pct(f'{s}.ledger.kept.buyback_of_onchain')} of the protocol revenue that reaches "
@@ -270,6 +360,26 @@ def render(payloads: dict[str, dict]) -> tuple[str, list[Fact]]:
         f"{f.num(f'{month0}.hhi_channel', 3)}), and declared app fees to NEAR wallets explained "
         f"{f.pct(attr_last)} of on-chain revenue, down from {f.pct(attr_first)} in "
         f"{f.word(f'{month_first}.period')}."
+    )
+    out(
+        "- Intents revenue is not network usage: from "
+        f"{f.date('usage.window.first_date')} to {f.date('usage.window.last_date')}, calls to "
+        f"`intents.near` were {f.pct('usage.shares.intents_call_share')} of all function calls "
+        f"and its daily signers {f.pct('usage.shares.intents_signer_share', 2)} of daily active "
+        "accounts (distinct transaction signers)."
+    )
+    out(
+        f"- Network usage {followed} Intents: comparing the two halves of the "
+        f"{f.integer('usage.halves.weeks')} complete weeks, daily active accounts "
+        f"{f.change(f'{halves}.active_signers')} and transactions "
+        f"{f.change(f'{halves}.tx_count')}, while Intents volume "
+        f"{f.change(f'{halves}.volume_usd')} and the NEAR price "
+        f"{f.change(f'{halves}.near_usd')}. No cause is attributed."
+    )
+    out(
+        "- The track's example hypothesis, that Intents volume leads network usage better than "
+        f"the token price, is {f.text('usage.lead_lag.verdict.label')} out of sample: "
+        f"{f.text('usage.lead_lag.verdict.text')}"
     )
     out(
         "- The growth that makes capture look inevitable comes from the launch phase: mean monthly "
@@ -339,7 +449,7 @@ def render(payloads: dict[str, dict]) -> tuple[str, list[Fact]]:
         kind = "usd" if condition["unit"].startswith("USD") else "pct"
         verdict = "met" if condition["met"] else "not met"
         effect = (
-            "would support the thesis"
+            "would change the answer to yes"
             if condition["effect"] == "support"
             else "would withdraw the headline"
         )
@@ -349,6 +459,27 @@ def render(payloads: dict[str, dict]) -> tuple[str, list[Fact]]:
             f"{verdict}."
         )
     out("")
+    pre = "prereg"
+    tests = f.val(f"{pre}.tests") or []
+    if tests:
+        anchored = ""
+        if f.val(f"{pre}.anchor"):
+            anchored = (
+                f", hash committed on NEAR {f.word(f'{pre}.anchor.near.network')} at block "
+                f"{f.integer(f'{pre}.anchor.near.block_height')}"
+            )
+        out(
+            "Forecasts of this reading were written down before their windows closed "
+            f"(registered {f.word(f'{pre}.registered_at_utc')}{anchored}). A miss on any of them "
+            "means the reading above was wrong in that respect:"
+        )
+        out("")
+        for index in range(len(tests)):  # type: ignore[arg-type]
+            base = f"{pre}.tests[{index}]"
+            out(f"- {f.word(f'{base}.id')}: {f.text(f'{base}.claim')}")
+        out("")
+        out("Each is scored on the dashboard when its window closes; a miss is reported as a miss.")
+        out("")
 
     # ------------------------------------------------------------------ unavailable
     out("## Unavailable metrics and why")
@@ -419,11 +550,17 @@ def render_results(payloads: dict[str, dict]) -> tuple[str, list[Fact]]:
         f"burn in the {f.integer(f'{s}.ledger.days')} days to {f.date(f'{s}.hero.date')}.",
         f"- **Not yet:** daily Intents volume would have to reach {f.usd(f'{steps}[0].v_star_usd_per_day')}, "
         f"{f.times(f'{steps}[0].volume_multiple', 1)} its {f.usd(f'{s}.levers.volume_usd_per_day')} "
-        "average, for capture to cover issuance at today's rates.",
+        "average, for capture to cover issuance at today's rates "
+        f"({f.times(f'{s}.levers.at_window_prices.volume_multiple', 1)} at the prices of the "
+        "window the cents use).",
         "- That multiple does not depend on how volume is counted: at half or twice DefiLlama's "
         "volume it stays "
         f"{f.times(f'{s}.invariance.rows[volume_scale=2.0].volume_multiple', 1)}. It is the growth "
         "in buyback revenue that break-even needs.",
+        "- The track's example hypothesis, that Intents volume leads network usage better than "
+        f"price: {f.text('usage.lead_lag.verdict.label')} out of sample; daily active accounts "
+        f"{f.change('usage.halves.change.active_signers')} while Intents volume "
+        f"{f.change('usage.halves.change.volume_usd')}.",
         f"- Proof: the SHA-256 of the snapshot manifest is committed on NEAR "
         f"**{f.word(f'{proof}.network')}** (contract `{f.word(f'{proof}.contract')}`, run id "
         f"`{f.word(f'{proof}.run_id')}`, [transaction]({f.word(f'{proof}.explorer_url')}), block "

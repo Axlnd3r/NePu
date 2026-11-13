@@ -116,8 +116,9 @@ This project measures it and reports how far the network is from that point:
 **Latest build**, generated from `site/public/data/*.json` (the full argument, with the evidence against it, is in [THESIS.md](THESIS.md)):
 
 - For every dollar of new NEAR issued, **12 cents** came back as buybacks or gas burn in the 30 days to 2026-10-31.
-- **Not yet:** daily Intents volume would have to reach $989.9M, 7.6x its $130.4M average, for capture to cover issuance at today's rates.
+- **Not yet:** daily Intents volume would have to reach $989.9M, 7.6x its $130.4M average, for capture to cover issuance at today's rates (9.2x at the prices of the window the cents use).
 - That multiple does not depend on how volume is counted: at half or twice DefiLlama's volume it stays 7.6x. It is the growth in buyback revenue that break-even needs.
+- The track's example hypothesis, that Intents volume leads network usage better than price: not supported out of sample; daily active accounts fell 33% while Intents volume rose 72%.
 - The issuance cut HSP-029, read on chain from `vote.dao`: status `Timelock`, 99.97% of the veNEAR cast for one option, timelock ends 2026-11-16T16:48:08Z. It would close 1.58x of the gap once validators adopt it.
 - Proof: the SHA-256 of the snapshot manifest is committed on NEAR **testnet** (contract `nepu-ledger.testnet`, run id `capture-ledger-2026-11-01-48c59060cee3`, [transaction](https://explorer.testnet.near.org/transactions/2CsbDXKFmFPqUpBDvQxiamodirssdd9NT63E6dqeg76D), block 276,017,917). OpenTimestamps (Bitcoin): confirmed.
 <!-- results:end -->
